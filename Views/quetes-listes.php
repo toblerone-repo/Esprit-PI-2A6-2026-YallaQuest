@@ -1,5 +1,5 @@
 <?php
-
+$currentPage = 'quetes';
 
 $quetes = [
     [

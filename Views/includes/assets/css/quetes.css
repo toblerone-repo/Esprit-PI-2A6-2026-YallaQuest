@@ -524,3 +524,19 @@ tr:hover td .action-btn {
 #quete-prog-formulaire {
     display: none;
 }
+
+.sidebar-nav a {
+    color: var(--ivory-color);
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s ease;
+}
+
+.sidebar-nav a:hover {
+    color: var(--green-color);
+}
+
+.sidebar-nav a.active {
+    color: var(--pink-color);
+    font-weight: 700;
+}
