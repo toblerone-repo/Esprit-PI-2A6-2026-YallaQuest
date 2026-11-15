@@ -1,0 +1,446 @@
+<?php
+
+
+$quetes = [
+    [
+        'id_quete' => 1,
+        'titre' => 'Préparer une salade méchouia.',
+        'consignes' => '',
+        'difficulte' => 'Facile',
+        'xp' => 10,
+        'competence' => 'Nutrition',
+        'categorie' => 'Recette',
+        'type_activite' => [
+            'libelle' => 'Cuisine',
+            'unite' => 'portion'
+        ],
+        'contenu_details' => 'Prépare une salade méchouia maison avec des légumes grillés, de l’huile d’olive et les épices de ton choix.',
+        'selected' => false,
+        'date-debut' => '2026-11-14',
+        'date-fin' => '2026-11-20'
+    ],
+    [
+        'id_quete' => 2,
+        'titre' => 'Marcher 30 minutes près de chez soi.',
+        'consignes' => '',
+        'difficulte' => 'Moyenne',
+        'xp' => 25,
+        'competence' => 'Endurance',
+        'categorie' => 'Marche',
+        'type_activite' => [
+            'libelle' => 'Physique',
+            'unite' => 'kilomètre'
+        ],
+        'contenu_details' => 'Profite d’une promenade de 30 minutes à ton rythme. Choisis un itinéraire agréable et reste en mouvement.',
+        'selected' => true,
+        'date-debut' => '2026-11-15',
+        'date-fin' => '2026-11-21'
+    ],
+    [
+        'id_quete' => 3,
+        'titre' => "Séance d'étirements guidée.",
+        'consignes' => '',
+        'difficulte' => 'Facile',
+        'xp' => 10,
+        'competence' => 'Mobilité',
+        'categorie' => 'Étirements',
+        'type_activite' => [
+            'libelle' => 'Souplesse',
+            'unite' => 'minute'
+        ],
+        'contenu_details' => 'Réalise une série d’étirements doux pour détendre tes muscles et améliorer ta souplesse.',
+        'selected' => false,
+        'date-debut' => '2026-11-16',
+        'date-fin' => '2026-11-22'
+    ],
+    [
+        'id_quete' => 4,
+        'titre' => '10 minutes de respiration guidée.',
+        'consignes' => '',
+        'difficulte' => 'Facile',
+        'xp' => 10,
+        'competence' => 'Focus',
+        'categorie' => 'Exercice de respiration',
+        'type_activite' => [
+            'libelle' => 'Respiration',
+            'unite' => 'minute'
+        ],
+        'contenu_details' => 'Installe-toi dans un endroit calme et concentre-toi sur ta respiration pendant 10 minutes.',
+        'selected' => true,
+        'date-debut' => '2026-11-14',
+        'date-fin' => '2026-11-17'
+    ],
+    [
+        'id_quete' => 5,
+        'titre' => 'Renforcement adapté à son niveau.',
+        'consignes' => '',
+        'difficulte' => 'Difficile',
+        'xp' => 50,
+        'competence' => 'Force',
+        'categorie' => 'Renforcement musculaire',
+        'type_activite' => [
+            'libelle' => 'Musculation',
+            'unite' => 'répétition'
+        ],
+        'contenu_details' => 'Effectue des exercices de renforcement musculaire adaptés à tes capacités, comme des squats ou des pompes.',
+        'selected' => false,
+        'date-debut' => '2026-11-18',
+        'date-fin' => '2026-11-30'
+    ],
+    [
+        'id_quete' => 6,
+        'titre' => "Chacun marche 20 minutes avant l'échéance.",
+        'consignes' => '',
+        'difficulte' => 'Moyenne',
+        'xp' => 25,
+        'competence' => 'Endurance',
+        'categorie' => 'Marche',
+        'type_activite' => [
+            'libelle' => 'Physique',
+            'unite' => 'kilomètre'
+        ],
+        'contenu_details' => 'Chaque membre de la guilde marche 20 minutes avant la date limite. Les XP sont attribués après la participation de tous.',
+        'selected' => false,
+        'date-debut' => '2026-11-19',
+        'date-fin' => '2026-11-26'
+    ],
+    [
+        'id_quete' => 7,
+        'titre' => 'Faire 15 minutes de yoga doux.',
+        'consignes' => '',
+        'difficulte' => 'Facile',
+        'xp' => 10,
+        'competence' => 'Mobilité',
+        'categorie' => 'Yoga',
+        'type_activite' => [
+            'libelle' => 'Souplesse',
+            'unite' => 'minute'
+        ],
+        'contenu_details' => 'Pratique une courte séance de yoga pour détendre ton corps et améliorer ta souplesse.',
+        'selected' => false,
+        'date-debut' => '2026-11-20',
+        'date-fin' => '2026-11-27'
+    ],
+    [
+        'id_quete' => 8,
+        'titre' => 'Prendre une pause sans écran pendant 20 minutes.',
+        'consignes' => '',
+        'difficulte' => 'Facile',
+        'xp' => 10,
+        'competence' => 'Focus',
+        'categorie' => 'Pause sans écran',
+        'type_activite' => [
+            'libelle' => 'Bien-être',
+            'unite' => 'minute'
+        ],
+        'contenu_details' => 'Éloigne-toi des écrans pendant 20 minutes et profite d’une activité calme.',
+        'selected' => true,
+        'date-debut' => '2026-11-14',
+        'date-fin' => '2026-11-21'
+    ]
+];
+
+$competences = [
+    [
+        'id' => 1,
+        'nom' => 'Nutrition',
+        'description' => 'Quêtes liées à une alimentation saine et équilibrée.'
+    ],
+    [
+        'id' => 2,
+        'nom' => 'Endurance',
+        'description' => 'Quêtes visant à améliorer la résistance physique et cardiovasculaire.'
+    ],
+    [
+        'id' => 3,
+        'nom' => 'Mobilité',
+        'description' => 'Quêtes favorisant la souplesse, les étirements et la mobilité du corps.'
+    ],
+    [
+        'id' => 4,
+        'nom' => 'Focus',
+        'description' => 'Quêtes visant à améliorer la concentration, la relaxation et le bien-être mental.'
+    ],
+    [
+        'id' => 5,
+        'nom' => 'Force',
+        'description' => 'Quêtes destinées à développer la force et le renforcement musculaire.'
+    ]
+];
+
+
+$categories = [
+    ['id' => 1, 'nom' => 'Recette', 'id_type_activite' => 1],
+    ['id' => 2, 'nom' => 'Marche', 'id_type_activite' => 2],
+    ['id' => 3, 'nom' => 'Étirements', 'id_type_activite' => 3],
+    ['id' => 4, 'nom' => 'Exercice de respiration', 'id_type_activite' => 4],
+    ['id' => 5, 'nom' => 'Renforcement musculaire', 'id_type_activite' => 5],
+    ['id' => 6, 'nom' => 'Yoga', 'id_type_activite' => 3],
+    ['id' => 7, 'nom' => 'Pause sans écran', 'id_type_activite' => 6]
+];
+
+$types_activite = [
+    ['id' => 1, 'libelle' => 'Cuisine', 'unite' => 'portion'],
+    ['id' => 2, 'libelle' => 'Physique', 'unite' => 'kilomètre'],
+    ['id' => 3, 'libelle' => 'Souplesse', 'unite' => 'minute'],
+    ['id' => 4, 'libelle' => 'Respiration', 'unite' => 'minute'],
+    ['id' => 5, 'libelle' => 'Musculation', 'unite' => 'répétition'],
+    ['id' => 6, 'libelle' => 'Bien-être', 'unite' => 'minute']
+];
+
+?>
+
+
+
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Cormorant+Garamond:ital,wght@0,300..700;1,300..700&family=DM+Serif+Display:ital@0;1&family=Dancing+Script:wght@400..700&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Libre+Baskerville:ital,wght@0,400..700;1,400..700&family=Manrope:wght@200..800&family=Merriweather:ital,opsz,wght@0,18..144,300..900;1,18..144,300..900&family=Patrick+Hand&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Sacramento&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Cormorant+Garamond:ital,wght@0,300..700;1,300..700&family=DM+Serif+Display:ital@0;1&family=Dancing+Script:wght@400..700&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Libre+Baskerville:ital,wght@0,400..700;1,400..700&family=Manrope:wght@200..800&family=Merriweather:ital,opsz,wght@0,18..144,300..900;1,18..144,300..900&family=Patrick+Hand&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Sacramento&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.2.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="quetes.css">
+</head>
+
+<body>
+    <div class="backoffice-layout">
+        <div class="sidebar">
+            <div class="sidebar-brand ">
+                <h4>BackOffice</h4>
+            </div>
+
+            <div class="sidebar-nav">
+                <a href="#">Activités</a>
+                <a href="#">Nouvelle activité</a>
+                <a href="#">Adhérents</a>
+                <a href="#">Nouvel adhérent</a>
+            </div>
+
+        </div>
+
+        <div class="main-content container">
+
+            <div id="backoffice-btn-div-quete">
+                <button id="ajout-quete-btn-bo" class="submit-btn">Ajouter une quête</button>
+            </div>
+
+            <div id="modifier-form-container">
+                <div id="form-modifier-quete" class="form-container">
+                    <h1 class="form-title">Modifier une quête</h1>
+
+                    <form action="/submit-post" method="POST" id="quest-form">
+                        <div class="form-group">
+                            <label class="quest-form-label" for="title">Titre</label>
+                            <input type="text" name="title" id="title" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="quest-form-label" for="consigne">Consigne</label>
+                            <input type="text" name="consigne" id="consigne" required>
+                        </div>
+
+
+                        <fieldset class="form-group">
+                            <legend class="quest-form-label">Compétence</legend>
+                            <div class="quete-competence-options">
+                                <?php foreach ($competences as $index => $competence) {
+                                    $checked = $index === 0 ? 'checked' : '';
+                                    echo "<input type='radio' class='competence-radio' name='competence' id='competence-modifier-{$competence['id']}' value='{$competence['id']}' {$checked}>";
+
+                                    echo "<label class='competence-pill' for='competence-modifier-{$competence['id']}'><i class='fa-solid fa-check'></i>" . htmlspecialchars($competence['nom']) . "</label>";
+                                }
+                                ?>
+                            </div>
+                        </fieldset>
+
+                        <fieldset class="form-group">
+                            <legend class="quest-form-label">Catégorie</legend>
+                            <div class="quete-categorie-options">
+                                <?php foreach ($categories as $index => $categorie) {
+                                    $checked = $index === 0 ? 'checked' : '';
+                                    echo "<input type='radio' class='categorie-radio' name='categorie' id='categorie-modifier-{$categorie['id']}' value='{$categorie['id']}' {$checked}>";
+
+                                    echo "<label class='categorie-pill' for='categorie-modifier-{$categorie['id']}'><i class='fa-solid fa-check'></i>" . htmlspecialchars($categorie['nom']) . "</label>";
+                                }
+                                ?>
+                            </div>
+                        </fieldset>
+
+                        <fieldset class="form-group">
+                            <legend class="quest-form-label">Type d'activité</legend>
+                            <div class="quete-type-activite-options">
+                                <?php foreach ($types_activite as $index => $typeActivite) {
+                                    $checked = $index === 0 ? 'checked' : '';
+                                    echo "<input type='radio' class='type-activite-radio' name='type_activite' id='type-activite-modifier-{$typeActivite['id']}' value='{$typeActivite['id']}' {$checked}>";
+
+                                    echo "<label class='type-activite-pill' for='type-activite-modifier-{$typeActivite['id']}'><i class='fa-solid fa-check'></i>" . htmlspecialchars($typeActivite['libelle']) . "</label>";
+                                }
+                                ?>
+                            </div>
+                        </fieldset>
+
+
+
+                        <div class="form-group">
+                            <label class="quest-form-label" for="xp">XP</label>
+                            <input name="xp" id="xp" required></input>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="quest-form-label" for="contenu_details">Contenu Détails</label>
+                            <textarea name="contenu_details" id="contenu_details" required></textarea>
+                        </div>
+
+                        <div class="btn-div-form">
+                            <button type="submit" class="submit-btn btn">Enregistrer</button>
+                        </div>
+
+
+                    </form>
+                </div>
+            </div>
+
+            <div id="add-form-container">
+                <div id="form-ajout-quete" class="form-container">
+                    <h1 class="form-title">Ajouter une quête</h1>
+
+                    <form action="/submit-post" method="POST" id="quest-form">
+                        <div class="form-group">
+                            <label class="quest-form-label" for="title">Titre</label>
+                            <input type="text" name="title" id="title" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="quest-form-label" for="consigne">Consigne</label>
+                            <input type="text" name="consigne" id="consigne" required>
+                        </div>
+
+
+                        <fieldset class="form-group">
+                            <legend class="quest-form-label">Compétence</legend>
+                            <div class="quete-competence-options">
+                                <?php foreach ($competences as $index => $competence) {
+                                    $checked = $index === 0 ? 'checked' : '';
+                                    echo "<input type='radio' class='competence-radio' name='competence' id='competence-ajout-{$competence['id']}' value='{$competence['id']}' {$checked}>";
+
+                                    echo "<label class='competence-pill' for='competence-ajout-{$competence['id']}'><i class='fa-solid fa-check'></i>" . htmlspecialchars($competence['nom']) . "</label>";
+                                }
+                                ?>
+                            </div>
+                        </fieldset>
+
+                        <fieldset class="form-group">
+                            <legend class="quest-form-label">Catégorie</legend>
+                            <div class="quete-categorie-options">
+                                <?php foreach ($categories as $index => $categorie) {
+                                    $checked = $index === 0 ? 'checked' : '';
+                                    echo "<input type='radio' class='categorie-radio' name='categorie' id='categorie-ajout-{$categorie['id']}' value='{$categorie['id']}' {$checked}>";
+
+                                    echo "<label class='categorie-pill' for='categorie-ajout-{$categorie['id']}'><i class='fa-solid fa-check'></i>" . htmlspecialchars($categorie['nom']) . "</label>";
+                                }
+                                ?>
+                            </div>
+                        </fieldset>
+
+                        <fieldset class="form-group">
+                            <legend class="quest-form-label">Type d'activité</legend>
+                            <div class="quete-type-activite-options">
+                                <?php foreach ($types_activite as $index => $typeActivite) {
+                                    $checked = $index === 0 ? 'checked' : '';
+                                    echo "<input type='radio' class='type-activite-radio' name='type_activite' id='type-activite-ajout-{$typeActivite['id']}' value='{$typeActivite['id']}' {$checked}>";
+
+                                    echo "<label class='type-activite-pill' for='type-activite-ajout-{$typeActivite['id']}'><i class='fa-solid fa-check'></i>" . htmlspecialchars($typeActivite['libelle']) . "</label>";
+                                }
+                                ?>
+                            </div>
+                        </fieldset>
+
+
+
+                        <div class="form-group">
+                            <label class="quest-form-label" for="xp">XP</label>
+                            <input name="xp" id="xp" required></input>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="quest-form-label" for="contenu_details">Contenu Détails</label>
+                            <textarea name="contenu_details" id="contenu_details" required></textarea>
+                        </div>
+
+                        <div class="btn-div-form">
+                            <button type="submit" class="submit-btn btn">Enregistrer</button>
+                        </div>
+
+
+                    </form>
+                </div>
+            </div>
+
+
+            <h2 id="liste-quete-titre">Liste de quêtes</h2>
+            <div class="container">
+
+                <table class="table-liste">
+                    <tr>
+                        <th>Titre</th>
+                        <th>Compétence</th>
+                        <th>Catégorie</th>
+                        <th>Difficulté</th>
+                        <th>XP</th>
+                        <th>Type d'activité</th>
+                        <th>Unité</th>
+                        <th>Détails</th>
+                        <th>Date Début</th>
+                        <th>Date Fin</th>
+
+                    </tr>
+
+                    <?php
+                    foreach ($quetes as $quete) {
+
+                        echo "<tr>"
+                            . "<td> {$quete['titre']} </td>"
+                            . "<td> {$quete['competence']}</td>"
+                            . "<td> {$quete['categorie']}</td>"
+                            . "<td> {$quete['difficulte']}</td>"
+                            . "<td> {$quete['xp']}</td>"
+                            . "<td> {$quete['type_activite']['libelle']}</td>"
+                            . "<td> {$quete['type_activite']['unite']}</td>"
+                            . "<td> {$quete['contenu_details']}</td>"
+                            . "<td> {$quete['date-debut']}</p></td>"
+                            . "<td> {$quete['date-fin']}</p></td>"
+                            . "<td class='cellule-actions'>"
+                            . "<div class=''actions-boutons>"
+                            . "<button type='button' class='action-btn mod-btn'> <i class='fa-solid fa-pen'></i></button>"
+                            . "<button type='button' class='action-btn supp-btn'><i class='fa-solid fa-trash'></i> </button>"
+                            . "</td>"
+                            . "</div>"
+                            . "</tr>";
+                    };
+
+
+                    ?>
+                </table>
+            </div>
+
+
+
+        </div>
+    </div>
+
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="quetes.js"></script>
+
+</body>
+
+</html>
