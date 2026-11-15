@@ -1,0 +1,3 @@
+# Administration réservée à un accès local.
+Require local
+DirectoryIndex index.php
