@@ -1,0 +1,323 @@
+
+
+/*  Couleurs et polices  */
+:root {
+  --journal-noir: #0b0b0b;
+  --journal-fond-carte: #121212;
+  --journal-bordure: #262626;
+  --journal-lilas: #EBC1F2;
+  --journal-gris: #A8A8A8;
+  --journal-blanc: #F6F4F8;
+  --journal-or: #D7A64B;
+  --journal-rouge: #e5484d;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background-color: var(--journal-noir);
+  color: var(--journal-blanc);
+  font-family: "Inter", Arial, sans-serif;
+  line-height: 1.5;
+}
+
+.journal-admin {
+  padding: 24px 16px 48px;
+}
+
+.journal-admin p {
+  margin: 0;
+}
+
+.journal-admin h1,
+.journal-admin h2 {
+  font-family: "Playfair Display", Georgia, serif;
+  font-weight: 400;
+  margin: 0;
+}
+
+.journal-admin h1 {
+  font-size: 2.2rem;
+  text-transform: uppercase;
+}
+
+.journal-admin h2 {
+  font-size: 1.3rem;
+}
+
+.journal-sous-titre {
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--journal-gris);
+}
+
+.journal-aide {
+  font-size: 0.85rem;
+  color: var(--journal-gris);
+}
+
+
+.journal-entete-page {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+/*  Panneaux  */
+.journal-panneau {
+  background-color: var(--journal-fond-carte);
+  border: 1px solid var(--journal-bordure);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 24px;
+}
+
+.journal-entete-panneau {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+/*  Boutons  */
+.journal-bouton {
+  display: inline-block;
+  padding: 8px 18px;
+  border: 1px solid var(--journal-bordure);
+  border-radius: 20px;
+  background-color: transparent;
+  color: var(--journal-blanc);
+  font-family: inherit;
+  font-size: 0.85rem;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.journal-bouton:hover {
+  border-color: var(--journal-gris);
+}
+
+.journal-bouton.journal-principal {
+  background-color: var(--journal-lilas);
+  border-color: var(--journal-lilas);
+  color: #000000;
+  font-weight: 600;
+}
+
+.journal-bouton.journal-petit {
+  padding: 4px 12px;
+  font-size: 0.8rem;
+}
+
+.journal-bouton.journal-supprimer:hover {
+  border-color: var(--journal-rouge);
+  color: var(--journal-rouge);
+}
+
+.journal-actions {
+  display: flex;
+  gap: 8px;
+}
+
+/*  Tableaux  */
+.journal-tableau {
+  overflow: auto;
+}
+
+.journal-tableau table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.journal-tableau th,
+.journal-tableau td {
+  padding: 12px 10px;
+  text-align: left;
+  border-bottom: 1px solid var(--journal-bordure);
+}
+
+.journal-tableau th {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: var(--journal-gris);
+}
+
+/* ligne qui sépare les activités de chaque quête */
+.journal-titre-groupe td {
+  padding-top: 24px;
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 1.05rem;
+  color: var(--journal-lilas);
+}
+
+.journal-titre-groupe span {
+  font-family: "Inter", Arial, sans-serif;
+  font-size: 0.8rem;
+  color: var(--journal-gris);
+}
+
+.journal-description {
+  font-size: 0.85rem;
+  color: var(--journal-gris);
+}
+
+.journal-quantite {
+  font-weight: 600;
+  color: var(--journal-or);
+}
+
+.journal-nombre {
+  padding: 2px 10px;
+  border-radius: 20px;
+  background-color: var(--journal-bordure);
+  font-size: 0.8rem;
+}
+
+/*  Statut d'une quête  */
+.journal-statut {
+  padding: 2px 10px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+}
+
+.journal-statut.journal-en-cours {
+  background-color: var(--journal-bordure);
+  color: var(--journal-gris);
+}
+
+.journal-statut.journal-termine {
+  background-color: var(--journal-lilas);
+  color: #000000;
+  font-weight: 600;
+}
+
+.journal-statut.journal-validee {
+  border: 1px solid var(--journal-or);
+  color: var(--journal-or);
+}
+
+/*  Petite barre de progression  */
+.journal-progression {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.8rem;
+  color: var(--journal-gris);
+}
+
+.journal-barre {
+  width: 140px;
+  height: 8px;
+  border-radius: 10px;
+  background-color: var(--journal-bordure);
+}
+
+.journal-remplissage {
+  height: 100%;
+  border-radius: 10px;
+  background-color: var(--journal-lilas);
+}
+
+/*  Formulaire  */
+.journal-grille-formulaire {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.journal-champ {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.journal-champ label {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.journal-champ input,
+.journal-champ select,
+.journal-champ textarea {
+  padding: 10px 12px;
+  border: 1px solid var(--journal-bordure);
+  border-radius: 10px;
+  background-color: var(--journal-noir);
+  color: var(--journal-blanc);
+  font-family: inherit;
+}
+
+.journal-champ input:focus,
+.journal-champ select:focus,
+.journal-champ textarea:focus {
+  border-color: var(--journal-lilas);
+}
+
+.journal-boutons-formulaire {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+
+@media (min-width: 900px) {
+  .journal-admin {
+    padding: 32px;
+  }
+
+  .journal-admin h1 {
+    font-size: 3rem;
+  }
+}
+
+
+.footer {
+  padding: 20px 16px;
+  border-top: 1px solid var(--journal-bordure);
+  color: var(--journal-gris);
+}
+
+.footer .row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.footer p {
+  margin: 0;
+  font-size: 0.8rem;
+}
+
+.footer a {
+  color: var(--journal-gris);
+  font-size: 0.8rem;
+  text-decoration: none;
+}
+
+.footer .copyright a,
+.footer a:hover {
+  color: var(--journal-lilas);
+}
+
+.footer .terms {
+  display: flex;
+  gap: 15px;
+}
+
+@media (min-width: 900px) {
+  .footer {
+    padding: 20px 32px;
+  }
+}
