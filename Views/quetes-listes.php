@@ -386,8 +386,6 @@ $types_activite = [
                         <th>Type d'activité</th>
                         <th>Unité</th>
                         <th>Détails</th>
-                        <th>Date Début</th>
-                        <th>Date Fin</th>
 
                     </tr>
 
@@ -403,8 +401,6 @@ $types_activite = [
                             . "<td> {$quete['type_activite']['libelle']}</td>"
                             . "<td> {$quete['type_activite']['unite']}</td>"
                             . "<td> {$quete['contenu_details']}</td>"
-                            . "<td> {$quete['date-debut']}</p></td>"
-                            . "<td> {$quete['date-fin']}</p></td>"
                             . "<td class='cellule-actions'>"
                             . "<div class=''actions-boutons>"
                             . "<button type='button' class='action-btn mod-btn'> <i class='fa-solid fa-pen'></i></button>"
