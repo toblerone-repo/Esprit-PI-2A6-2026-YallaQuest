@@ -15,57 +15,6 @@ Il permet à chaque aventurier :
 4. **D'automatiser l'accomplissement** : dès que toutes les étapes d'un objectif sont validées, l'objectif se termine automatiquement (`statut = 'atteint'`), attribue des points d'expérience (**+50 XP**), fait progresser le niveau de l'aventurier et affiche une notification de félicitation.
 5. **D'administrer les objectifs (Back-Office)** : supervision globale, filtrage dynamique par état, et création/assignation directe d'objectifs avec étapes.
 
----
-
-## 📐 Diagramme de Classes UML & Modèle de Données
-
-Le module respecte fidèlement le diagramme de classes et la relation d'agrégation/contenance :
-
-```
-┌─────────────────────────────────┐           ┌─────────────────────────────────┐
-│            objectif             │           │          EtapeObjectif          │
-├─────────────────────────────────┤           ├─────────────────────────────────┤
-│ *IdO : int                      │ 0..n   1..1│ *IdEO : int                     │
-│ *titre : string                 │───────────│ *titre : string                 │
-│ *note : string                  │  contenir │ *est_validee : bool             │
-│ *date_debut : datetime          │           │ *date_validation : datetime/null│
-│ *date_fin : datetime            │           │ *id_objectif : int (FK -> IdO)  │
-│ *statut : string                │           └─────────────────────────────────┘
-└─────────────────────────────────┘
-```
-
-### Script SQL pour phpMyAdmin (`yallaquest.sql`)
-
-```sql
-CREATE DATABASE IF NOT EXISTS `yallaquest` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE `yallaquest`;
-
--- Table des objectifs
-CREATE TABLE IF NOT EXISTS `objectif` (
-  `id` INT AUTO_INCREMENT PRIMARY KEY,
-  `titre` VARCHAR(150) NOT NULL,
-  `note` TEXT NULL,
-  `description` TEXT NULL,
-  `categorie` VARCHAR(50) DEFAULT 'Activité physique',
-  `date_debut` DATETIME NULL,
-  `date_fin` DATETIME NULL,
-  `date_limite` DATE NULL,
-  `statut` ENUM('a_venir', 'en_cours', 'atteint') DEFAULT 'en_cours',
-  `xp_recompense` INT DEFAULT 50,
-  `date_creation` DATETIME DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- Table des étapes d'un objectif (Relation 1..1 vers 0..n)
-CREATE TABLE IF NOT EXISTS `etape_objectif` (
-  `IdEO` INT AUTO_INCREMENT PRIMARY KEY,
-  `titre` VARCHAR(255) NOT NULL,
-  `est_validee` TINYINT(1) DEFAULT 0,
-  `date_validation` DATETIME NULL,
-  `id_objectif` INT NOT NULL,
-  INDEX (`id_objectif`),
-  CONSTRAINT `fk_etape_objectif` FOREIGN KEY (`id_objectif`) REFERENCES `objectif`(`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-```
 
 ---
 
@@ -111,52 +60,7 @@ C:\xampp\htdocs\objectif/
     ├── css/yq.css                    # Charte graphique (noir nuit, lilas, ivoire, sauge, or)
     ├── fonts/                        # Polices web intégrées (Playfair Display & Inter)
     └── img/piliers/                  # Visuels d'ambiance des 5 piliers bien-être
-```
 
----
-
-## 💻 Détail des Composants Techniques
-
-### 1. La Connexion PDO Singleton (`config.php`)
-Conforme à la diapositive 10 du **Chapitre 6 - PHP PDO - CRUD** :
-```php
-class config {
-    private static $pdo = null;
-
-    public static function getConnexion() {
-        if (!isset(self::$pdo)) {
-            self::$pdo = new PDO("mysql:host=localhost;dbname=yallaquest;charset=utf8mb4", "root", "", [
-                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
-            ]);
-        }
-        return self::$pdo;
-    }
-}
-```
-
-### 2. Les Entités Modèles (`Model/`)
-- **`Objectif.php`** : Encapsule les données d'un objectif (`$IdO`, `$titre`, `$note`, `$date_debut`, `$date_fin`, `$statut`, `$categorie`, `$xpRecompense`).
-- **`EtapeObjectif.php`** : Encapsule une étape avec `$IdEO`, `$titre`, `$est_validee`, `$date_validation`, et la clé étrangère `$id_objectif`.
-
-### 3. Le Contrôleur CRUD (`Controller/ObjectifC.php`)
-Structure identique à la classe `PersonneC` du cours :
-- `afficherObjectifs()` : retourne la liste de tous les objectifs classés par date.
-- `recupererObjectif($id)` : sélectionne un objectif par son identifiant unique.
-- `ajouterObjectif(Objectif $objectif)` : insertion sécurisée par requête préparée `INSERT INTO objectif (...)`.
-- `modifierObjectif(Objectif $objectif, $id)` : mise à jour via `UPDATE objectif SET ...`.
-- `supprimerObjectif($id)` : supprime l'objectif ainsi que toutes ses étapes associées.
-- `recupererEtapes($idObjectif)` : renvoie les étapes d'un objectif.
-- `ajouterEtape(EtapeObjectif $etape)` : ajoute une nouvelle étape.
-- `validerEtape($idEO, $estValidee)` : coche ou décoche une étape. **Règle d'achèvement automatique** : si toutes les étapes d'un objectif sont validées, le statut de l'objectif passe automatiquement à `'atteint'`.
-- `basculerStatut($id)` : permet d'accomplir ou reprendre un objectif manuellement.
-
-### 4. Les Vues PHP / HTML (`View/`)
-- **Génération serveur propre** : Boucle PHP `<?php foreach ($listeObjectifs as $obj): ?>` générant l'affichage HTML sans script opaque.
-- **Formulaire standard** : Traitement en méthode `POST` avec redirection `header('Location: ...')`.
-- **Validation JavaScript claire** (`js/objectifs.js`) : Vérification des champs requis, cohérence chronologique (`date_fin > date_debut`), ajout dynamique de champs d'étapes dans la modale.
-
----
 
 ## 🎨 Charte Graphique YallaQuest
 
