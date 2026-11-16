@@ -1,5 +1,5 @@
 /* Yalla Quest · Front-Office (espace aventurier).
-   S'ajoute à shared/css/yq.css : seulement ce qui est propre aux objectifs et aux pages de connexion. */
+   S'ajoute à front-office/css/yq.css : seulement ce qui est propre aux objectifs et aux pages de connexion. */
 
 /* ---------- profil : identité, niveau, jauge XP, compteurs ---------- */
 .profile { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 16px; margin-bottom: 28px; }

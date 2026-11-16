@@ -1,4 +1,4 @@
-/* Yalla Quest · effets (chargé seulement par les pages qui utilisent shared/js/effects/effects.js).
+/* Yalla Quest · effets (chargé seulement par les pages qui utilisent front-office/js/objectifs-effects.js).
    Chaque règle dépend d'une classe posée par le JS : sans JS, cette feuille ne change rien. Pas d'encre au curseur. */
 
 /* démarrage : la zone animée attend les effets (le script en tête de page retire la classe au bout de 1,8 s) */

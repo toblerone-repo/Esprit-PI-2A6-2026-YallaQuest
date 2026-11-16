@@ -1,7 +1,7 @@
 /**
  * Vue - formulaires « Rejoins la quête » (inscription) et « Connexion ».
  * La validation reste dans AuthController (inchangé). Plus d'alert() : les erreurs s'affichent dans la page,
- * la réussite dans un toast (shared/js/ui.js).
+ * la réussite dans un toast (front-office/js/ui.js).
  */
 document.addEventListener('DOMContentLoaded', function () {
     // Inscription
@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 return;
             }
             loginError.hidden = true;
-            YQ.go('objectifs.php');
+            YQ.go('index.php?page=objectifs');
         });
     }
 });

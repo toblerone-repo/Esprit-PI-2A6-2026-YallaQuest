@@ -1,7 +1,7 @@
 /**
  * Vue - gestion des aventuriers, Back-Office Yalla Quest (MVC).
  * Données et actions via AdminModel / AdminController (inchangés). Plus de Bootstrap ni de confirm() :
- * fenêtres <dialog>, confirmation et toast viennent de shared/js/ui.js (objet YQ).
+ * fenêtres <dialog>, confirmation et toast viennent de front-office/js/ui.js (objet YQ).
  */
 const userFilters = { q: '', role: 'all', statut: 'all' };
 
