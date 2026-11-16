@@ -1,3 +1,12 @@
+> **Mise à jour (branche `integration/merged-mvc`)** : tous les effets liés à la souris ont été retirés de la
+> section Guildes : l'encre WebGL qui suivait le curseur (`InkField.js`), l'emblème 3D qui s'inclinait vers le
+> curseur (`FloatingEmblem.js`), les shaders (`shaders.js`), l'inclinaison/parallaxe des cartes et les boutons
+> magnétiques (`Micro.js`), ainsi que Three.js qui ne servait qu'à ces effets. Restent : défilement fluide (Lenis),
+> entrées au défilement, rideau de transition entre pages, goutte des onglets, éclaboussure au clic sur un vote et
+> toast élastique. Les chemins ci-dessous datent d'avant l'intégration : les pages s'ouvrent désormais par
+> `index.php?page=guildes` et `index.php?admin=guildes`. Les sections qui décrivent l'encre, l'emblème,
+> l'inclinaison et l'aimant ne s'appliquent plus.
+
 # Yalla Quest · Guildes — scroll & mouse effects
 
 Motion layer added on top of the Guildes template. No text, layout, colour or behaviour change apart from the

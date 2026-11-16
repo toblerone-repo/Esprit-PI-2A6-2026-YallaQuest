@@ -17,9 +17,5 @@
 <script>window.Lenis || document.write('<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"><\/script>')</script>
 <script src="front-office/lib/splittype/split-type.min.js"></script>
 <script>window.SplitType || document.write('<script src="https://cdn.jsdelivr.net/npm/split-type@0.3.4/umd/index.min.js"><\/script>')</script>
-<script type="importmap">
-{ "imports": { "three": "./front-office/lib/three/three.module.min.js" } }
-</script>
-<script>window.YQ_THREE_CDN = 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.min.js';</script>
 <script type="module" src="front-office/js/effects/main.js"></script>
 <?php endif; ?>

@@ -3,7 +3,7 @@ if (!defined('YQ_ROOT')) { header('Location: ../../../index.php?page=guildes'); 
 $pageTitle = 'Guildes · Yalla Quest';
 $currentPage = 'guildes';
 $pageScript = 'guildes.js';
-$enableEffects = true; // effets de défilement (css/effects.css + js/effects/) ; false = page d'origine
+$enableEffects = true; // effets de défilement et de transition (css/effects.css + js/effects/), sans effet de souris ; false = page d'origine
 ?>
 <!DOCTYPE html>
 <html lang="fr">

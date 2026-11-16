@@ -1,89 +1,15 @@
-// Yalla Quest · effets — micro-interactions : inclinaison des cartes, boutons magnétiques,
-// indicateur d'onglet en goutte, éclaboussure dans le bouton de vote, toast élastique.
+// Yalla Quest · effets — micro-interactions : indicateur d'onglet en goutte,
+// éclaboussure dans le bouton de vote (au clic), toast élastique.
 // Tout est délégué sur document : aucun écouteur à rebrancher après un re-rendu de #canvas.
 
 let ctx = null;
 let bound = false;
-let tilts = new Map();     // carte -> { rx, ry, k, tx, ty, tk }
-let magnet = null;         // élément actuellement attiré
 let lastTab = null;        // { key, left, top, width, height } de l'onglet sélectionné précédent
 let blobs = [];            // { tabs, blob, ro, tween }
 let toastObserver = null;
-const point = { x: 0, y: 0 };
 
-const fine = () => ctx && !ctx.env.coarse && !ctx.env.reduced;
-
-/* ---------- 1. inclinaison 3D des cartes + parallaxe de l'illustration ---------- */
-function onMove(e) {
-  point.x = e.clientX; point.y = e.clientY;
-  if (!fine() || e.pointerType === 'touch') return;
-  const S = ctx.SEL, T = ctx.TUNE.tilt;
-  const t = e.target instanceof Element ? e.target : null;
-  const card = t && t.closest(S.proposal);
-  for (const [c, s] of tilts) if (c !== card) { s.tx = s.ty = s.tk = 0; }
-  if (card && card.dataset.fxEntering !== '1' && ctx.root.contains(card)) {
-    let s = tilts.get(card);
-    if (!s) { s = { rx: 0, ry: 0, k: 0, tx: 0, ty: 0, tk: 0 }; tilts.set(card, s); }
-    // à plat au-dessus des boutons de vote, de la liste des votants et de l'illustration (encre « reveal »)
-    if (t.closest(S.noTilt)) { s.tx = s.ty = s.tk = 0; }
-    else {
-      const r = card.getBoundingClientRect();
-      const nx = ((e.clientX - r.left) / r.width) * 2 - 1, ny = ((e.clientY - r.top) / r.height) * 2 - 1;
-      s.ty = nx * T.max; s.tx = -ny * T.max; s.tk = 1;
-      s.px = nx; s.py = ny;
-    }
-  }
-  magnetMove(e, t);
-}
-
-function tiltTick() {
-  if (!tilts.size) return;
-  const { gsap, SEL } = ctx, T = ctx.TUNE.tilt;
-  for (const [card, s] of tilts) {
-    if (!card.isConnected) { tilts.delete(card); continue; }
-    s.rx += (s.tx - s.rx) * T.lerp; s.ry += (s.ty - s.ry) * T.lerp; s.k += (s.tk - s.k) * T.lerp;
-    const art = card.querySelector(SEL.art);
-    const rest = Math.abs(s.rx) < 0.02 && Math.abs(s.ry) < 0.02 && s.k < 0.01;
-    if (rest && !s.tk) {
-      gsap.set(card, { clearProps: 'transform,willChange' });
-      if (art) gsap.set(art, { clearProps: 'transform' });
-      delete card.dataset.fxTilt;
-      tilts.delete(card);
-      continue;
-    }
-    card.dataset.fxTilt = '1';
-    gsap.set(card, { rotationX: s.rx, rotationY: s.ry, transformPerspective: T.perspective, willChange: 'transform' });
-    if (art) gsap.set(art, { x: -(s.px || 0) * T.parallax * s.k, y: -(s.py || 0) * T.parallax * s.k, scale: 1 + T.artScale * s.k });
-  }
-}
-
-function flatten() {
-  for (const s of tilts.values()) { s.tx = s.ty = s.tk = 0; }
-  releaseMagnet();
-}
-
-/* ---------- 2. boutons magnétiques ---------- */
-function magnetMove(e, t) {
-  const el = t && t.closest(ctx.SEL.magnetic);
-  if (el !== magnet) releaseMagnet();
-  if (!el || el.disabled) return;
-  magnet = el;
-  const { gsap, TUNE } = ctx, M = TUNE.magnetic;
-  const r = el.getBoundingClientRect();
-  const cx = r.left + r.width / 2 - (+gsap.getProperty(el, 'x') || 0), cy = r.top + r.height / 2 - (+gsap.getProperty(el, 'y') || 0);
-  const clamp = (v) => Math.max(-M.max, Math.min(M.max, v));
-  gsap.to(el, { x: clamp((e.clientX - cx) * M.strength), y: clamp((e.clientY - cy) * M.strength), duration: 0.3, ease: 'power3.out', overwrite: 'auto' });
-}
-function releaseMagnet() {
-  if (!magnet) return;
-  const el = magnet; magnet = null;
-  if (el.isConnected) ctx.gsap.to(el, { x: 0, y: 0, scale: 1, duration: ctx.TUNE.magnetic.release, ease: 'elastic.out(1, 0.35)', overwrite: 'auto', clearProps: 'transform' });
-}
-function onDown(e) {
-  // l'attraction pose un transform en ligne : on rejoue ici le petit « appui » du :active d'origine
-  if (magnet && e.target instanceof Element && magnet.contains(e.target)) ctx.gsap.to(magnet, { scale: 0.97, duration: 0.1, overwrite: 'auto' });
-}
-function onUp() { if (magnet) ctx.gsap.to(magnet, { scale: 1, duration: 0.25, ease: 'power2.out', overwrite: 'auto' }); }
+// (Les effets qui suivaient la souris — inclinaison 3D des cartes, parallaxe de l'illustration,
+//  boutons magnétiques — ont été retirés de la section Guildes.)
 
 /* ---------- 3. éclaboussure d'encre dans le bouton de vote ---------- */
 function onClick(e) {
@@ -195,13 +121,7 @@ export function init(root, c) {
   watchToast();
   if (bound) return;
   bound = true;
-  document.addEventListener('pointermove', onMove, { passive: true });
-  document.addEventListener('pointerdown', onDown, { passive: true });
-  document.addEventListener('pointerup', onUp, { passive: true });
   document.addEventListener('click', onClick, true);
-  document.documentElement.addEventListener('pointerleave', flatten);
-  window.addEventListener('blur', flatten);
-  c.gsap.ticker.add(tiltTick);
 }
 
 /** Avant un re-rendu : rien à débrancher (délégation), on retire seulement ce qu'on a ajouté au DOM. */
@@ -213,22 +133,8 @@ export function dispose() {
   destroyTabs();
   if (toastObserver) { toastObserver.disconnect(); toastObserver = null; }
   document.querySelector(ctx?.SEL.toast || '.toast')?.classList.remove('fx-pop');
-  for (const card of tilts.keys()) {
-    if (!card.isConnected) continue;
-    ctx.gsap.set(card, { clearProps: 'transform,willChange' });
-    const art = card.querySelector(ctx.SEL.art); if (art) ctx.gsap.set(art, { clearProps: 'transform' });
-    delete card.dataset.fxTilt;
-  }
-  tilts.clear();
-  if (magnet) { ctx.gsap.set(magnet, { clearProps: 'transform' }); magnet = null; }
   lastTab = null;
   if (!bound) return;
   bound = false;
-  document.removeEventListener('pointermove', onMove);
-  document.removeEventListener('pointerdown', onDown);
-  document.removeEventListener('pointerup', onUp);
   document.removeEventListener('click', onClick, true);
-  document.documentElement.removeEventListener('pointerleave', flatten);
-  window.removeEventListener('blur', flatten);
-  ctx.gsap.ticker.remove(tiltTick);
 }

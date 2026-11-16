@@ -43,7 +43,6 @@ export function play(root, c, oldNodes, scrollY) {
   ghost.style.width = `${r.width}px`;
   for (const n of oldNodes) ghost.appendChild(n);
   // l'ancienne page ne doit plus porter d'état d'effets ni d'identifiants en double
-  ghost.querySelectorAll('.fx-emblem-live').forEach((el) => el.classList.remove('fx-emblem-live'));
   ghost.querySelectorAll('[id]').forEach((el) => el.removeAttribute('id'));
   old.appendChild(ghost);
 

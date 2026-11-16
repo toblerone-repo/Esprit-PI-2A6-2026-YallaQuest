@@ -87,9 +87,9 @@ export function init(root, c) {
   const after = q(`${SEL.kicker}, ${SEL.about}, ${SEL.sub}`);
   touched.push(...after);
   if (after.length) tl.from(after, { y: 14, opacity: 0, duration: 0.6, ease: 'power3.out', stagger: E.textStagger, clearProps: CLEAR }, h1 ? 0.22 : 0);
-  // sans WebGL, l'emblème entre comme une simple image
+  // l'emblème entre comme une simple image
   const emblem = root.querySelector(SEL.emblem);
-  if (emblem && !emblem.classList.contains('fx-emblem-live') && !(c.env.webgl && !c.env.coarse)) {
+  if (emblem) {
     touched.push(emblem);
     tl.from(emblem, { scale: 0.8, opacity: 0, duration: 0.7, ease: 'power3.out', clearProps: CLEAR }, 0);
   }

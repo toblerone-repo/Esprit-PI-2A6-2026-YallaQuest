@@ -1,7 +1,7 @@
-/* Yalla Quest · Guildes — effets de défilement et de souris.
+/* Yalla Quest · Guildes — effets de défilement et de transition (aucun effet ne suit la souris).
    Chargé seulement si la page pose $enableEffects = true. Tout est posé PAR-DESSUS le template :
    aucune couleur en dur (variables de css/guildes.css), et chaque règle dépend d'une classe ajoutée par
-   js/effects/main.js (.fx-on, .fx-ink, …). Sans JS ou sans WebGL, cette feuille ne change rien. */
+   js/effects/main.js (.fx-on, …). Sans JS, cette feuille ne change rien. */
 
 /* ---------- démarrage : pas de flash du premier rendu avant les entrées ---------- */
 html.fx-boot #canvas { opacity: 0; }
@@ -12,17 +12,6 @@ html.lenis, html.lenis body { height: auto; }
 /* dialogue ouvert : page verrouillée, sans saut de largeur quand la barre de défilement disparaît */
 html.fx-locked { overflow: hidden; scrollbar-gutter: stable; }
 
-/* ---------- canvas WebGL partagé : encre + emblème. Jamais cliquable. ---------- */
-.fx-gl { position: fixed; left: 0; top: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
-/* mode zones : le texte et les boutons passent AU-DESSUS de l'encre */
-html.fx-ink .title-row, html.fx-ink .pagefoot { position: relative; z-index: 2; }
-/* mode curseur : l'encre passe AU-DESSUS de tout en « différence » : le fond noir devient lilas, le texte blanc
-   devient sombre, le texte noir des cartes devient lilas. Toujours pointer-events: none : rien n'est bloqué. */
-.fx-gl.fx-over { z-index: 15; }
-.fx-gl.fx-invert { mix-blend-mode: difference; }
-/* look « glass » (par défaut) : pas de mélange, la goutte est presque transparente : seuls voile, liseré et reflet se voient */
-/* l'<img> de l'emblème garde sa place (pas de décalage) et son rôle ; la tuile 3D la remplace à l'œil */
-.emblem.fx-emblem-live { opacity: 0; }
 html.fx-on .toast { z-index: 30; }
 
 /* ---------- transition de page : rideau d'encre sur toute la largeur de l'écran, sous la barre du haut ---------- */
@@ -41,9 +30,6 @@ html.fx-on .toast { z-index: 30; }
 html.fx-on .votebar i { transition: none; }
 
 /* ---------- micro-interactions ---------- */
-/* aimant : GSAP pilote le transform, on retire donc « transform » de la transition du bouton */
-html.fx-on .btn.primary { transition-property: background, border-color; }
-
 /* éclaboussure --night dans le bouton de vote, sous le libellé */
 html.fx-on .choice button { position: relative; overflow: hidden; isolation: isolate; }
 .fx-splash { position: absolute; inset: 0; z-index: -1; pointer-events: none; }
@@ -65,8 +51,7 @@ html.fx-on .choice button { position: relative; overflow: hidden; isolation: iso
 }
 html.fx-on .toast.show.fx-pop { animation: fx-toast-in 520ms cubic-bezier(0.2, 0.8, 0.2, 1) both; }
 
-/* ---------- mouvement réduit : ni encre, ni rideau, ni goutte ; main.js ne fait que des fondus de 150 ms ---------- */
+/* ---------- mouvement réduit : ni rideau, ni goutte ; main.js ne fait que des fondus de 150 ms ---------- */
 @media (prefers-reduced-motion: reduce) {
-  .fx-gl, .fx-wipe, .fx-splash, .fx-tabblob { display: none !important; }
-  .emblem.fx-emblem-live { opacity: 1; }
+  .fx-wipe, .fx-splash, .fx-tabblob { display: none !important; }
 }
