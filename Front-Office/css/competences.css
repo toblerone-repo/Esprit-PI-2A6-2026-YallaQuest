@@ -144,6 +144,44 @@ body {
   background-color: var(--lilas);
 }
 
+/* ----- Mon totem (le dernier totem débloqué) ----- */
+.competences-mon-totem {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 20px;
+  padding: 20px;
+  background-color: var(--gris-fonce);
+  border: 1px solid var(--bordure);
+  border-radius: 16px;
+}
+
+.competences-mon-totem img {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 50%;
+  background-color: var(--bordure);
+}
+
+.competences-mon-totem h3 {
+  margin: 0 0 4px;
+  font-family: var(--police-titre);
+  font-weight: normal;
+  font-size: 1.6rem;
+}
+
+.competences-totem-description {
+  margin: 0 0 8px;
+  color: var(--gris);
+}
+
+.competences-totem-date {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--or);
+}
+
 /* ----- Tableau des totems ----- */
 .competences-tableau {
   overflow-x: auto;
@@ -183,7 +221,7 @@ body {
   background-color: var(--bordure);
 }
 
-/* Totem pas encore obtenu : image en gris */
+/* Totem pas encore atteint : image en gris */
 .competences-grise {
   filter: grayscale(100%);
   opacity: 0.4;
@@ -197,7 +235,7 @@ body {
   font-weight: bold;
 }
 
-.competences-obtenu {
+.competences-atteint {
   background-color: var(--lilas);
   color: var(--noir);
 }

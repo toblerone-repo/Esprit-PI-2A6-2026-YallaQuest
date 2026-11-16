@@ -19,6 +19,21 @@
   </section>
 
   <section class="competences-bloc">
+    <h2>Mon totem</h2>
+
+    <!-- Le membre porte un seul totem : le dernier qu'il a débloqué.
+         S'il n'en a pas encore, afficher : Aucun totem pour l'instant. -->
+    <div class="competences-mon-totem">
+      <img src="img/totems/belier.jpg" alt="Le Bélier">
+      <div>
+        <h3>Le Bélier</h3>
+        <p class="competences-totem-description">Symbole de puissance et de détermination</p>
+        <p class="competences-totem-date">Obtenu le 12/11/2026 · compétence Force</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="competences-bloc">
     <h2>XP par compétence</h2>
 
     <div class="competences-grille">
@@ -31,7 +46,7 @@
             <div class="competences-remplissage" style="width: 100%;"></div>
           </div>
           <p class="competences-xp"><strong>300 XP</strong> · seuil du totem : 300 XP</p>
-          <p class="competences-totem">Totem obtenu : <strong>Le Bélier</strong></p>
+          <p class="competences-totem">Totem atteint : <strong>Le Bélier</strong></p>
         </div>
       </article>
       <article class="competences-carte">
@@ -86,7 +101,7 @@
   </section>
 
   <section class="competences-bloc">
-    <h2>Mes totems</h2>
+    <h2>Les totems</h2>
 
     <div class="competences-tableau">
       <table>
@@ -96,15 +111,13 @@
           <th>Compétence</th>
           <th>Seuil</th>
           <th>Statut</th>
-          <th>Obtenu le</th>
         </tr>
         <tr>
           <td><img src="img/totems/belier.jpg" alt="Le Bélier"></td>
           <td>Le Bélier</td>
           <td>Force</td>
           <td>300 XP</td>
-          <td><span class="competences-statut competences-obtenu">Obtenu</span></td>
-          <td>12/11/2026</td>
+          <td><span class="competences-statut competences-atteint">Atteint</span></td>
         </tr>
         <tr>
           <td><img class="competences-grise" src="img/totems/voile.jpg" alt="La Voile"></td>
@@ -112,7 +125,6 @@
           <td>Endurance</td>
           <td>600 XP</td>
           <td><span class="competences-statut competences-verrouille">Verrouillé</span></td>
-          <td>—</td>
         </tr>
         <tr>
           <td><img class="competences-grise" src="img/totems/plume.jpg" alt="La Plume"></td>
@@ -120,7 +132,6 @@
           <td>Mobilité</td>
           <td>200 XP</td>
           <td><span class="competences-statut competences-verrouille">Verrouillé</span></td>
-          <td>—</td>
         </tr>
         <tr>
           <td><img class="competences-grise" src="img/totems/arbre.jpg" alt="L'Arbre"></td>
@@ -128,7 +139,6 @@
           <td>Focus</td>
           <td>400 XP</td>
           <td><span class="competences-statut competences-verrouille">Verrouillé</span></td>
-          <td>—</td>
         </tr>
         <tr>
           <td><img class="competences-grise" src="img/totems/graine.jpg" alt="La Graine"></td>
@@ -136,7 +146,6 @@
           <td>Nutrition</td>
           <td>250 XP</td>
           <td><span class="competences-statut competences-verrouille">Verrouillé</span></td>
-          <td>—</td>
         </tr>
       </table>
     </div>
