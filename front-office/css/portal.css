@@ -1,0 +1,25 @@
+/* Yalla Quest · portail d'accueil (index.html). S'ajoute à yq.css. */
+.portal { width: min(1080px, 100%); margin: 0 auto; padding: 64px 24px 48px; }
+.portal-head { margin-bottom: 40px; }
+.portal-logo { width: 72px; height: 72px; border-radius: 18px; object-fit: cover; margin-bottom: 24px; }
+.portal-head h1 { font-size: 88px; }
+.portal-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+.portal-card { display: grid; gap: 14px; align-content: start; padding: 28px; text-decoration: none; transition: background-color 150ms ease; }
+.portal-card:hover { background: #fff; }
+.portal-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.portal-role { font-size: 13px; color: var(--ivory-muted); }
+.portal-card h2 { font-family: var(--cond); font-weight: 600; font-size: 36px; line-height: 1; }
+.portal-text { color: #2b2b2b; max-width: 52ch; }
+.portal-pages { display: grid; gap: 6px; padding: 14px 0; border-top: 1px solid var(--ivory-rule); border-bottom: 1px solid var(--ivory-rule); font-size: 14px; color: var(--ivory-muted); }
+.portal-pages strong { color: #000; font-weight: 600; }
+.portal-go { justify-self: start; display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 22px; border-radius: 999px; background: #000; color: #fff; font-weight: 600; font-size: 14px; transition: background-color 150ms ease, color 150ms ease; }
+.portal-go svg { width: 16px; height: 16px; transition: transform 200ms var(--ease-out); }
+.portal-card:hover .portal-go { background: var(--accent); color: #000; }
+.portal-card:hover .portal-go svg { transform: translateX(3px); }
+.portal-card:focus-visible { outline-offset: 4px; border-radius: var(--radius-card); }
+@media (max-width: 860px) {
+  .portal { padding: 40px 16px 32px; }
+  .portal-head h1 { font-size: 52px; }
+  .portal-grid { grid-template-columns: minmax(0, 1fr); }
+  .portal-card { padding: 22px; }
+}

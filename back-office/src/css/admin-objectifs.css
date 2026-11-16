@@ -1,0 +1,28 @@
+/* Yalla Quest · Back-Office (administration). S'ajoute à shared/css/yq.css.
+   Outil de travail : pas d'effets de mouvement ici. */
+
+.admin-table td.id { min-width: 220px; }
+.admin-table .gcell .avatar { width: 40px; height: 40px; font-size: 13px; }
+.admin-table .note-cell { display: block; margin-top: 2px; font-size: 13px; color: var(--muted); max-width: 46ch; }
+.admin-table .period { white-space: nowrap; font-size: 13px; }
+.admin-table .period span { display: block; color: var(--muted); }
+.admin-table .period strong { color: #fff; font-weight: 500; }
+
+/* pastilles cliquables (rôle, statut, état) : la pastille dit l'état, le libellé accessible dit l'action */
+.pill.role-admin { background: var(--accent); color: #000; }
+.pill.role-joueur { background: var(--raised); color: #e6e6e6; }
+.pill.st-actif, .pill.st-atteint { background: var(--sage); color: #000; }
+.pill.st-suspendu, .pill.st-en_cours { background: var(--gold); color: #000; }
+.pill.st-a_venir { background: var(--accent-soft); color: var(--accent); }
+.pill.xp { background: var(--accent); color: #000; }
+.pill.cat { background: var(--raised); color: #e6e6e6; }
+
+tr.flash td { animation: admin-flash 1.6s ease-out; }
+@keyframes admin-flash { from { background: var(--accent-soft); } to { background: transparent; } }
+
+@media (min-width: 861px) and (max-width: 1280px) { .admin-table .hide-md { display: none; } }
+@media (max-width: 860px) {
+  .admin-table.respond td.second { grid-column: 1; font-size: 13px; color: var(--muted); }
+  .admin-table.respond td.c-side { grid-column: 2; grid-row: 1; justify-self: end; align-self: center; }
+  .admin-table.respond td.c-side + td.c-side { grid-row: 2; }
+}
