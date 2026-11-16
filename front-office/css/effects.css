@@ -1,0 +1,72 @@
+/* Yalla Quest · Guildes — effets de défilement et de souris.
+   Chargé seulement si la page pose $enableEffects = true. Tout est posé PAR-DESSUS le template :
+   aucune couleur en dur (variables de css/guildes.css), et chaque règle dépend d'une classe ajoutée par
+   js/effects/main.js (.fx-on, .fx-ink, …). Sans JS ou sans WebGL, cette feuille ne change rien. */
+
+/* ---------- démarrage : pas de flash du premier rendu avant les entrées ---------- */
+html.fx-boot #canvas { opacity: 0; }
+
+/* ---------- Lenis (défilement fluide) ---------- */
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+/* dialogue ouvert : page verrouillée, sans saut de largeur quand la barre de défilement disparaît */
+html.fx-locked { overflow: hidden; scrollbar-gutter: stable; }
+
+/* ---------- canvas WebGL partagé : encre + emblème. Jamais cliquable. ---------- */
+.fx-gl { position: fixed; left: 0; top: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+/* mode zones : le texte et les boutons passent AU-DESSUS de l'encre */
+html.fx-ink .title-row, html.fx-ink .pagefoot { position: relative; z-index: 2; }
+/* mode curseur : l'encre passe AU-DESSUS de tout en « différence » : le fond noir devient lilas, le texte blanc
+   devient sombre, le texte noir des cartes devient lilas. Toujours pointer-events: none : rien n'est bloqué. */
+.fx-gl.fx-over { z-index: 15; }
+.fx-gl.fx-invert { mix-blend-mode: difference; }
+/* look « glass » (par défaut) : pas de mélange, la goutte est presque transparente : seuls voile, liseré et reflet se voient */
+/* l'<img> de l'emblème garde sa place (pas de décalage) et son rôle ; la tuile 3D la remplace à l'œil */
+.emblem.fx-emblem-live { opacity: 0; }
+html.fx-on .toast { z-index: 30; }
+
+/* ---------- transition de page : rideau d'encre sur toute la largeur de l'écran, sous la barre du haut ---------- */
+.fx-wipe { position: fixed; z-index: 5; overflow: hidden; pointer-events: none; contain: layout paint; }
+.fx-wipe-old { position: absolute; inset: 0; overflow: hidden; background: var(--ground); }
+.fx-wipe-ghost { position: absolute; left: 0; width: 100%; min-height: 100%; }
+.fx-wipe-svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.fx-wipe-ink { fill: var(--accent); }
+.fx-wipe-ground { fill: var(--ground); }
+
+/* ---------- entrées ---------- */
+/* SplitType : chaque ligne masque ses lettres ; marge négative = place pour les accents des capitales */
+.fx-line { overflow: hidden; padding: 0.18em 0.05em 0.1em; margin: -0.18em -0.05em -0.1em; }
+.fx-char { will-change: transform; }
+/* GSAP anime la largeur : la transition CSS du template ferait traîner chaque image */
+html.fx-on .votebar i { transition: none; }
+
+/* ---------- micro-interactions ---------- */
+/* aimant : GSAP pilote le transform, on retire donc « transform » de la transition du bouton */
+html.fx-on .btn.primary { transition-property: background, border-color; }
+
+/* éclaboussure --night dans le bouton de vote, sous le libellé */
+html.fx-on .choice button { position: relative; overflow: hidden; isolation: isolate; }
+.fx-splash { position: absolute; inset: 0; z-index: -1; pointer-events: none; }
+.fx-splash i { position: absolute; border-radius: 50%; background: var(--night); transform: scale(0); }
+.choice button.fx-splashing { background: transparent; transition: none; }
+
+/* onglets : la goutte porte la couleur de l'onglet sélectionné, qui devient transparent */
+.fx-tabs { position: relative; }
+.fx-tabs > a { position: relative; z-index: 1; }
+.fx-tabs > a[aria-selected="true"] { background: transparent; border-color: transparent; }
+.fx-tabblob { position: absolute; z-index: 0; pointer-events: none; transform-origin: center; }
+
+/* toast : petit écrasement / étirement à l'arrivée (le translate(-50%) du template est conservé) */
+@keyframes fx-toast-in {
+  0%   { transform: translate(-50%, 16px) scale(0.72, 0.5); }
+  45%  { transform: translate(-50%, -5px) scale(1.07, 0.9); }
+  70%  { transform: translate(-50%, 1px) scale(0.97, 1.05); }
+  100% { transform: translate(-50%, 0) scale(1, 1); }
+}
+html.fx-on .toast.show.fx-pop { animation: fx-toast-in 520ms cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+
+/* ---------- mouvement réduit : ni encre, ni rideau, ni goutte ; main.js ne fait que des fondus de 150 ms ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .fx-gl, .fx-wipe, .fx-splash, .fx-tabblob { display: none !important; }
+  .emblem.fx-emblem-live { opacity: 1; }
+}
