@@ -109,14 +109,14 @@ function toggleEtape(idEO, checkbox) {
     var val = checkbox.checked ? 1 : 0;
     
     // Appel AJAX vers la page actuelle pour mettre à jour la base de données
-    fetch('objectifs.php?toggle_etape=' + idEO + '&val=' + val)
+    fetch('index.php?page=objectifs&toggle_etape=' + idEO + '&val=' + val)
         .then(function() {
             // Recharger la page pour recalculer la progression, XP et statut
             window.location.reload();
         })
         .catch(function() {
             // En cas de problème réseau, basculer via navigation standard
-            window.location.href = 'objectifs.php?toggle_etape=' + idEO + '&val=' + val;
+            window.location.href = 'index.php?page=objectifs&toggle_etape=' + idEO + '&val=' + val;
         });
 }
 

@@ -6,4 +6,4 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display&display=swap">
 
 <!-- Template Stylesheet -->
-<link rel="stylesheet" href="css/competences.css">
+<link rel="stylesheet" href="front-office/css/competences.css">

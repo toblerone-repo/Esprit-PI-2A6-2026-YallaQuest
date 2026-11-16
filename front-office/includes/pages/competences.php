@@ -1,13 +1,15 @@
+<?php if (!defined('YQ_ROOT')) { header('Location: ../../../index.php?page=competences'); exit; } ?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
   <?php
     $pageTitle = 'Mes compétences · YallaQuest';
     $currentPage = 'competences';
-    require_once 'includes/head.php';
+    require_once YQ_FRONT . '/includes/head-competences.php';
   ?>
 </head>
 <body>
+<?php require YQ_FRONT . '/includes/modules-nav.php'; ?>
 
 <main class="competences-page">
 
@@ -24,7 +26,7 @@
     <!-- Le membre porte un seul totem : le dernier qu'il a débloqué.
          S'il n'en a pas encore, afficher : Aucun totem pour l'instant. -->
     <div class="competences-mon-totem">
-      <img src="img/totems/belier.jpg" alt="Le Bélier">
+      <img src="front-office/img/totems/belier.jpg" alt="Le Bélier">
       <div>
         <h3>Le Bélier</h3>
         <p class="competences-totem-description">Symbole de puissance et de détermination</p>
@@ -38,7 +40,7 @@
 
     <div class="competences-grille">
       <article class="competences-carte">
-        <img src="img/competences/force.jpg" alt="Force">
+        <img src="front-office/img/piliers/force.jpg" alt="Force">
         <div class="competences-carte-contenu">
           <h3>Force</h3>
           <p class="competences-part">Part de l'XP : 30 %</p>
@@ -50,7 +52,7 @@
         </div>
       </article>
       <article class="competences-carte">
-        <img src="img/competences/endurance.jpg" alt="Endurance">
+        <img src="front-office/img/piliers/endurance.jpg" alt="Endurance">
         <div class="competences-carte-contenu">
           <h3>Endurance</h3>
           <p class="competences-part">Part de l'XP : 30 %</p>
@@ -62,7 +64,7 @@
         </div>
       </article>
       <article class="competences-carte">
-        <img src="img/competences/mobilite.jpg" alt="Mobilité">
+        <img src="front-office/img/piliers/mobilite.jpg" alt="Mobilité">
         <div class="competences-carte-contenu">
           <h3>Mobilité</h3>
           <p class="competences-part">Part de l'XP : 10 %</p>
@@ -74,7 +76,7 @@
         </div>
       </article>
       <article class="competences-carte">
-        <img src="img/competences/focus.jpg" alt="Focus">
+        <img src="front-office/img/piliers/focus.jpg" alt="Focus">
         <div class="competences-carte-contenu">
           <h3>Focus</h3>
           <p class="competences-part">Part de l'XP : 20 %</p>
@@ -86,7 +88,7 @@
         </div>
       </article>
       <article class="competences-carte">
-        <img src="img/competences/nutrition.jpg" alt="Nutrition">
+        <img src="front-office/img/piliers/nutrition.jpg" alt="Nutrition">
         <div class="competences-carte-contenu">
           <h3>Nutrition</h3>
           <p class="competences-part">Part de l'XP : 10 %</p>
@@ -113,35 +115,35 @@
           <th>Statut</th>
         </tr>
         <tr>
-          <td><img src="img/totems/belier.jpg" alt="Le Bélier"></td>
+          <td><img src="front-office/img/totems/belier.jpg" alt="Le Bélier"></td>
           <td>Le Bélier</td>
           <td>Force</td>
           <td>300 XP</td>
           <td><span class="competences-statut competences-atteint">Atteint</span></td>
         </tr>
         <tr>
-          <td><img class="competences-grise" src="img/totems/voile.jpg" alt="La Voile"></td>
+          <td><img class="competences-grise" src="front-office/img/totems/voile.jpg" alt="La Voile"></td>
           <td>La Voile</td>
           <td>Endurance</td>
           <td>600 XP</td>
           <td><span class="competences-statut competences-verrouille">Verrouillé</span></td>
         </tr>
         <tr>
-          <td><img class="competences-grise" src="img/totems/plume.jpg" alt="La Plume"></td>
+          <td><img class="competences-grise" src="front-office/img/totems/plume.jpg" alt="La Plume"></td>
           <td>La Plume</td>
           <td>Mobilité</td>
           <td>200 XP</td>
           <td><span class="competences-statut competences-verrouille">Verrouillé</span></td>
         </tr>
         <tr>
-          <td><img class="competences-grise" src="img/totems/arbre.jpg" alt="L'Arbre"></td>
+          <td><img class="competences-grise" src="front-office/img/totems/arbre.jpg" alt="L'Arbre"></td>
           <td>L'Arbre</td>
           <td>Focus</td>
           <td>400 XP</td>
           <td><span class="competences-statut competences-verrouille">Verrouillé</span></td>
         </tr>
         <tr>
-          <td><img class="competences-grise" src="img/totems/graine.jpg" alt="La Graine"></td>
+          <td><img class="competences-grise" src="front-office/img/totems/graine.jpg" alt="La Graine"></td>
           <td>La Graine</td>
           <td>Nutrition</td>
           <td>250 XP</td>

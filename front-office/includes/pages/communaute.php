@@ -1,6 +1,6 @@
 <?php
 if (!isset($pageTitle)) {
-    header('Location: ../communaute.php');
+    header('Location: ../../../index.php?page=communaute');
     exit;
 }
 ?>
@@ -11,11 +11,12 @@ if (!isset($pageTitle)) {
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="La communauté YallaQuest : partage tes petites victoires et découvre des conseils pour bouger, bien manger et souffler.">
   <title><?= htmlspecialchars($pageTitle) ?></title>
-  <link rel="icon" href="../logo.jpeg" type="image/jpeg">
-  <link rel="stylesheet" href="../shared/css/common.css">
-  <link rel="stylesheet" href="../shared/css/front.css">
+  <link rel="icon" href="front-office/img/logo.jpeg" type="image/jpeg">
+  <link rel="stylesheet" href="front-office/css/common.css">
+  <link rel="stylesheet" href="front-office/css/front.css">
 </head>
 <body class="community-page">
+<?php require YQ_FRONT . '/includes/modules-nav.php'; ?>
   <main class="page-shell">
     <section class="community-intro">
       <div class="hero-heading">
@@ -25,9 +26,9 @@ if (!isset($pageTitle)) {
       </div>
       <div class="welcome-grid">
         <div class="quest-art" aria-hidden="true">
-          <img src="../shared/images/mobilite.webp" alt="" class="art-card art-mobility">
-          <img src="../shared/images/focus.webp" alt="" class="art-card art-focus">
-          <img src="../shared/images/endurance.webp" alt="" class="art-card art-endurance">
+          <img src="front-office/img/publications/mobilite.webp" alt="" class="art-card art-mobility">
+          <img src="front-office/img/publications/focus.webp" alt="" class="art-card art-focus">
+          <img src="front-office/img/publications/endurance.webp" alt="" class="art-card art-endurance">
           <span class="art-caption">Chacun son chemin. Ensemble, l’aventure.</span>
         </div>
         <article class="welcome-card">
@@ -55,11 +56,12 @@ if (!isset($pageTitle)) {
       <div class="discussion-tools">
         <nav aria-label="Filtrer les publications" class="category-filters">
           <?php foreach ($categories as $key => $label) { ?>
-            <a href="communaute.php?categorie=<?= $key ?>&amp;recherche=<?= htmlspecialchars(urlencode($search)) ?>#discussions"
+            <a href="index.php?page=communaute&amp;categorie=<?= $key ?>&amp;recherche=<?= htmlspecialchars(urlencode($search)) ?>#discussions"
                class="filter-chip" <?php if ($selectedCategory == $key) { ?>aria-current="true"<?php } ?>><?= htmlspecialchars($label) ?></a>
           <?php } ?>
         </nav>
-        <form action="communaute.php#discussions" method="get" class="search-form">
+        <form action="index.php#discussions" method="get" class="search-form">
+          <input type="hidden" name="page" value="communaute">
           <input type="hidden" name="categorie" value="<?= htmlspecialchars($selectedCategory) ?>">
           <label for="search-publications" class="visually-hidden">Rechercher une publication</label>
           <input id="search-publications" type="search" name="recherche"
@@ -67,7 +69,7 @@ if (!isset($pageTitle)) {
           <button type="submit">Rechercher</button>
         </form>
         <?php if ($search !== '' || $selectedCategory !== 'all') { ?>
-          <a href="communaute.php#discussions" class="reset-search">Tout afficher</a>
+          <a href="index.php?page=communaute#discussions" class="reset-search">Tout afficher</a>
         <?php } ?>
       </div>
       <div class="discussion-layout">
@@ -96,7 +98,7 @@ if (!isset($pageTitle)) {
                     <p class="publication-text"><?= htmlspecialchars($publication['content']) ?></p>
                   </div>
                   <?php if ($publication['image'] && isset($publicationImages[$publication['image']])) { ?>
-                    <img src="../shared/images/<?= htmlspecialchars($publication['image']) ?>.webp" alt="" loading="lazy" class="publication-image">
+                    <img src="front-office/img/publications/<?= htmlspecialchars($publication['image']) ?>.webp" alt="" loading="lazy" class="publication-image">
                   <?php } ?>
                 </div>
                 <?php if ($publication['more'] !== '') { ?>
@@ -109,7 +111,7 @@ if (!isset($pageTitle)) {
               <?php if (!$isPreview) { ?>
                 <details class="publication-report" <?php if ($reportFormId == $publication['id']) { ?>open<?php } ?>>
                   <summary>Signaler ce contenu</summary>
-                  <form action="communaute.php#discussions" method="post" class="report-form">
+                  <form action="index.php?page=communaute#discussions" method="post" class="report-form">
                     <input type="hidden" name="action" value="report">
                     <input type="hidden" name="publication_id" value="<?= (int) $publication['id'] ?>">
                     <label for="reason-<?= (int) $publication['id'] ?>">Quel est le problème ?</label>
@@ -135,14 +137,14 @@ if (!isset($pageTitle)) {
               <?php if ($search == '') { ?>
                 <a href="#publier">Raconter la première aventure →</a>
               <?php } else { ?>
-                <a href="communaute.php#discussions">Revenir à toutes les publications →</a>
+                <a href="index.php?page=communaute#discussions">Revenir à toutes les publications →</a>
               <?php } ?>
             </div>
           <?php } ?>
         </div>
         <aside class="camp-sidebar">
           <section class="charter-card">
-            <svg class="charter-icon" viewBox="0 0 24 24" aria-hidden="true"><use href="../shared/icons.svg#spark"></use></svg>
+            <svg class="charter-icon" viewBox="0 0 24 24" aria-hidden="true"><use href="front-office/img/icons.svg#spark"></use></svg>
             <h3>Un camp où<br>chacun a sa place.</h3>
             <p>On s’encourage. On partage ce qu’on a vécu. On avance sans se comparer.</p>
             <ul>
@@ -164,7 +166,7 @@ if (!isset($pageTitle)) {
           </div>
           <span class="primary-button">Écrire ma publication +</span>
         </summary>
-        <form action="communaute.php#publication-apercu" method="post" class="publish-form">
+        <form action="index.php?page=communaute#publication-apercu" method="post" class="publish-form">
           <input type="hidden" name="action" value="preview">
           <div>
             <label for="publication-category">Ton univers</label>

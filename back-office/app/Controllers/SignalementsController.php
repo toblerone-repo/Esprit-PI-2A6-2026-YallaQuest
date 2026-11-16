@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../Model/Signalement.php';
+require_once __DIR__ . '/../Models/Signalement.php';
 
 class SignalementsController
 {
@@ -13,7 +13,7 @@ class SignalementsController
 
     public function index()
     {
-        require __DIR__ . '/../../shared/options.php';
+        require YQ_BACK . '/src/options.php';
         $model = new Signalement();
         $module = 'signalements';
         $page = $this->readValue($_GET, 'action', 'liste');
@@ -38,7 +38,7 @@ class SignalementsController
                     $action = $this->readValue($_POST, 'action');
                     $note = $this->readValue($_POST, 'note');
                     if ($model->process($id, $action, $note)) {
-                        header('Location: index.php?module=signalements&action=voir&id=' . $id . '&message=' . $action);
+                        header('Location: index.php?admin=signalements&action=voir&id=' . $id . '&message=' . $action);
                         exit;
                     }
                     $flash = ['type' => 'error', 'message' => 'Le signalement n’a pas pu être traité.'];
@@ -92,6 +92,6 @@ class SignalementsController
                     }
                 }
         }
-        require __DIR__ . '/../View/layout.php';
+        require __DIR__ . '/../Views/partials/layout.php';
     }
 }

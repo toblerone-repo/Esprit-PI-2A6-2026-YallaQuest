@@ -1,3 +1,4 @@
+<?php if (!defined('YQ_ROOT')) { header('Location: ../../../index.php?page=journal'); exit; } ?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -14,9 +15,10 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css">
 
   
-  <link rel="stylesheet" href="css/journal.css">
+  <link rel="stylesheet" href="front-office/css/journal.css">
 </head>
 <body>
+<?php require YQ_FRONT . '/includes/modules-nav.php'; ?>
 
 
 
@@ -362,7 +364,7 @@
 
 </main>
 
-<?php require_once 'includes/footer.php'; ?>
+<?php require_once YQ_FRONT . '/includes/footer.php'; ?>
 
 </body>
 </html>

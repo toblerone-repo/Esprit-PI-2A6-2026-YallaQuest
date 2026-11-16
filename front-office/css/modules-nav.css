@@ -1,0 +1,22 @@
+/* Barre de navigation commune (front et back). Classes préfixées yq-modnav pour ne gêner aucun module. */
+.yq-modnav {
+  position: relative;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 8px 16px;
+  background: #15131f;
+  color: #f6f4f8;
+  font: 500 14px/1.2 Inter, system-ui, sans-serif;
+  flex-wrap: wrap;
+}
+.yq-modnav a { color: inherit; text-decoration: none; }
+.yq-modnav-brand { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; }
+.yq-modnav-brand img { border-radius: 6px; }
+.yq-modnav-links { display: flex; gap: 4px; flex-wrap: wrap; flex: 1; }
+.yq-modnav-links a { padding: 6px 10px; border-radius: 999px; }
+.yq-modnav-links a:hover, .yq-modnav-links a:focus-visible { background: rgba(235, 193, 242, 0.15); }
+.yq-modnav-links a[aria-current="page"] { background: #ebc1f2; color: #15131f; }
+.yq-modnav-admin { opacity: 0.8; }
+.yq-modnav-admin:hover { opacity: 1; }

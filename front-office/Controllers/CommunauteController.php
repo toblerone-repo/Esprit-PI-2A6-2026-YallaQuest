@@ -1,6 +1,6 @@
 <?php
-require_once __DIR__ . '/../Model/Publication.php';
-require_once __DIR__ . '/../Model/Signalement.php';
+require_once __DIR__ . '/../Models/Publication.php';
+require_once __DIR__ . '/../Models/Signalement.php';
 
 class CommunauteController
 {
@@ -14,7 +14,7 @@ class CommunauteController
 
     public function index()
     {
-        require __DIR__ . '/../../shared/options.php';
+        require YQ_BACK . '/src/options.php';
         $pageTitle = 'Communauté — YallaQuest';
         $selectedCategory = $this->readValue($_GET, 'categorie', 'all');
         $search = $this->readValue($_GET, 'recherche');
@@ -58,6 +58,9 @@ class CommunauteController
                 case 'created':
                     $flash = ['type' => 'success', 'message' => 'Merci. Ton signalement a été transmis à la modération.'];
                     break;
+                case 'invalid':
+                    $flash = ['type' => 'error', 'message' => 'Choisis un motif dans la liste (2000 caractères au plus pour les précisions).'];
+                    break;
                 case 'unavailable':
                     $flash = ['type' => 'error', 'message' => 'Le signalement ne peut pas être envoyé pour le moment.'];
                     break;
@@ -73,6 +76,6 @@ class CommunauteController
         foreach ($filteredPublications as $publication) {
             $displayPublications[] = $publication;
         }
-        require __DIR__ . '/../View/communaute.php';
+        require __DIR__ . '/../includes/pages/communaute.php';
     }
 }

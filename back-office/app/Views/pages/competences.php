@@ -1,3 +1,4 @@
+<?php if (!defined('YQ_ROOT')) { header('Location: ../../../../index.php?admin=competences'); exit; } ?>
 <?php
 $title = 'Compétences | YallaQuest Admin';
 $currentPage = 'competences';

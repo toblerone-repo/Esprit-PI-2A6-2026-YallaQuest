@@ -3,9 +3,9 @@
  * Contrôleur ObjectifC - YallaQuest (Architecture MVC)
  * Conforme au cours ESPRIT (Chapitre 6 : PHP PDO - CRUD)
  */
-require_once __DIR__ . '/../../config.php';
-require_once __DIR__ . '/../Model/Objectif.php';
-require_once __DIR__ . '/../Model/EtapeObjectif.php';
+require_once __DIR__ . '/../../back-office/src/config.php';
+require_once __DIR__ . '/../Models/Objectif.php';
+require_once __DIR__ . '/../Models/EtapeObjectif.php';
 
 class ObjectifC
 {
@@ -14,7 +14,10 @@ class ObjectifC
      */
     public function afficherObjectifs()
     {
-        $db = config::getConnexion();
+        $db = Config::getConnexion();
+        if ($db === null) {
+            return []; // base indisponible (voir back-office/src/config.php)
+        }
         try {
             $this->initialiserDonneesSiVide();
             $liste = $db->query('SELECT * FROM objectif ORDER BY id DESC');
@@ -29,7 +32,10 @@ class ObjectifC
      */
     public function recupererObjectif($id)
     {
-        $db = config::getConnexion();
+        $db = Config::getConnexion();
+        if ($db === null) {
+            return false; // base indisponible (voir back-office/src/config.php)
+        }
         try {
             $query = $db->prepare('SELECT * FROM objectif WHERE id = :id');
             $query->execute(['id' => $id]);
@@ -44,7 +50,10 @@ class ObjectifC
      */
     public function ajouterObjectif(Objectif $objectif)
     {
-        $db = config::getConnexion();
+        $db = Config::getConnexion();
+        if ($db === null) {
+            return 0; // base indisponible (voir back-office/src/config.php)
+        }
         try {
             $query = $db->prepare('
                 INSERT INTO objectif (titre, description, note, categorie, date_debut, date_fin, date_limite, statut, xp_recompense, date_creation)
@@ -78,7 +87,10 @@ class ObjectifC
      */
     public function supprimerObjectif($id)
     {
-        $db = config::getConnexion();
+        $db = Config::getConnexion();
+        if ($db === null) {
+            return; // base indisponible (voir back-office/src/config.php)
+        }
         try {
             // Supprimer d'abord les étapes
             $qEtapes = $db->prepare('DELETE FROM etape_objectif WHERE id_objectif = :id');
@@ -97,7 +109,10 @@ class ObjectifC
      */
     public function modifierObjectif(Objectif $objectif, $id)
     {
-        $db = config::getConnexion();
+        $db = Config::getConnexion();
+        if ($db === null) {
+            return; // base indisponible (voir back-office/src/config.php)
+        }
         try {
             $query = $db->prepare('
                 UPDATE objectif
@@ -125,7 +140,10 @@ class ObjectifC
      */
     public function basculerStatut($id)
     {
-        $db = config::getConnexion();
+        $db = Config::getConnexion();
+        if ($db === null) {
+            return; // base indisponible (voir back-office/src/config.php)
+        }
         try {
             $obj = $this->recupererObjectif($id);
             if ($obj) {
@@ -143,7 +161,10 @@ class ObjectifC
      */
     public function recupererEtapes($idObjectif)
     {
-        $db = config::getConnexion();
+        $db = Config::getConnexion();
+        if ($db === null) {
+            return []; // base indisponible (voir back-office/src/config.php)
+        }
         try {
             $query = $db->prepare('SELECT * FROM etape_objectif WHERE id_objectif = :id ORDER BY IdEO ASC');
             $query->execute(['id' => $idObjectif]);
@@ -158,7 +179,10 @@ class ObjectifC
      */
     public function ajouterEtape(EtapeObjectif $etape)
     {
-        $db = config::getConnexion();
+        $db = Config::getConnexion();
+        if ($db === null) {
+            return 0; // base indisponible (voir back-office/src/config.php)
+        }
         try {
             $query = $db->prepare('
                 INSERT INTO etape_objectif (titre, est_validee, date_validation, id_objectif)
@@ -181,7 +205,10 @@ class ObjectifC
      */
     public function supprimerEtape($idEO)
     {
-        $db = config::getConnexion();
+        $db = Config::getConnexion();
+        if ($db === null) {
+            return; // base indisponible (voir back-office/src/config.php)
+        }
         try {
             $query = $db->prepare('DELETE FROM etape_objectif WHERE IdEO = :id');
             $query->execute(['id' => $idEO]);
@@ -196,7 +223,10 @@ class ObjectifC
      */
     public function validerEtape($idEO, $estValidee = true)
     {
-        $db = config::getConnexion();
+        $db = Config::getConnexion();
+        if ($db === null) {
+            return; // base indisponible (voir back-office/src/config.php)
+        }
         try {
             $dateVal = $estValidee ? date('Y-m-d H:i:s') : null;
             $query = $db->prepare('UPDATE etape_objectif SET est_validee = :val, date_validation = :dval WHERE IdEO = :id');
@@ -239,7 +269,10 @@ class ObjectifC
      */
     private function initialiserDonneesSiVide()
     {
-        $db = config::getConnexion();
+        $db = Config::getConnexion();
+        if ($db === null) {
+            return; // base indisponible (voir back-office/src/config.php)
+        }
         try {
             $count = $db->query('SELECT COUNT(*) FROM objectif')->fetchColumn();
             if ($count == 0) {

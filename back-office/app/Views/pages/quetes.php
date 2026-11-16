@@ -1,3 +1,4 @@
+<?php if (!defined('YQ_ROOT')) { header('Location: ../../../../index.php?admin=quetes'); exit; } ?>
 <?php
 $currentPage = 'quetes';
 
@@ -207,12 +208,13 @@ $types_activite = [
     <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Cormorant+Garamond:ital,wght@0,300..700;1,300..700&family=DM+Serif+Display:ital@0;1&family=Dancing+Script:wght@400..700&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Libre+Baskerville:ital,wght@0,400..700;1,400..700&family=Manrope:wght@200..800&family=Merriweather:ital,opsz,wght@0,18..144,300..900;1,18..144,300..900&family=Patrick+Hand&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Sacramento&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.2.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <link rel="stylesheet" href="includes/assets/css/quetes.css">
+    <link rel="stylesheet" href="front-office/css/quetes.css">
 </head>
 
 <body>
+<?php require YQ_BACK . '/app/Views/partials/admin-nav.php'; ?>
     <div class="backoffice-layout">
-        <?php require_once __DIR__ . '/includes/sidebar.php'; ?>
+        <?php require_once YQ_BACK . '/app/Views/partials/sidebar.php'; ?>
 
         <div class="main-content container">
 
@@ -224,7 +226,7 @@ $types_activite = [
                 <div id="form-modifier-quete" class="form-container">
                     <h1 class="form-title">Modifier une quête</h1>
 
-                    <form action="/submit-post" method="POST" id="quest-form">
+                    <form action="index.php?admin=quetes" method="POST" id="quest-form">
                         <div class="form-group">
                             <label class="quest-form-label" for="title">Titre</label>
                             <input type="text" name="title" id="title" required>
@@ -300,7 +302,7 @@ $types_activite = [
                 <div id="form-ajout-quete" class="form-container">
                     <h1 class="form-title">Ajouter une quête</h1>
 
-                    <form action="/submit-post" method="POST" id="quest-form">
+                    <form action="index.php?admin=quetes" method="POST" id="quest-form">
                         <div class="form-group">
                             <label class="quest-form-label" for="title">Titre</label>
                             <input type="text" name="title" id="title" required>
@@ -391,24 +393,25 @@ $types_activite = [
 
                     <?php
                     foreach ($quetes as $quete) {
+                        $e = function ($v) { return htmlspecialchars((string) $v, ENT_QUOTES, 'UTF-8'); };
 
                         echo "<tr>"
-                            . "<td> {$quete['titre']} </td>"
-                            . "<td> {$quete['competence']}</td>"
-                            . "<td> {$quete['categorie']}</td>"
-                            . "<td> {$quete['difficulte']}</td>"
-                            . "<td> {$quete['xp']}</td>"
-                            . "<td> {$quete['type_activite']['libelle']}</td>"
-                            . "<td> {$quete['type_activite']['unite']}</td>"
-                            . "<td> {$quete['contenu_details']}</td>"
+                            . "<td> {$e($quete['titre'])} </td>"
+                            . "<td> {$e($quete['competence'])}</td>"
+                            . "<td> {$e($quete['categorie'])}</td>"
+                            . "<td> {$e($quete['difficulte'])}</td>"
+                            . "<td> {$e($quete['xp'])}</td>"
+                            . "<td> {$e($quete['type_activite']['libelle'])}</td>"
+                            . "<td> {$e($quete['type_activite']['unite'])}</td>"
+                            . "<td> {$e($quete['contenu_details'])}</td>"
                             . "<td class='cellule-actions'>"
-                            . "<div class=''actions-boutons>"
+                            . "<div class='actions-boutons'>"
                             . "<button type='button' class='action-btn mod-btn'> <i class='fa-solid fa-pen'></i></button>"
                             . "<button type='button' class='action-btn supp-btn'><i class='fa-solid fa-trash'></i> </button>"
-                            . "</td>"
                             . "</div>"
+                            . "</td>"
                             . "</tr>";
-                    };
+                    }
 
 
                     ?>
@@ -423,7 +426,7 @@ $types_activite = [
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="includes/assets/js/quetes.js"></script>
+    <script src="front-office/js/quetes.js"></script>
 
 </body>
 

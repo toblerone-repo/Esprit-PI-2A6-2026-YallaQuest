@@ -1,23 +1,25 @@
 <?php
+if (!defined('YQ_ROOT')) { header('Location: ../../../index.php?page=guildes'); exit; }
 $pageTitle = 'Guildes · Yalla Quest';
 $currentPage = 'guildes';
 $pageScript = 'guildes.js';
-$enableEffects = true; // effets de défilement et de souris (css/effects.css + js/effects/) ; false = page d'origine
+$enableEffects = true; // effets de défilement (css/effects.css + js/effects/) ; false = page d'origine
 ?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<?php require_once __DIR__ . '/includes/head.php'; ?>
+<?php require_once YQ_FRONT . '/includes/head-guildes.php'; ?>
 </head>
 <body>
-<?php require_once __DIR__ . '/includes/spinner.php'; ?>
+<?php require YQ_FRONT . '/includes/modules-nav.php'; ?>
+<?php require_once YQ_FRONT . '/includes/spinner.php'; ?>
 <div class="app">
-<?php require_once __DIR__ . '/includes/navbar.php'; ?>
+<?php require_once YQ_FRONT . '/includes/navbar.php'; ?>
   <main class="canvas" id="canvas" tabindex="-1"></main>
 </div>
 
-<?php require_once __DIR__ . '/includes/footer.php'; ?>
+<?php require_once YQ_FRONT . '/includes/footer-guildes.php'; ?>
 
-<?php require_once __DIR__ . '/includes/scripts.php'; ?>
+<?php require_once YQ_FRONT . '/includes/scripts.php'; ?>
 </body>
 </html>

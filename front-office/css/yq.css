@@ -4,13 +4,13 @@
    Toutes les couleurs passent par les variables ci-dessous. */
 
 /* ---------- polices locales ---------- */
-@font-face { font-family: "Playfair Display"; font-weight: 400; font-display: swap; src: url(../fonts/PlayfairDisplay-400.woff2) format("woff2"); }
-@font-face { font-family: "Playfair Display"; font-weight: 400; font-style: italic; font-display: swap; src: url(../fonts/PlayfairDisplay-400-italic.woff2) format("woff2"); }
-@font-face { font-family: "Inter"; font-weight: 400; font-display: swap; src: url(../fonts/Inter-400.woff2) format("woff2"); }
-@font-face { font-family: "Inter"; font-weight: 400; font-style: italic; font-display: swap; src: url(../fonts/Inter-400-italic.woff2) format("woff2"); }
-@font-face { font-family: "Inter"; font-weight: 500; font-display: swap; src: url(../fonts/Inter-500.woff2) format("woff2"); }
-@font-face { font-family: "Inter"; font-weight: 600; font-display: swap; src: url(../fonts/Inter-600.woff2) format("woff2"); }
-@font-face { font-family: "Barlow Condensed"; font-weight: 600; font-display: swap; src: url(../fonts/BarlowCondensed-600.woff2) format("woff2"); }
+@font-face { font-family: "Playfair Display"; font-weight: 400; font-display: swap; src: url(../lib/fonts/PlayfairDisplay-400.woff2) format("woff2"); }
+@font-face { font-family: "Playfair Display"; font-weight: 400; font-style: italic; font-display: swap; src: url(../lib/fonts/PlayfairDisplay-400-italic.woff2) format("woff2"); }
+@font-face { font-family: "Inter"; font-weight: 400; font-display: swap; src: url(../lib/fonts/Inter-400.woff2) format("woff2"); }
+@font-face { font-family: "Inter"; font-weight: 400; font-style: italic; font-display: swap; src: url(../lib/fonts/Inter-400-italic.woff2) format("woff2"); }
+@font-face { font-family: "Inter"; font-weight: 500; font-display: swap; src: url(../lib/fonts/Inter-500.woff2) format("woff2"); }
+@font-face { font-family: "Inter"; font-weight: 600; font-display: swap; src: url(../lib/fonts/Inter-600.woff2) format("woff2"); }
+@font-face { font-family: "Barlow Condensed"; font-weight: 600; font-display: swap; src: url(../lib/fonts/BarlowCondensed-600.woff2) format("woff2"); }
 
 /* ---------- variables ---------- */
 :root {

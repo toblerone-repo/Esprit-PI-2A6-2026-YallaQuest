@@ -1,6 +1,6 @@
 <?php
-require_once __DIR__ . '/../Model/Publication.php';
-require_once __DIR__ . '/../Model/Signalement.php';
+require_once __DIR__ . '/../Models/Publication.php';
+require_once __DIR__ . '/../Models/Signalement.php';
 
 class PublicationsController
 {
@@ -12,9 +12,38 @@ class PublicationsController
         return $default;
     }
 
+    // Contrôle des champs du formulaire : renvoie un message d'erreur, ou '' si tout est valide.
+    private function validate($data, $categories, $publicationTypes, $publicationStatuses, $publicationImages)
+    {
+        foreach (['author' => 'L’auteur', 'title' => 'Le titre', 'content' => 'Le récit'] as $key => $label) {
+            if (!is_string($data[$key]) || trim($data[$key]) === '') {
+                return $label . ' est obligatoire.';
+            }
+        }
+        if (mb_strlen($data['author']) > 100 || mb_strlen($data['title']) > 200) {
+            return 'L’auteur (100 caractères) ou le titre (200 caractères) est trop long.';
+        }
+        if (!is_string($data['more'])) {
+            return 'Le complément est invalide.';
+        }
+        if ($data['category'] === 'all' || !isset($categories[$data['category']])) {
+            return 'Choisis une catégorie de la liste.';
+        }
+        if (!in_array($data['type'], $publicationTypes, true)) {
+            return 'Choisis un type de publication de la liste.';
+        }
+        if (!isset($publicationStatuses[$data['status']])) {
+            return 'Choisis un statut de la liste.';
+        }
+        if ($data['image'] !== null && !isset($publicationImages[$data['image']])) {
+            return 'Choisis une illustration de la liste.';
+        }
+        return '';
+    }
+
     public function index()
     {
-        require __DIR__ . '/../../shared/options.php';
+        require YQ_BACK . '/src/options.php';
         $model = new Publication();
         $reportModel = new Signalement();
         $module = 'publications';
@@ -86,7 +115,7 @@ class PublicationsController
                 $isEdit = $page == 'modifier';
                 $title = 'Nouvelle publication';
                 $submitLabel = 'Créer la publication';
-                $formAction = 'index.php?action=ajouter';
+                $formAction = 'index.php?admin=publications&action=ajouter';
                 $data = [
                     'author' => 'Équipe YallaQuest', 'title' => '', 'content' => '', 'more' => '',
                     'category' => 'nutrition', 'type' => 'Petite victoire', 'image' => '', 'status' => 'draft',
@@ -101,7 +130,7 @@ class PublicationsController
                     }
                     $title = 'Modifier la publication';
                     $submitLabel = 'Enregistrer les modifications';
-                    $formAction = 'index.php?action=modifier&id=' . $id;
+                    $formAction = 'index.php?admin=publications&action=modifier&id=' . $id;
                     foreach ($data as $key => $default) {
                         $data[$key] = $publication[$key];
                     }
@@ -117,12 +146,20 @@ class PublicationsController
                     if ($data['image'] == '') {
                         $data['image'] = null;
                     }
+                    $formError = $this->validate($data, $categories, $publicationTypes, $publicationStatuses, $publicationImages);
+                    if ($formError != '') {
+                        $flash = ['type' => 'error', 'message' => $formError];
+                        if ($data['image'] === null) {
+                            $data['image'] = '';
+                        }
+                        break;
+                    }
                     if ($isEdit) {
                         $saved = $model->update($id, $data);
-                        $redirect = 'index.php?action=voir&id=' . $id . '&message=modifie';
+                        $redirect = 'index.php?admin=publications&action=voir&id=' . $id . '&message=modifie';
                     } else {
                         $saved = $model->create($data);
-                        $redirect = 'index.php?message=cree';
+                        $redirect = 'index.php?admin=publications&message=cree';
                     }
                     if ($saved) {
                         header('Location: ' . $redirect);
@@ -143,7 +180,7 @@ class PublicationsController
                 $title = 'Supprimer la publication';
                 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     if ($model->delete($id)) {
-                        header('Location: index.php?message=supprime');
+                        header('Location: index.php?admin=publications&message=supprime');
                         exit;
                     }
                     $flash = ['type' => 'error', 'message' => 'La publication n’a pas pu être supprimée.'];
@@ -185,6 +222,6 @@ class PublicationsController
                     }
                 }
         }
-        require __DIR__ . '/../View/layout.php';
+        require __DIR__ . '/../Views/partials/layout.php';
     }
 }

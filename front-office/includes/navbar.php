@@ -3,8 +3,7 @@
 // logo, liens des pages, « Ma guilde » (rempli par js/guildes.js dans #my-guilds), sections à venir, compte.
 // Sur téléphone : barre mobile + #sidebar en feuille plein écran (bouton menu), comme avant.
 // Le lien actif (aria-current) est posé par js/guildes.js selon le hash.
-$shared = $shared ?? '../../shared/';
-$logo = htmlspecialchars($shared) . 'img/logo.png';
+$logo = 'front-office/img/logo.png';
 ?>
   <header class="mobilebar">
     <button class="btn ghost menu-toggle" type="button" aria-label="Ouvrir le menu" aria-controls="sidebar" aria-expanded="false">

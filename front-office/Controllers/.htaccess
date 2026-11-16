@@ -1,0 +1,5 @@
+# Les fichiers PHP de ce dossier ne s’exécutent que via index.php (à la racine).
+# Les fichiers .js (modèles / contrôleurs côté client) restent servis au navigateur.
+<FilesMatch "\.php$">
+  Require all denied
+</FilesMatch>

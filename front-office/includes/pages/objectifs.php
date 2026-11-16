@@ -2,10 +2,11 @@
 $currentPage = 'objectifs';
 $pageTitle = 'Mes objectifs · Yalla Quest';
 
-require_once __DIR__ . '/../../config.php';
-require_once __DIR__ . '/../Model/Objectif.php';
-require_once __DIR__ . '/../Model/EtapeObjectif.php';
-require_once __DIR__ . '/../Controller/ObjectifC.php';
+if (!defined('YQ_ROOT')) {
+    header('Location: ../../../index.php?page=objectifs');
+    exit;
+}
+require_once YQ_FRONT . '/Controllers/ObjectifC.php';
 
 $objectifC = new ObjectifC();
 
@@ -13,7 +14,7 @@ $objectifC = new ObjectifC();
 if (isset($_GET['supprimer'])) {
     $idSuppr = intval($_GET['supprimer']);
     $objectifC->supprimerObjectif($idSuppr);
-    header('Location: objectifs.php');
+    header('Location: index.php?page=objectifs');
     exit;
 }
 
@@ -21,7 +22,7 @@ if (isset($_GET['supprimer'])) {
 if (isset($_GET['toggle'])) {
     $idToggle = intval($_GET['toggle']);
     $objectifC->basculerStatut($idToggle);
-    header('Location: objectifs.php');
+    header('Location: index.php?page=objectifs');
     exit;
 }
 
@@ -30,7 +31,7 @@ if (isset($_GET['toggle_etape'])) {
     $idEO = intval($_GET['toggle_etape']);
     $val = isset($_GET['val']) ? intval($_GET['val']) : 1;
     $objectifC->validerEtape($idEO, $val === 1);
-    header('Location: objectifs.php');
+    header('Location: index.php?page=objectifs');
     exit;
 }
 
@@ -46,6 +47,10 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST' && isset($_POST['ajouter_objec
 
     if (empty($titre)) {
         $messageErreur = "Le titre de l'objectif est obligatoire.";
+    } elseif (mb_strlen($titre) > 150) {
+        $messageErreur = 'Le titre ne doit pas dépasser 150 caractères.';
+    } elseif (strtotime($dateDebut) === false || strtotime($dateFin) === false) {
+        $messageErreur = 'Les dates de début et de fin sont invalides.';
     } elseif (strtotime($dateFin) <= strtotime($dateDebut)) {
         $messageErreur = "L'heure de fin doit venir après l'heure de début.";
     } else {
@@ -57,14 +62,14 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST' && isset($_POST['ajouter_objec
         if (!empty($etapesTitres) && is_array($etapesTitres)) {
             foreach ($etapesTitres as $titreEtape) {
                 $titreEtape = trim($titreEtape);
-                if (!empty($titreEtape)) {
+                if (!empty($titreEtape) && mb_strlen($titreEtape) <= 255) {
                     $etape = new EtapeObjectif($titreEtape, $idNouvelObj);
                     $objectifC->ajouterEtape($etape);
                 }
             }
         }
 
-        header('Location: objectifs.php?succes=1');
+        header('Location: index.php?page=objectifs&succes=1');
         exit;
     }
 }
@@ -112,10 +117,11 @@ $imagesPiliers = [
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($pageTitle) ?></title>
-    <link rel="stylesheet" href="../../shared/css/yq.css">
-    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="front-office/css/yq.css">
+    <link rel="stylesheet" href="front-office/css/objectifs.css">
 </head>
 <body>
+<?php require YQ_FRONT . '/includes/modules-nav.php'; ?>
 <div class="app">
 <main class="canvas" id="canvas">
     <!-- En-tête de la page -->
@@ -127,7 +133,7 @@ $imagesPiliers = [
             <p class="sub">Planifie un but comme une note pour le futur, avec une heure de début et une heure de fin.</p>
         </div>
         <div class="actions">
-            <a class="btn sm" href="../../Back-Office/View/objectifs.php" style="margin-right:8px;">Administration</a>
+            <a class="btn sm" href="index.php?admin=objectifs" style="margin-right:8px;">Administration</a>
             <button class="btn primary" type="button" onclick="ouvrirModal()">
                 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true" style="width:16px;height:16px;display:inline-block;vertical-align:middle;margin-right:6px;"><path d="M8 3v10M3 8h10"/></svg>
                 Nouveau but
@@ -135,10 +141,14 @@ $imagesPiliers = [
         </div>
     </div>
 
+    <?php if ($messageErreur !== '') { ?>
+        <p class="alert" role="alert"><?= htmlspecialchars($messageErreur) ?></p>
+    <?php } ?>
+
     <!-- Carte Profil Aventurier & Progression XP -->
     <section class="profile" aria-label="Profil aventurier">
         <div class="panel profile-card">
-            <img src="../assets/img/logo.jpeg" alt="Logo" style="width:56px;height:56px;border-radius:14px;object-fit:cover;">
+            <img src="front-office/img/logo-objectifs.jpeg" alt="Logo" style="width:56px;height:56px;border-radius:14px;object-fit:cover;">
             <div class="who">
                 <h2>Aventurier</h2>
                 <div class="pills">
@@ -196,7 +206,7 @@ $imagesPiliers = [
                 $dateFinStr = !empty($obj['date_fin']) ? date('d M', strtotime($obj['date_fin'])) : '';
             ?>
             <article class="obj-card ivory on-ivory" data-statut="<?= htmlspecialchars($obj['statut']) ?>">
-                <img class="art" src="../../shared/img/piliers/<?= $img ?>.jpg" alt="" loading="lazy">
+                <img class="art" src="front-office/img/piliers/<?= $img ?>.jpg" alt="" loading="lazy">
                 <div class="body">
                     <p class="qline">
                         <span class="pilier"><?= htmlspecialchars($cat) ?></span> · 
@@ -250,11 +260,11 @@ $imagesPiliers = [
                         </span>
                         <div class="actions">
                             <?php if ($isAtteint): ?>
-                                <a class="btn sm" href="objectifs.php?toggle=<?= $id ?>">Reprendre</a>
+                                <a class="btn sm" href="index.php?page=objectifs&amp;toggle=<?= $id ?>">Reprendre</a>
                             <?php else: ?>
-                                <a class="btn primary sm" href="objectifs.php?toggle=<?= $id ?>">Accomplir</a>
+                                <a class="btn primary sm" href="index.php?page=objectifs&amp;toggle=<?= $id ?>">Accomplir</a>
                             <?php endif; ?>
-                            <a class="btn danger sm icon" href="objectifs.php?supprimer=<?= $id ?>" onclick="return confirm('Voulez-vous vraiment supprimer cet objectif ?');" title="Supprimer">
+                            <a class="btn danger sm icon" href="index.php?page=objectifs&amp;supprimer=<?= $id ?>" onclick="return confirm('Voulez-vous vraiment supprimer cet objectif ?');" title="Supprimer">
                                 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" style="width:14px;height:14px;"><path d="M3 4.5h10M6.5 4.5V3h3v1.5M4.5 4.5l.6 8.5h5.8l.6-8.5"/></svg>
                             </a>
                         </div>
@@ -269,7 +279,7 @@ $imagesPiliers = [
 
 <!-- Boîte de dialogue : Formulaire d'ajout d'objectif (HTML5 + PHP) -->
 <dialog class="dlg" id="dlgBut" aria-labelledby="dlgButTitle">
-    <form method="POST" action="objectifs.php" onsubmit="return validerFormulaireObjectif()">
+    <form method="POST" action="index.php?page=objectifs" onsubmit="return validerFormulaireObjectif()">
         <input type="hidden" name="ajouter_objectif" value="1">
         
         <div class="head">
@@ -342,6 +352,6 @@ $imagesPiliers = [
 </dialog>
 
 <!-- Script JavaScript simple -->
-<script src="../js/objectifs.js"></script>
+<script src="front-office/js/objectifs.js"></script>
 </body>
 </html>

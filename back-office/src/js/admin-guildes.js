@@ -9,11 +9,11 @@
   const $ = (s, el = document) => el.querySelector(s);
   const $$ = (s, el = document) => [...el.querySelectorAll(s)];
   const esc = (v) => String(v ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
-  const BASE = document.body.dataset.base || '../../shared/'; // ressources communes (shared/)
+  const BASE = document.body.dataset.base || 'front-office/'; // ressources communes (front-office/img/)
   const d = (iso) => new Date(iso + 'T12:00:00').toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' });
   const plural = (k, one, many) => `${k} ${k > 1 ? many : one}`;
 
-  const image = (c) => `${BASE}img/competences/${competence(c)?.img || 'focus'}.jpg`;
+  const image = (c) => `${BASE}img/piliers/${competence(c)?.img || 'focus'}.jpg`;
   const initiales = (u) => utilisateur(u).pseudo.split('.').map((w) => w[0]).join('').toUpperCase();
 
   const state = { q: '', statut: 'all' };

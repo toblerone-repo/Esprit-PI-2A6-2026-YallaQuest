@@ -1,11 +1,9 @@
 <?php
-// Scripts de fin de page du Back-Office, dans l'ordre MVC : modèle, contrôleur, puis la vue ($pageScript, dans js/).
-$s = htmlspecialchars($shared ?? '../../shared/');
-$o = htmlspecialchars($office ?? '../');
+// Scripts de fin de page de l'administration des guildes, dans l'ordre MVC : modèle, contrôleur, puis la vue ($pageScript, dans src/js/).
 ?>
-<script src="<?= $s ?>js/sidebar.js"></script>
-<script src="<?= $o ?>Model/GuildeModel.js"></script>
-<script src="<?= $o ?>Controller/GuildeController.js"></script>
+<script src="front-office/js/sidebar.js"></script>
+<script src="back-office/app/Models/GuildeModel.js"></script>
+<script src="back-office/app/Controllers/GuildeController.js"></script>
 <?php if (!empty($pageScript)): ?>
-<script src="<?= $o ?>js/<?= htmlspecialchars($pageScript) ?>"></script>
+<script src="back-office/src/js/<?= htmlspecialchars($pageScript) ?>"></script>
 <?php endif; ?>

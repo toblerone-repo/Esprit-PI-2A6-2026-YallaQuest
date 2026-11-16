@@ -1,3 +1,3 @@
-# Administration réservée à un accès local.
+# Administration et ressources du Back-Office réservées à un accès local
+# (index.php applique la même règle aux pages ?admin=…).
 Require local
-DirectoryIndex index.php

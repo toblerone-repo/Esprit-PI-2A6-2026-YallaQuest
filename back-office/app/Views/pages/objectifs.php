@@ -2,22 +2,24 @@
 $currentPage = 'objectifs';
 $pageTitle = 'Objectifs · Administration · Yalla Quest';
 
-require_once __DIR__ . '/../../config.php';
-require_once __DIR__ . '/../../Front-Office/Model/Objectif.php';
-require_once __DIR__ . '/../../Front-Office/Model/EtapeObjectif.php';
-require_once __DIR__ . '/../../Front-Office/Controller/ObjectifC.php';
+if (!defined('YQ_ROOT')) {
+    header('Location: ../../../../index.php?admin=objectifs');
+    exit;
+}
+require_once YQ_BACK . '/app/Controllers/AdminController.php';
 
-$objectifC = new ObjectifC();
+$objectifC = new AdminController();
 
 // 1. Suppression d'un objectif par l'administrateur
 if (isset($_GET['supprimer'])) {
     $idSuppr = intval($_GET['supprimer']);
     $objectifC->supprimerObjectif($idSuppr);
-    header('Location: objectifs.php');
+    header('Location: index.php?admin=objectifs');
     exit;
 }
 
 // 2. Ajout d'un objectif par l'administrateur
+$messageErreur = '';
 if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST' && isset($_POST['ajouter_objectif_admin'])) {
     $titre = trim($_POST['titre'] ?? '');
     $note = trim($_POST['note'] ?? '');
@@ -27,21 +29,27 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST' && isset($_POST['ajouter_objec
     $xp = intval($_POST['xp'] ?? 50);
     $etapesTitres = $_POST['etapes'] ?? [];
 
-    if (!empty($titre) && strtotime($dateFin) > strtotime($dateDebut)) {
+    if ($titre === '' || mb_strlen($titre) > 150) {
+        $messageErreur = 'Le titre est obligatoire (150 caractères au plus).';
+    } elseif (strtotime($dateDebut) === false || strtotime($dateFin) === false || strtotime($dateFin) <= strtotime($dateDebut)) {
+        $messageErreur = 'La date de fin doit venir après la date de début.';
+    } elseif ($xp < 0 || $xp > 1000) {
+        $messageErreur = 'La récompense XP doit être comprise entre 0 et 1000.';
+    } else {
         $obj = new Objectif($titre, $note, $dateDebut, $dateFin, 'en_cours', null, $categorie, $xp);
         $idNouvelObj = $objectifC->ajouterObjectif($obj);
 
         if (!empty($etapesTitres) && is_array($etapesTitres)) {
             foreach ($etapesTitres as $titreEtape) {
                 $titreEtape = trim($titreEtape);
-                if (!empty($titreEtape)) {
+                if (!empty($titreEtape) && mb_strlen($titreEtape) <= 255) {
                     $etape = new EtapeObjectif($titreEtape, $idNouvelObj);
                     $objectifC->ajouterEtape($etape);
                 }
             }
         }
 
-        header('Location: objectifs.php?succes=1');
+        header('Location: index.php?admin=objectifs&succes=1');
         exit;
     }
 }
@@ -56,10 +64,11 @@ $totalQuests = count($listeObjectifs);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($pageTitle) ?></title>
-    <link rel="stylesheet" href="../../shared/css/yq.css">
-    <link rel="stylesheet" href="../css/admin.css">
+    <link rel="stylesheet" href="front-office/css/yq.css">
+    <link rel="stylesheet" href="back-office/src/css/admin-objectifs.css">
 </head>
 <body>
+<?php require YQ_BACK . '/app/Views/partials/admin-nav.php'; ?>
 <div class="app">
 <main class="canvas" id="canvas">
     <!-- En-tête Back-Office -->
@@ -71,13 +80,17 @@ $totalQuests = count($listeObjectifs);
             <p class="sub"><?= $totalQuests ?> objectif<?= $totalQuests > 1 ? 's' : '' ?> enregistré<?= $totalQuests > 1 ? 's' : '' ?></p>
         </div>
         <div class="actions">
-            <a class="btn sm" href="../../Front-Office/View/objectifs.php" style="margin-right:8px;">Espace Aventurier</a>
+            <a class="btn sm" href="index.php?page=objectifs" style="margin-right:8px;">Espace Aventurier</a>
             <button class="btn primary" type="button" onclick="document.getElementById('dlgQuest').showModal();">
                 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true" style="width:16px;height:16px;display:inline-block;vertical-align:middle;margin-right:6px;"><path d="M8 3v10M3 8h10"/></svg>
                 Assigner un but
             </button>
         </div>
     </div>
+
+    <?php if ($messageErreur !== '') { ?>
+        <p class="alert" role="alert"><?= htmlspecialchars($messageErreur) ?></p>
+    <?php } ?>
 
     <!-- Barre de recherche et filtre -->
     <div class="filters" role="search">
@@ -144,7 +157,7 @@ $totalQuests = count($listeObjectifs);
                             </td>
                             <td><strong>+<?= $obj['xp_recompense'] ?? 50 ?> XP</strong></td>
                             <td style="text-align:right;">
-                                <a class="btn danger sm" href="objectifs.php?supprimer=<?= $id ?>" onclick="return confirm('Confirmer la suppression de cet objectif ?');">
+                                <a class="btn danger sm" href="index.php?admin=objectifs&amp;supprimer=<?= $id ?>" onclick="return confirm('Confirmer la suppression de cet objectif ?');">
                                     Supprimer
                                 </a>
                             </td>
@@ -160,7 +173,7 @@ $totalQuests = count($listeObjectifs);
 
 <!-- Modal d'assignation d'objectif par l'Admin -->
 <dialog id="dlgQuest" class="dlg">
-    <form method="POST" action="objectifs.php" onsubmit="return validerAdminObjectif()">
+    <form method="POST" action="index.php?admin=objectifs" onsubmit="return validerAdminObjectif()">
         <input type="hidden" name="ajouter_objectif_admin" value="1">
         <div class="head">
             <h2>Assigner un objectif</h2>

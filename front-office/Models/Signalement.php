@@ -1,2 +1,2 @@
 <?php
-require_once __DIR__ . '/../../Back-Office/Model/Signalement.php';
+require_once __DIR__ . '/../../back-office/app/Models/Signalement.php';

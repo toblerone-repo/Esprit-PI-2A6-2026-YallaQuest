@@ -1,3 +1,4 @@
+<?php if (!defined('YQ_ROOT')) { header('Location: ../../../../index.php?admin=totems'); exit; } ?>
 <?php
 $title = 'Totems | YallaQuest Admin';
 $currentPage = 'totems';

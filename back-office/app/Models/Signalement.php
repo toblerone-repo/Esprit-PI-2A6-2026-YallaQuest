@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../../config.php';
+require_once __DIR__ . '/../../src/config.php';
 require_once __DIR__ . '/Publication.php';
 
 class Signalement
@@ -33,6 +33,10 @@ class Signalement
     {
         if ($this->db == null) {
             return 'unavailable';
+        }
+        require YQ_BACK . '/src/options.php';
+        if (!is_string($reason) || !isset($reportReasons[$reason]) || !is_string($details) || mb_strlen($details) > 2000) {
+            return 'invalid';
         }
         $publicationModel = new Publication();
         $publication = $publicationModel->find($publicationId);

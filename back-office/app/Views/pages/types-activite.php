@@ -1,3 +1,4 @@
+<?php if (!defined('YQ_ROOT')) { header('Location: ../../../../index.php?admin=types-activite'); exit; } ?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -9,9 +10,10 @@
   
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Playfair+Display&display=swap">
 
-  <link rel="stylesheet" href="../../../src/css/journal-admin.css">
+  <link rel="stylesheet" href="back-office/src/css/journal-admin.css">
 </head>
 <body>
+<?php require YQ_BACK . '/app/Views/partials/admin-nav.php'; ?>
 
 
 <div class="journal-admin">
@@ -216,7 +218,7 @@
 
 </div>
 
-<?php require_once '../partials/footer.php'; ?>
+<?php require_once YQ_BACK . '/app/Views/partials/footer.php'; ?>
 
 </body>
 </html>

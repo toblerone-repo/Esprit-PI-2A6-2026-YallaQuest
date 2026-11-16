@@ -1,3 +1,2 @@
 <?php
-require_once __DIR__ . '/../../Front-Office/Model/EtapeObjectif.php';
-?>
+require_once __DIR__ . '/../../../front-office/Models/EtapeObjectif.php';
