@@ -12,7 +12,7 @@
         <li><a class="community-navbar-link" href="competences.php">Compétences et totems</a></li>
         <li><a class="community-navbar-link" href="guildes.php">Guildes</a></li>
         <li><a class="community-navbar-link" href="communaute.php" aria-current="page">Communauté</a></li>
-        <li><a class="community-navbar-link" href="">Profils</a></li>
+        <li><a class="community-navbar-link" href="page-profil.php">Profils</a></li>
       </ul>
     </nav>
 
