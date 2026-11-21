@@ -1,0 +1,111 @@
+.yq-community-navbar,
+.yq-community-navbar * {
+  box-sizing: border-box;
+}
+
+.yq-community-navbar {
+  background: #0d0d10;
+  color: #f1f0f5;
+  font-family: Arial, sans-serif;
+  line-height: 1.4;
+}
+
+.yq-community-navbar .community-navbar-inner {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 24px;
+  width: min(1400px, calc(100% - 64px));
+  min-height: 84px;
+  margin: auto;
+  padding: 20px 0;
+}
+
+.yq-community-navbar .community-navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #cbb5f4;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -.025em;
+  white-space: nowrap;
+}
+
+.yq-community-navbar .community-navbar-logo {
+  display: block;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.yq-community-navbar .community-navbar-links {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.yq-community-navbar .community-navbar-link {
+  display: block;
+  padding: 10px 12px;
+  border-radius: 999px;
+  color: #a4a1af;
+  font-size: .76rem;
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color .15s, background-color .15s;
+}
+
+.yq-community-navbar .community-navbar-link:hover {
+  background: #202026;
+  color: #f1f0f5;
+  text-decoration: none;
+}
+
+.yq-community-navbar .community-navbar-link[aria-current="page"] {
+  background: #f1f0f5;
+  color: #211a2a;
+}
+
+.yq-community-navbar :focus-visible {
+  outline: 2px solid #cbb5f4;
+  outline-offset: 4px;
+}
+
+@media (max-width: 1150px) {
+  .yq-community-navbar .community-navbar-inner {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .yq-community-navbar .community-navbar-navigation {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+}
+
+@media (max-width: 600px) {
+  .yq-community-navbar .community-navbar-inner {
+    width: calc(100% - 32px);
+    gap: 18px 10px;
+    padding: 18px 0;
+  }
+
+  .yq-community-navbar .community-navbar-brand {
+    gap: 8px;
+    font-size: .9rem;
+  }
+
+  .yq-community-navbar .community-navbar-link {
+    padding: 9px 11px;
+  }
+
+}
