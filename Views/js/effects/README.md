@@ -32,7 +32,7 @@ Juste après `<body>` d'une page PHP de `Views/front-office/pages/` (c'est le ca
 <?php require __DIR__ . '/../includes/spinner.php'; ?>
 ```
 
-Il couvre la page jusqu'à l'événement `load`, s'efface en 0,4 s puis envoie l'événement `yallaquest:loaded` (une page peut l'écouter pour lancer ses animations ; les effets de `guildes` l'attendent, 4 s au plus). Sans JavaScript il n'apparaît pas ; il disparaît de toute façon au bout de 8 s. Mouvement réduit : pas de rotation. Couleurs : `--ground`, `--accent`, `--muted` de la page (valeurs de repli sinon). Aucune variable PHP à définir.
+`spinner.php` ne contient que le balisage : ses styles sont dans `Views/css/guilde.css` (partie « indicateur de chargement », chargée par toutes les pages) et son script dans `Views/js/spinner.js` (inclus par `spinner.php`). Il couvre la page jusqu'à l'événement `load`, s'efface en 0,4 s puis envoie l'événement `yallaquest:loaded` (une page peut l'écouter pour lancer ses animations ; les effets de `guildes` l'attendent, 4 s au plus). Sans JavaScript il n'apparaît pas (masqué par défaut, affiché par le script) ; il disparaît de toute façon au bout de 8 s. Mouvement réduit : pas de rotation. Couleurs : `--ground`, `--accent`, `--muted` de la page (valeurs de repli sinon). Aucune variable PHP à définir.
 
 ## En-tête commun du back-office — `partials/header.php`
 

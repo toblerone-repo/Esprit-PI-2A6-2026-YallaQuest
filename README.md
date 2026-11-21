@@ -19,10 +19,10 @@ Toutes les pages chargent une seule feuille : `Views/css/guilde.css` (`../../css
 └── Views/
     ├── css/            guilde.css (feuille unique : commun, front, back, effets, page Guildes)
     ├── img/            logo.jpeg, competences/ (vignettes des compétences)
-    ├── js/             effects/ (effets Guildes + README)
+    ├── js/             spinner.js (script de l'indicateur de chargement), effects/ (effets Guildes + README)
     ├── lib/            fonts/, gsap/, lenis/, splittype/, three/
     ├── front-office/
-    │   ├── includes/   spinner.php (indicateur de chargement, commun au front-office)
+    │   ├── includes/   spinner.php (indicateur de chargement, balisage seul ; styles dans guilde.css, script dans js/spinner.js)
     │   └── pages/      guildes.php
     └── back-office/
         ├── partials/   header.php (en-tête commun du back-office, tous les membres)
