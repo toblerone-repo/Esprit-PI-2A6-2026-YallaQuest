@@ -254,7 +254,7 @@ $pas_de_prog = false;
             <button class="surprise-btn submit-btn">Quête surprise!</button>
             <div class="dropdown">
                 <button class="btn submit-btn dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Filtrer selon
+                    Trier selon
                 </button>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                     <a class="dropdown-item" href="#">Difficulté - Ordre Croissant</a>
