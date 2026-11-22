@@ -1,0 +1,102 @@
+/* Yalla Quest · Front-office : pied de page commun (Views/front-office/includes/footer.php).
+   Tout est préfixé « yq-front-footer » et ne dépend d'aucune autre feuille de style,
+   pour s'afficher de la même façon sur toutes les pages. Couleurs de la barre de navigation. */
+
+.yq-front-footer,
+.yq-front-footer * {
+  box-sizing: border-box;
+}
+
+.yq-front-footer {
+  display: block;
+  margin: 0;
+  border-top: 1px solid #202026;
+  background: #0d0d10;
+  color: #a4a1af;
+  font-family: Arial, sans-serif;
+  font-size: 13px;
+  line-height: 1.5;
+  text-align: left;
+}
+
+.yq-front-footer .yq-front-footer-inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 32px;
+  width: min(1400px, calc(100% - 64px));
+  margin: auto;
+  padding: 28px 0;
+}
+
+.yq-front-footer .yq-front-footer-brand {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px 10px;
+}
+
+.yq-front-footer .yq-front-footer-logo {
+  display: block;
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  object-fit: cover;
+}
+
+.yq-front-footer .yq-front-footer-name {
+  color: #cbb5f4;
+  font: 700 15px/1.4 Arial, sans-serif;
+  letter-spacing: -.025em;
+}
+
+.yq-front-footer .yq-front-footer-motto {
+  color: #a4a1af;
+  font: italic 400 13px/1.4 Arial, sans-serif;
+}
+
+.yq-front-footer .yq-front-footer-contact {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  margin: 0;
+  font-style: normal;
+}
+
+.yq-front-footer .yq-front-footer-contact span {
+  color: inherit;
+  font: inherit;
+}
+
+.yq-front-footer .yq-front-footer-contact a {
+  color: #cbb5f4;
+  text-decoration: none;
+}
+
+.yq-front-footer .yq-front-footer-contact a:hover {
+  color: #f1f0f5;
+  text-decoration: underline;
+}
+
+.yq-front-footer .yq-front-footer-copy {
+  width: 100%;
+  margin: 0;
+  padding-top: 14px;
+  border-top: 1px solid #202026;
+  color: #6f6c7a;
+  font-size: 12px;
+}
+
+.yq-front-footer :focus-visible {
+  outline: 2px solid #cbb5f4;
+  outline-offset: 4px;
+}
+
+@media (max-width: 600px) {
+  .yq-front-footer .yq-front-footer-inner {
+    width: calc(100% - 32px);
+    padding: 22px 0;
+  }
+}

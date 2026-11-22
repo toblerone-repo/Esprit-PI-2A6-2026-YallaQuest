@@ -14,6 +14,7 @@
 </head>
 <body>
 <?php require __DIR__ . '/../includes/spinner.php'; ?>
+<?php include_once __DIR__ . '/../includes/navbar.php'; ?>
 <div class="app">
   <main class="canvas" id="canvas" tabindex="-1">
     <!-- Une section par vue ; l'adresse (#guildes, #g1…#g5, #quetes) affiche la section voulue, #g1 par défaut. -->
@@ -513,5 +514,6 @@
 <script>window.SplitType || document.write('<script src="https://cdn.jsdelivr.net/npm/split-type@0.3.4/umd/index.min.js"><\/script>');</script>
 <script type="importmap">{"imports":{"three":"../../lib/three/three.module.min.js"}}</script>
 <script type="module" src="../../js/effects/main.js" onerror="document.documentElement.classList.remove('fx-boot')"></script>
+<?php include_once __DIR__ . '/../includes/footer.php'; ?>
 </body>
 </html>

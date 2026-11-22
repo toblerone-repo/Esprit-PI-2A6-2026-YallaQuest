@@ -5,7 +5,7 @@ Projet Technologies Web 2A — ESPRIT (2026-2027). Partie « Guildes » : indica
 ## Pages et includes
 - `Views/front-office/includes/spinner.php` — indicateur de chargement : `<?php require __DIR__ . '/../includes/spinner.php'; ?>` juste après `<body>`
 - `Views/back-office/partials/header.php` — en-tête commun du back-office ; chaque membre ajoute sa page dans `$adminPages`
-- `Views/back-office/pages/guilde_admin.php` — administration des guildes : chiffres clés, tableau des guildes, tableau des propositions de quêtes (statique, sans effets) ; lien « Guildes » dans l'en-tête
+- `Views/back-office/pages/guilde_admin.php` — administration des guildes : chiffres clés, tableau des guildes, tableau des propositions de quêtes (statique, sans effets) ; lien « Guildes » dans la barre latérale
 - `Views/front-office/pages/guildes.php` — espace membre en HTML statique : guildes, pages des guildes (propositions de quêtes), quêtes ; une section par adresse (`#guildes`, `#g1`…`#g5`, `#quetes`), navigation sous le titre ; seul le JavaScript des effets reste
 
 Lancer avec XAMPP/WAMP ou `php -S localhost:8000` à la racine, puis ouvrir `http://localhost:8000/Views/front-office/pages/guildes.php`.
