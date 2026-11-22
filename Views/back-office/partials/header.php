@@ -10,6 +10,7 @@
    Chaque membre ajoute sa page ci-dessous : 'clé' => ['Libellé', 'fichier.php'] (fichiers de Views/back-office/pages/). */
 $adminPages = [
     'utilisateurs' => ['Aventuriers', 'listuser.php'], // [DARINE · LISTE UTILISATEURS] page renommée
+    'suppression' => ['Suppression des comptes', 'liste_utilisateurs.php'],
 ];
 ?>
 <link rel="stylesheet" href="../../css/bo-header.css">

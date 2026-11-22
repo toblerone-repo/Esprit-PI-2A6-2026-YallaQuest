@@ -265,7 +265,7 @@ require_once __DIR__ . '/../partials/head.php';
 
                         <div class="form-group">
                             <label class="quest-form-label" for="xp">XP</label>
-                            <input name="xp" id="xp" required></input>
+                            <input name="xp" id="xp" inputmode="numeric" data-regex="xp" required></input>
                             <span class="message-erreur"></span>
                         </div>
 
@@ -336,7 +336,7 @@ require_once __DIR__ . '/../partials/head.php';
 
                         <div class="form-group">
                             <label class="quest-form-label" for="xp">XP</label>
-                            <input name="xp" id="xp" required></input>
+                            <input name="xp" id="xp" inputmode="numeric" data-regex="xp" required></input>
                             <span class="message-erreur"></span>
 
                         </div>
@@ -403,6 +403,7 @@ require_once __DIR__ . '/../partials/head.php';
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../../js/regex.js"></script>
     <script src="../../js/quetes.js"></script>
 
 <?php include_once __DIR__ . '/../partials/footer.php'; ?>

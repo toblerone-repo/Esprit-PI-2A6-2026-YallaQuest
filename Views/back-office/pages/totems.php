@@ -125,7 +125,7 @@ require_once __DIR__ . '/../partials/head.php';
       <div class="competences-admin-champs">
         <div class="competences-admin-champ">
           <label for="nom">Nom du totem</label>
-          <input type="text" id="nom" name="nom" maxlength="50" required placeholder="Ex : Le Bélier">
+          <input type="text" id="nom" name="nom" maxlength="50" required data-regex="libelle" placeholder="Ex : Le Bélier">
         </div>
         <div class="competences-admin-champ">
           <label for="id_competence">Compétence</label>
@@ -140,7 +140,7 @@ require_once __DIR__ . '/../partials/head.php';
         </div>
         <div class="competences-admin-champ">
           <label for="seuil">Seuil d'XP</label>
-          <input type="number" id="seuil" name="seuil" min="0" step="10" required placeholder="Ex : 300">
+          <input type="number" id="seuil" name="seuil" data-regex="seuil" min="0" step="10" required placeholder="Ex : 300">
         </div>
         <div class="competences-admin-champ">
           <label for="visuel">Visuel du totem</label>
@@ -162,6 +162,7 @@ require_once __DIR__ . '/../partials/head.php';
 
 </div>
 
+<script src="../../js/regex.js"></script>
 <?php include_once __DIR__ . '/../partials/footer.php'; ?>
 </body>
 </html>

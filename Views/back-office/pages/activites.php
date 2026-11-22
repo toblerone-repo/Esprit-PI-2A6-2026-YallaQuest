@@ -299,7 +299,7 @@ require_once __DIR__ . '/../partials/head.php';
         </div>
         <div class="journal-champ">
           <label for="quantite">Quantité à atteindre</label>
-          <input type="number" id="quantite" name="quantite" min="0" step="0.1" required placeholder="Ex : 100">
+          <input type="number" id="quantite" name="quantite" data-regex="quantite" min="0" step="0.1" required placeholder="Ex : 100">
         </div>
       </div>
 
@@ -467,6 +467,7 @@ require_once __DIR__ . '/../partials/head.php';
 
 </div>
 
+<script src="../../js/regex.js"></script>
 <?php include_once __DIR__ . '/../partials/footer.php'; ?>
 
 </body>

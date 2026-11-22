@@ -23,10 +23,11 @@ $navbarCurrent = $navbarAlias[$navbarCurrent] ?? $navbarCurrent;
 <link rel="stylesheet" href="../../css/communaute-navbar.css">
 <header class="yq-community-navbar">
   <div class="community-navbar-inner">
-    <div class="community-navbar-brand" aria-label="YallaQuest">
+    <!-- Le logo ramène à l'accueil du site (index.php, à la racine du projet). -->
+    <a class="community-navbar-brand" href="../../../index.php" aria-label="YallaQuest, accueil">
       <img class="community-navbar-logo" src="../../img/communaute-logo.jpg" width="32" height="32" alt="">
       <span>YALLAQUEST</span>
-    </div>
+    </a>
 
     <nav class="community-navbar-navigation" aria-label="Navigation principale">
       <ul class="community-navbar-links">

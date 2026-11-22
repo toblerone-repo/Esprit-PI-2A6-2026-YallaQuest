@@ -1,7 +1,7 @@
 /**
  * Vue - formulaires « Rejoindre la guilde » (inscription) et « Connexion ».
- * La validation reste dans AuthController. Les erreurs s'affichent dans la page,
- * la réussite dans un toast (ui.js).
+ * Les formats (e-mail, nom, pseudo, mot de passe) viennent de regex.js (YQRegex), à charger avant ce fichier.
+ * Les erreurs s'affichent dans la page, la réussite dans un toast (ui.js).
  */
 document.addEventListener('DOMContentLoaded', function () {
     // Inscription (join_now.php)
@@ -18,7 +18,30 @@ document.addEventListener('DOMContentLoaded', function () {
             const confMdp = document.getElementById('confirmer_mot_de_passe').value;
             const joinError = document.getElementById('joinError');
 
-            const errors = AuthController.validateRegister(pseudo, email, mdp, confMdp);
+            // Chaque champ vide ou mal formé ajoute un message ; le premier champ faux reçoit le focus.
+            const errors = [];
+            let premierChamp = null;
+            function verifier(id, valeur, motif, libelle) {
+                let erreur = '';
+                if (valeur === '') erreur = libelle + ' est obligatoire.';
+                // Le message du motif « nom » ne cite pas le champ (prénom ou nom) : on le précise.
+                else if (motif && !YQRegex.tester(motif, valeur)) erreur = (motif === 'nom' ? libelle + ' : ' : '') + YQRegex.message(motif);
+                if (erreur) {
+                    errors.push(erreur);
+                    if (!premierChamp) premierChamp = id;
+                }
+            }
+            verifier('prenom', prenom, 'nom', 'Le prénom');
+            verifier('nom', nom, 'nom', 'Le nom');
+            verifier('pseudo', pseudo, 'pseudo', 'Le pseudo');
+            verifier('email', email, 'email', "L'e-mail");
+            verifier('mot_de_passe', mdp, 'motDePasse', 'Le mot de passe');
+            if (confMdp === '') verifier('confirmer_mot_de_passe', '', null, 'La confirmation du mot de passe');
+            else if (confMdp !== mdp) {
+                errors.push('Les mots de passe ne correspondent pas.');
+                if (!premierChamp) premierChamp = 'confirmer_mot_de_passe';
+            }
+
             if (errors.length > 0) {
                 const ul = document.createElement('ul');
                 errors.forEach((err) => {
@@ -28,22 +51,23 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
                 joinError.replaceChildren(ul);
                 joinError.hidden = false;
+                document.getElementById(premierChamp).focus();
                 return;
             }
 
             joinError.hidden = true;
-            AuthController.register(pseudo, email, mdp, prenom, nom);
+            // Pas encore d'enregistrement côté serveur : le compte n'est pas créé dans la base.
             joinForm.querySelector('[type="submit"]').disabled = true;
             YQ.toast('Bienvenue ' + pseudo + ' ! Ton compte est créé.');
-            setTimeout(() => YQ.go('login.php'), 1200);
+            setTimeout(() => YQ.go('../../../index.php?action=login'), 1200);
         });
     }
 
-    // Connexion (login.php)
+    // Connexion (index.php?action=login, vue login.php)
     const loginForm = document.getElementById('loginForm');
     if (loginForm) {
-        // Contrôle côté navigateur ; si tout est bon, le formulaire part vers login.php
-        // qui vérifie l'e-mail et le mot de passe dans la base.
+        // Contrôle côté navigateur ; si tout est bon, le formulaire part vers index.php?action=login
+        // (AuthController::login vérifie l'e-mail et le mot de passe dans la base).
         loginForm.addEventListener('submit', function (e) {
             const email = document.getElementById('email').value.trim();
             const mdp = document.getElementById('mot_de_passe').value;
@@ -54,8 +78,8 @@ document.addEventListener('DOMContentLoaded', function () {
             if (email === '') {
                 erreur = 'Saisis ton e-mail.';
                 champ = 'email';
-            } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-                erreur = "L'adresse e-mail n'est pas valide.";
+            } else if (!YQRegex.tester('email', email)) {
+                erreur = YQRegex.message('email');
                 champ = 'email';
             } else if (mdp === '') {
                 erreur = 'Saisis ton mot de passe.';

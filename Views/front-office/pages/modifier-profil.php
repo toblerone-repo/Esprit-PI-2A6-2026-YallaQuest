@@ -132,6 +132,7 @@ $pageTitle = 'Modifier mon profil · Yalla Quest';
         </section>
     </div>
 
+    <script src="../../js/regex.js"></script>
     <script src="../../js/profil.js"></script>
 </main>
 <?php include_once __DIR__ . '/../includes/footer.php'; ?>

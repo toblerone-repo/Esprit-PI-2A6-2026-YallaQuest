@@ -125,11 +125,11 @@ require_once __DIR__ . '/../partials/head.php';
       <div class="competences-admin-champs">
         <div class="competences-admin-champ">
           <label for="nom">Nom</label>
-          <input type="text" id="nom" name="nom" maxlength="50" required placeholder="Ex : Force">
+          <input type="text" id="nom" name="nom" maxlength="50" required data-regex="libelle" placeholder="Ex : Force">
         </div>
         <div class="competences-admin-champ">
           <label for="pourcentage">Part de l'XP totale (%)</label>
-          <input type="number" id="pourcentage" name="pourcentage" min="0" max="100" required placeholder="Ex : 20">
+          <input type="number" id="pourcentage" name="pourcentage" data-regex="pourcentage" min="0" max="100" required placeholder="Ex : 20">
         </div>
         <div class="competences-admin-champ">
           <label for="visuel">Visuel de la compétence</label>
@@ -151,6 +151,7 @@ require_once __DIR__ . '/../partials/head.php';
 
 </div>
 
+<script src="../../js/regex.js"></script>
 <?php include_once __DIR__ . '/../partials/footer.php'; ?>
 </body>
 </html>

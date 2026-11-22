@@ -6,32 +6,40 @@ document.getElementById("formulaire-modification").addEventListener("submit", as
 
     const ancienMpInput = document.querySelector("#formulaire-modification #ancien-mot-de-passe");
 
+    // Les formats (nom, e-mail, mot de passe) viennent de regex.js (YQRegex), chargé avant ce fichier.
     const prenomInput = document.querySelector("#formulaire-modification #prenom");
-    if (prenomInput.validity.valueMissing || prenomInput.value.trim().length === 0) {
-        prenomInput.nextElementSibling.textContent = "Le nom est obligatoire.";
+    if (prenomInput.value.trim().length === 0) {
+        prenomInput.nextElementSibling.textContent = "Le prénom est obligatoire.";
+        prenomInput.classList.add("warning-border");
+        modificationValidee = false;
+    } else if (!YQRegex.tester("nom", prenomInput.value)) {
+        prenomInput.nextElementSibling.textContent = YQRegex.message("nom");
         prenomInput.classList.add("warning-border");
         modificationValidee = false;
     };
 
     const nomInput = document.querySelector("#formulaire-modification #nom");
-    if (nomInput.validity.valueMissing || nomInput.value.trim().length === 0) {
+    if (nomInput.value.trim().length === 0) {
         nomInput.nextElementSibling.textContent = "Le nom est obligatoire.";
+        nomInput.classList.add("warning-border");
+        modificationValidee = false;
+    } else if (!YQRegex.tester("nom", nomInput.value)) {
+        nomInput.nextElementSibling.textContent = YQRegex.message("nom");
         nomInput.classList.add("warning-border");
         modificationValidee = false;
     };
 
-    const emailPattern = /^[a-zA-Z0-9._]+@(gmail\.com|outlook\.com|icloud\.com)$/;
     const emailInput = document.querySelector("#formulaire-modification #email");
-    if (emailInput.validity.valueMissing || emailPattern.test(emailInput.value.trim()) === false) {
-        emailInput.nextElementSibling.textContent = "L'adresse e-mail n'est pas valide. ";
+    if (!YQRegex.tester("email", emailInput.value)) {
+        emailInput.nextElementSibling.textContent = YQRegex.message("email");
         emailInput.classList.add("warning-border");
         modificationValidee = false;
     };
 
 
     const mpInput = document.querySelector("#formulaire-modification #nouveau-mot-de-passe");
-    if (mpInput.validity.valueMissing || mpInput.value.trim().length < 8) {
-        mpInput.nextElementSibling.textContent = "Le mot de passe doit contenir au moins 8 caractères.";
+    if (!YQRegex.tester("motDePasse", mpInput.value)) {
+        mpInput.nextElementSibling.textContent = YQRegex.message("motDePasse");
         mpInput.classList.add("warning-border");
         modificationValidee = false;
     };

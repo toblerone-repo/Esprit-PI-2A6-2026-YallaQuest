@@ -7,6 +7,7 @@
    Pour ajouter une page : une ligne dans $boSidebarPages, 'fichier.php' => 'Libellé'. */
 $boSidebarPages = [
     'listuser.php'       => 'Aventuriers', // [DARINE · LISTE UTILISATEURS]
+    'liste_utilisateurs.php' => 'Suppression des comptes',
     'quetes-listes.php'  => 'Quêtes',
     'activites.php'      => 'Activités',
     'types-activite.php' => "Types d'activité",

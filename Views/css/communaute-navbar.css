@@ -31,6 +31,19 @@
   font-weight: 700;
   letter-spacing: -.025em;
   white-space: nowrap;
+  text-decoration: none;
+}
+
+/* Le logo est un lien vers l'accueil : il garde sa couleur, sans soulignement. */
+.yq-community-navbar .community-navbar-brand:hover {
+  color: #cbb5f4;
+  text-decoration: none;
+}
+
+.yq-community-navbar .community-navbar-brand:focus-visible {
+  outline: 2px solid #cbb5f4;
+  outline-offset: 4px;
+  border-radius: 8px;
 }
 
 .yq-community-navbar .community-navbar-logo {

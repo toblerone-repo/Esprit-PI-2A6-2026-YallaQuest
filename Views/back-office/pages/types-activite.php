@@ -202,11 +202,11 @@ require_once __DIR__ . '/../partials/head.php';
       <div class="journal-grille-formulaire">
         <div class="journal-champ">
           <label for="nom">Nom</label>
-          <input type="text" id="nom" name="nom" maxlength="50" required placeholder="Ex : Préparation alimentaire">
+          <input type="text" id="nom" name="nom" maxlength="50" required data-regex="libelle" placeholder="Ex : Préparation alimentaire">
         </div>
         <div class="journal-champ">
           <label for="unite">Unité de mesure</label>
-          <input type="text" id="unite" name="unite_mesure" maxlength="20" required placeholder="Ex : grammes">
+          <input type="text" id="unite" name="unite_mesure" data-regex="unite" maxlength="20" required placeholder="Ex : grammes">
         </div>
       </div>
 
@@ -219,6 +219,7 @@ require_once __DIR__ . '/../partials/head.php';
 
 </div>
 
+<script src="../../js/regex.js"></script>
 <?php include_once __DIR__ . '/../partials/footer.php'; ?>
 
 </body>

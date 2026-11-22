@@ -231,4 +231,27 @@ class UtilisateurC
         unset($utilisateur['mot_de_passe_hash']);
         return $utilisateur;
     }
+    public static function getIdConnecte(): ?int
+    {
+        if (!empty($_SESSION['user_id'])) {
+            return (int) $_SESSION['user_id'];
+        }
+        return null;
+    }
+    function deleteUtilisateur($id)
+    {
+        try {
+            $db = config::getConnexion();
+            $query = $db->prepare('DELETE FROM utilisateur WHERE id_utilisateur = :id');
+            $query->execute(['id' => $id]);
+            return $query->rowCount();
+        } catch (PDOException $e) {
+            // Code 23000 : clé étrangère. Le compte est encore utilisé par une autre table
+            // (quêtes programmées, publications, guilde créée...) : MySQL refuse le DELETE.
+            if ($e->getCode() == 23000) {
+                return -1;
+            }
+            die('Erreur: ' . $e->getMessage());
+        }
+    }
 }

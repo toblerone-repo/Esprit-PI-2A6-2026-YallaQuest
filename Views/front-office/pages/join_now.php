@@ -55,7 +55,7 @@ $pageTitle = 'Créer mon compte · Yalla Quest';
                         <div class="field">
                             <label for="mot_de_passe">Mot de passe</label>
                             <input class="input" type="password" id="mot_de_passe" autocomplete="new-password" required aria-describedby="mdpHint">
-                            <span class="hint" id="mdpHint">6 caractères au moins.</span>
+                            <span class="hint" id="mdpHint">8 caractères au moins, dont une lettre et un chiffre.</span>
                         </div>
                         <div class="field">
                             <label for="confirmer_mot_de_passe">Confirmer le mot de passe</label>
@@ -65,11 +65,12 @@ $pageTitle = 'Créer mon compte · Yalla Quest';
                     </div>
                 </form>
 
-                <p class="switch">Déjà membre de Yalla Quest ? <a href="login.php">Se connecter</a></p>
+                <p class="switch">Déjà membre de Yalla Quest ? <a href="../../../index.php?action=login">Se connecter</a></p>
             </section>
         </div>
     </main>
 
+<script src="../../js/regex.js"></script>
 <script src="../../js/ui.js"></script>
 <script src="../../js/validation.js"></script>
 </body>

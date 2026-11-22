@@ -119,6 +119,9 @@ if (formulairePublicationAdmin) {
       erreurAuteur = 'Le nom de l’auteur est obligatoire.';
     } else if (longueur(auteur.value.trim()) < 2 || longueur(auteur.value) > 100) {
       erreurAuteur = 'Le nom de l’auteur doit contenir entre 2 et 100 caractères.';
+    } else if (!YQRegex.tester('auteur', auteur.value)) {
+      // format défini dans regex.js (chargé avant ce fichier sur publications.php)
+      erreurAuteur = YQRegex.message('auteur');
     }
     if (!afficherErreur(auteur, erreurAuteur)) valide = false;
 

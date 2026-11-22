@@ -322,6 +322,7 @@ if (in_array($_SERVER['REQUEST_METHOD'] ?? 'GET', ['POST', 'PUT', 'PATCH', 'DELE
 <?php } ?>
   <?php } ?>
 </div>
+<script src="../../js/regex.js" defer></script>
 <script src="../../js/communaute-validation.js" defer></script>
 <?php if ($standalone) { ?>
 <?php include_once __DIR__ . '/../partials/footer.php'; ?>
