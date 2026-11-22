@@ -13,7 +13,8 @@ class UtilisateurC
     nom = :nom, 
     prenom = :prenom, 
     mail = :mail, 
-    mot_de_passe_hash = :mp
+    mot_de_passe_hash = :mp, 
+    img_profil = :img_profil
     WHERE id_utilisateur = :id";
 
 
@@ -25,6 +26,7 @@ class UtilisateurC
                 'prenom' => $utilisateur->getPrenom(),
                 'mail' => $utilisateur->getEmail(),
                 'mp' => $utilisateur->getMp(),
+                'img_profil' => $utilisateur->getImgProfil(),
             ]);
         } catch (PDOException $e) {
             die("Erreur: " . $e->getMessage());
@@ -33,12 +35,12 @@ class UtilisateurC
 
     function listerImagesProfil()
     {
-        $sql = "SELECT * FROM images";
+        $sql = "SELECT id_image AS id, chemin FROM images";
         $db = config::getConnexion();
 
         try {
             $list = $db->query($sql);
-            return $list;
+            return $list->fetchAll();
         } catch (PDOException $e) {
             die("Erreur: " . $e->getMessage());
         };
