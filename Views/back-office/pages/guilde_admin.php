@@ -1,10 +1,20 @@
 <?php
 /* Yalla Quest · Back-Office : administration des guildes (page statique, données d'exemple de la partie Guildes).
-   Même gabarit que les autres pages du back-office : en-tête commun, Views/css/guilde.css, aucun effet. */
+   Même gabarit que les autres pages du back-office : barre latérale et en-tête communs, Views/css/guilde.css, aucun effet. */
 $currentPage = 'guildes';
 $pageTitle = 'Guildes · Administration · Yalla Quest';
-require __DIR__ . '/../partials/header.php';
 ?>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?= htmlspecialchars($pageTitle) ?></title>
+    <link rel="stylesheet" href="../../css/guilde.css">
+</head>
+<body>
+<?php include_once __DIR__ . '/../partials/sidebar.php'; ?>
+<?php include_once __DIR__ . '/../partials/header.php'; ?>
 <div class="app">
 <main class="canvas" id="canvas" tabindex="-1">
     <div class="title-row">
@@ -106,5 +116,6 @@ require __DIR__ . '/../partials/header.php';
     </div></div>
 </main>
 </div>
+<?php include_once __DIR__ . '/../partials/footer.php'; ?>
 </body>
 </html>

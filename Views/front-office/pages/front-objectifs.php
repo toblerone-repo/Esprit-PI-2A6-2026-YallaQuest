@@ -11,6 +11,7 @@ $pageTitle = 'Mes objectifs · Yalla Quest';
     <link rel="stylesheet" href="../../css/front-objectifs-styles.css">
 </head>
 <body>
+<?php include_once __DIR__ . '/../includes/navbar.php'; ?>
 <div class="app">
 <main class="canvas" id="canvas">
     <!-- En-tête -->
@@ -236,5 +237,6 @@ $pageTitle = 'Mes objectifs · Yalla Quest';
 </dialog>
 
 <?php require_once __DIR__ . '/../includes/scripts.php'; ?>
+<?php include_once __DIR__ . '/../includes/footer.php'; ?>
 </body>
 </html>

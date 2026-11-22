@@ -8,6 +8,7 @@
   ?>
 </head>
 <body>
+<?php include_once __DIR__ . '/../includes/navbar.php'; ?>
 
 <main class="competences-page">
 
@@ -153,5 +154,6 @@
 
 </main>
 
+<?php include_once __DIR__ . '/../includes/footer.php'; ?>
 </body>
 </html>

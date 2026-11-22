@@ -119,14 +119,13 @@
   <title><?= htmlspecialchars($pageTitle) ?></title>
 <?php } ?>
 <link rel="stylesheet" href="../../css/communaute-base.css">
-<link rel="stylesheet" href="../../css/communaute-navbar.css">
 <link rel="stylesheet" href="../../css/communaute.css">
 <?php if ($standalone) { ?>
 </head>
 <body class="yq-community-page">
 <?php } ?>
 <div class="yq-community yq-community-front">
-  <?php require __DIR__ . '/../includes/navbar.php'; ?>
+  <?php include_once __DIR__ . '/../includes/navbar.php'; ?>
   <?php if ($unavailable) { ?>
   <main class="page-shell page-section">
     <h1 class="section-title">La communauté est momentanément indisponible.</h1>
@@ -322,6 +321,7 @@
 </div>
 <script src="../../js/communaute-validation.js" defer></script>
 <?php if ($standalone) { ?>
+<?php include_once __DIR__ . '/../includes/footer.php'; ?>
 </body>
 </html>
 <?php } ?>

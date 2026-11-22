@@ -7,6 +7,7 @@
   background: #0d0d10;
   color: #f1f0f5;
   font-family: Arial, sans-serif;
+  font-size: 16px;
   line-height: 1.4;
 }
 
@@ -39,6 +40,19 @@
   height: 32px;
   border-radius: 8px;
   object-fit: cover;
+}
+
+/* La barre est incluse dans toutes les pages du front-office : son texte ne doit pas prendre
+   les styles généraux de la page (ex. une règle « span { … } » d'une autre feuille). */
+.yq-community-navbar .community-navbar-brand span {
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+}
+
+.yq-community-navbar .community-navbar-links li {
+  margin: 0;
+  padding: 0;
 }
 
 .yq-community-navbar .community-navbar-links {

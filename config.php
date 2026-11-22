@@ -26,13 +26,3 @@ class config
     }
 }
 config::getConnexion();
-?>
-
-
-
-
-
-
-
-
-

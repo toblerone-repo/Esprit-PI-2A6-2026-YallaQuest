@@ -11,6 +11,8 @@ $pageTitle = 'Objectifs · Administration · Yalla Quest';
     <link rel="stylesheet" href="../../css/back-objectifs-styles.css">
 </head>
 <body>
+<?php include_once __DIR__ . '/../partials/sidebar.php'; ?>
+<?php include_once __DIR__ . '/../partials/header.php'; ?>
 <div class="app">
 <main class="canvas" id="canvas">
     <!-- En-tête Back-Office -->
@@ -162,5 +164,6 @@ $pageTitle = 'Objectifs · Administration · Yalla Quest';
 </dialog>
 
 <?php require_once __DIR__ . '/../partials/scripts.php'; ?>
+<?php include_once __DIR__ . '/../partials/footer.php'; ?>
 </body>
 </html>

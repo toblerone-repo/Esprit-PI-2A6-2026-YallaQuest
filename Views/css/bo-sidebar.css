@@ -1,0 +1,158 @@
+/* Yalla Quest · Back-office : barre latérale commune (Views/back-office/partials/sidebar.php).
+   Tout est préfixé « bo-sidebar » et ne dépend d'aucune autre feuille de style,
+   pour s'afficher de la même façon sur toutes les pages du back-office. */
+
+.bo-sidebar {
+  --bo-sidebar-width: 232px;
+  --bo-sidebar-bg: #111115;
+  --bo-sidebar-border: #2a2a33;
+  --bo-sidebar-text: #f1f0f5;
+  --bo-sidebar-muted: #a4a1af;
+  --bo-sidebar-hover: #1d1d24;
+  --bo-sidebar-accent: #cbb5f4;
+
+  position: fixed;
+  inset: 0 auto 0 0;
+  z-index: 50;
+  box-sizing: border-box;
+  width: var(--bo-sidebar-width);
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 24px 14px;
+  overflow-y: auto;
+  background: var(--bo-sidebar-bg);
+  border-right: 1px solid var(--bo-sidebar-border);
+  color: var(--bo-sidebar-text);
+  font: 400 14px/1.4 "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  text-align: left;
+}
+
+/* La page laisse la place à la barre. */
+body:has(.bo-sidebar) {
+  padding-left: 232px;
+}
+
+.bo-sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 8px;
+}
+
+.bo-sidebar-brand img {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.bo-sidebar-name {
+  display: block;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.bo-sidebar-tag {
+  display: block;
+  margin-top: 2px;
+  color: var(--bo-sidebar-muted);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.bo-sidebar-links {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.bo-sidebar .bo-sidebar-link {
+  display: block;
+  padding: 9px 10px;
+  border-radius: 10px;
+  color: var(--bo-sidebar-muted);
+  font-weight: 500;
+  text-decoration: none;
+  transition: background-color 150ms ease, color 150ms ease;
+}
+
+.bo-sidebar .bo-sidebar-link:hover {
+  background: var(--bo-sidebar-hover);
+  color: var(--bo-sidebar-text);
+  text-decoration: none;
+}
+
+.bo-sidebar .bo-sidebar-link[aria-current="page"] {
+  background: var(--bo-sidebar-hover);
+  color: var(--bo-sidebar-accent);
+  font-weight: 600;
+}
+
+.bo-sidebar .bo-sidebar-front {
+  margin-top: auto;
+  display: block;
+  padding: 9px 12px;
+  border: 1px solid var(--bo-sidebar-border);
+  border-radius: 999px;
+  color: var(--bo-sidebar-text);
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+  transition: border-color 150ms ease, color 150ms ease;
+}
+
+.bo-sidebar .bo-sidebar-front:hover {
+  border-color: var(--bo-sidebar-accent);
+  color: var(--bo-sidebar-accent);
+  text-decoration: none;
+}
+
+.bo-sidebar a:focus-visible {
+  outline: 2px solid var(--bo-sidebar-accent);
+  outline-offset: 2px;
+}
+
+/* Téléphone et petite tablette : la barre passe en haut de la page, les liens défilent à l'horizontale. */
+@media (max-width: 860px) {
+  body:has(.bo-sidebar) {
+    padding-left: 0;
+  }
+
+  .bo-sidebar {
+    position: static;
+    width: 100%;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    overflow: visible;
+    border-right: 0;
+    border-bottom: 1px solid var(--bo-sidebar-border);
+  }
+
+  .bo-sidebar-brand {
+    padding: 0;
+  }
+
+  .bo-sidebar .bo-sidebar-front {
+    margin: 0 0 0 auto;
+    padding: 7px 12px;
+  }
+
+  .bo-sidebar-links {
+    order: 3;
+    width: 100%;
+    flex-direction: row;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .bo-sidebar .bo-sidebar-link {
+    flex: none;
+    white-space: nowrap;
+  }
+}

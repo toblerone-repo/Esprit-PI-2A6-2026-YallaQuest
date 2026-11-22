@@ -15,3 +15,5 @@
       <div class="spinner"></div>
     </div>
     <!-- ======== Preloader =========== -->
+    <?php include_once __DIR__ . '/../partials/sidebar.php'; ?>
+    <?php include_once __DIR__ . '/../partials/header.php'; ?>

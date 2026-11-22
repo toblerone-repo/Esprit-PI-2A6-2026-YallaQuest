@@ -36,22 +36,21 @@ Juste après `<body>` d'une page PHP de `Views/front-office/pages/` (c'est le ca
 
 ## En-tête commun du back-office — `partials/header.php`
 
-Pour toutes les pages d'administration, de tous les membres :
+Pour toutes les pages d'administration, de tous les membres, juste après `<body>` (chaque page garde son propre `<head>` et sa feuille de style) :
 
 ```php
-<?php
-$currentPage = 'utilisateurs';                                // clé du lien actif
-$pageTitle   = 'Aventuriers · Administration · Yalla Quest';
-require __DIR__ . '/../partials/header.php';
-?>
-<div class="app"><main class="canvas" id="canvas" tabindex="-1"> … </main></div>
+<?php $currentPage = 'utilisateurs'; // clé du lien actif, facultatif ?>
+…
+<body>
+<?php include_once __DIR__ . '/../partials/sidebar.php'; ?>
+<?php include_once __DIR__ . '/../partials/header.php'; ?>
 ```
 
-Il ouvre le document (feuille `guilde.css`, chemins relatifs depuis `Views/back-office/pages/`, aucun effet de mouvement) et affiche la barre « Yalla Quest · ADMINISTRATION » avec un lien par page. **Chaque membre ajoute sa page** dans le tableau `$adminPages` en haut du fichier : `'clé' => ['Libellé', 'fichier.php']`. Le lien dont la clé vaut `$currentPage` est marqué `aria-current="page"` (pastille blanche). Titre par défaut : « Administration · Yalla Quest ».
+`sidebar.php` affiche la barre latérale (logo, un lien par page, « Voir le site ») avec sa feuille `Views/css/bo-sidebar.css`. `header.php` affiche la barre « Yalla Quest · ADMINISTRATION » (sans logo, il est dans la barre latérale) avec sa feuille `Views/css/bo-header.css` ; les deux ne dépendent d'aucune autre feuille et s'affichent pareil sur toutes les pages. **Chaque membre ajoute sa page** dans le tableau `$adminPages` en haut de `header.php` : `'clé' => ['Libellé', 'fichier.php']`. Le lien dont la clé vaut `$currentPage` est marqué `aria-current="page"` (pastille blanche).
 
 ## Feuille de style — `Views/css/guilde.css`
 
-Le dossier `Views/css/` ne contient plus qu'un fichier. `guilde.css` réunit, dans cet ordre et sans changer une déclaration, les anciens `yq.css` (commun), `style.css` (connexion / inscription), `admin.css` (back-office) et `effects.css` (effets Guildes). `header.php` et `guildes.php` le chargent ; **les pages des autres membres qui chargeaient `yq.css`, `style.css` ou `admin.css` doivent charger `../../css/guilde.css` à la place** (une seule ligne).
+Le dossier `Views/css/` ne contient plus qu'un fichier. `guilde.css` réunit, dans cet ordre et sans changer une déclaration, les anciens `yq.css` (commun), `style.css` (connexion / inscription), `admin.css` (back-office) et `effects.css` (effets Guildes). `guilde_admin.php` et `guildes.php` le chargent ; **les pages des autres membres qui chargeaient `yq.css`, `style.css` ou `admin.css` doivent charger `../../css/guilde.css` à la place** (une seule ligne).
 
 La page Guildes n'a plus de `<style>` : ses styles (l'ancien `<style>` du template, sans ses polices en base64 — ce sont les mêmes que `Views/lib/fonts/`) sont dans la dernière partie de `guilde.css`, préfixés par `:where(html[data-yq-page="guildes"])`. Elle porte `data-yq-page="guildes"` sur `<html>`, et les sélecteurs des règles communes sont préfixés par `:where(html:not([data-yq-page="guildes"]))`. `:where()` ne compte pas dans la spécificité : sur toutes les autres pages, la cascade est exactement celle des anciens fichiers. Vérifié dans le navigateur en comparant tous les styles calculés, ancien CSS contre `guilde.css` : connexion, inscription et administration des aventuriers identiques (0 différence sur 288 400 valeurs) ; page Guildes identique sur ses 4 routes, à 1440 px et à 375 px (plus d'un million de valeurs, seule différence : l'ondulation aléatoire d'une carte pas encore révélée).
 Nouvelle règle commune : lui donner le même préfixe. Nouvelle règle pour la page Guildes : sans préfixe (partie effets, en fin de fichier) ou dans le `<style>` de la page.
@@ -133,4 +132,4 @@ Ouvrir `Views/front-office/pages/guildes.php` (voir « Ouvrir la page »).
 - [ ] Les boutons de vote, les onglets, « Proposer une quête », « Rejoindre », « Quitter » ne font rien (fonctions retirées) ; « voir les votes » s'ouvre.
 - [ ] `prefers-reduced-motion` : pas de Lenis, d'encre, d'emblème 3D, de vague ; fondus de 150 ms.
 - [ ] Onglet Réseau : aucun 404 (`css/guilde.css`, `img/competences/*.jpg`, `lib/…`, `js/effects/*.js`, polices `lib/fonts/*.woff2`).
-- [ ] Back-office : une page qui inclut `partials/header.php` est inchangée (la partie « page Guildes » de `guilde.css` ne s'y applique pas).
+- [ ] Back-office : l'en-tête `partials/header.php` est identique sur toutes les pages (la partie « page Guildes » de `guilde.css` ne s'y applique pas).

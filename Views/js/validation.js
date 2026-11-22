@@ -42,22 +42,34 @@ document.addEventListener('DOMContentLoaded', function () {
     // Connexion (login.php)
     const loginForm = document.getElementById('loginForm');
     if (loginForm) {
+        // Contrôle côté navigateur ; si tout est bon, le formulaire part vers login.php
+        // qui vérifie l'e-mail et le mot de passe dans la base.
         loginForm.addEventListener('submit', function (e) {
-            e.preventDefault();
-
-            const identifiant = document.getElementById('identifiant').value.trim();
+            const email = document.getElementById('email').value.trim();
             const mdp = document.getElementById('mot_de_passe').value;
             const loginError = document.getElementById('loginError');
 
-            const res = AuthController.login(identifiant, mdp);
-            if (!res.success) {
-                loginError.textContent = res.error;
+            let erreur = '';
+            let champ = null;
+            if (email === '') {
+                erreur = 'Saisis ton e-mail.';
+                champ = 'email';
+            } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                erreur = "L'adresse e-mail n'est pas valide.";
+                champ = 'email';
+            } else if (mdp === '') {
+                erreur = 'Saisis ton mot de passe.';
+                champ = 'mot_de_passe';
+            }
+
+            if (erreur !== '') {
+                e.preventDefault();
+                loginError.textContent = erreur;
                 loginError.hidden = false;
-                document.getElementById(identifiant ? 'mot_de_passe' : 'identifiant').focus();
+                document.getElementById(champ).focus();
                 return;
             }
             loginError.hidden = true;
-            YQ.toast('Bienvenue ' + res.user.pseudo + ' !');
         });
     }
 });

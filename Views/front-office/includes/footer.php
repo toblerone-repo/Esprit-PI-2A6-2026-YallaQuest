@@ -1,46 +1,24 @@
-<!-- Footer Start -->
-<div class="container-fluid bg-dark text-light footer pt-5 mt-5 wow fadeIn" data-wow-delay="0.1s">
-    <div class="container py-5">
-        <div class="row g-5">
-            <div class="col-lg-6 col-md-6">
-                <h4 class="text-white mb-3">Quick Link</h4>
-                <a class="btn btn-link" href="">About Us</a>
-                <a class="btn btn-link" href="">Contact Us</a>
-                <a class="btn btn-link" href="">Privacy Policy</a>
-                <a class="btn btn-link" href="">Terms &amp; Condition</a>
-                <a class="btn btn-link" href="">FAQs &amp; Help</a>
-            </div>
-            <div class="col-lg-6 col-md-6">
-                <h4 class="text-white mb-3">Contact</h4>
-                <p class="mb-2"><i class="fa fa-map-marker-alt me-3"></i>Ariana, Tunisie</p>
-                <p class="mb-2"><i class="fa fa-phone-alt me-3"></i><a href="tel:+216">+216</a></p>
-                <p class="mb-2"><i class="fa fa-envelope me-3"></i><a href="mailto:toblerone@gmail.com">toblerone@gmail.com</a></p>
-                <div class="d-flex pt-2">
-                    <a class="btn btn-outline-light btn-social" href="" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                    <a class="btn btn-outline-light btn-social" href="" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-                    <a class="btn btn-outline-light btn-social" href="" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
-                    <a class="btn btn-outline-light btn-social" href="" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
-                </div>
-            </div>
-        </div>
+<?php
+/* Pied de page commun à toutes les pages du front-office.
+   À inclure juste avant </body> d'une page de Views/front-office/pages/ :
+       <?php include_once __DIR__ . '/../includes/footer.php'; ?>
+   Il charge son propre style (Views/css/front-footer.css), qui ne dépend d'aucune autre feuille,
+   et reprend les couleurs de la barre de navigation (includes/navbar.php). */
+?>
+<link rel="stylesheet" href="../../css/front-footer.css">
+<footer class="yq-front-footer">
+  <div class="yq-front-footer-inner">
+    <div class="yq-front-footer-brand">
+      <img class="yq-front-footer-logo" src="../../img/communaute-logo.jpg" width="28" height="28" alt="">
+      <span class="yq-front-footer-name">YALLAQUEST</span>
+      <span class="yq-front-footer-motto">Chaque habitude est une quête.</span>
     </div>
-    <div class="container">
-        <div class="copyright">
-            <div class="row">
-                <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
-                    &copy; <a class="border-bottom" href="#">YallaQuest</a>, All Right Reserved.
-                    Designed By <a class="border-bottom" href="#">Toblerone</a>
-                </div>
-                <div class="col-md-6 text-center text-md-end">
-                    <div class="footer-menu">
-                        <a href="">Home</a>
-                        <a href="">Help</a>
-                        <a href="">FQAs</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 
-<a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
+    <address class="yq-front-footer-contact">
+      <span>Ariana, Tunisie</span>
+      <a href="mailto:toblerone@gmail.com">toblerone@gmail.com</a>
+    </address>
+
+    <p class="yq-front-footer-copy">&copy; <?= date('Y') ?> YallaQuest · Réalisé par Toblerone</p>
+  </div>
+</footer>

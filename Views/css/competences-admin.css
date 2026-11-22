@@ -6,6 +6,7 @@
 
 body {
   margin: 0;
+  background-color: #0B0B0B; /* même fond que .competences-admin : pas de blanc autour du contenu */
 }
 
 

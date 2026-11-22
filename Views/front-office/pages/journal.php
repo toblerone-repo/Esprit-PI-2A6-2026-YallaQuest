@@ -17,6 +17,7 @@
   <link rel="stylesheet" href="../../css/journal.css">
 </head>
 <body>
+<?php include_once __DIR__ . '/../includes/navbar.php'; ?>
 
 
 
@@ -362,7 +363,7 @@
 
 </main>
 
-<?php require_once '../includes/footer.php'; ?>
+<?php include_once __DIR__ . '/../includes/footer.php'; ?>
 
 </body>
 </html>

@@ -26,6 +26,7 @@ $utilisateur = [
 </head>
 
 <body class="page-profil">
+<?php include_once __DIR__ . '/../includes/navbar.php'; ?>
 
     <main class="container conteneur-profil py-5">
 
@@ -209,5 +210,6 @@ $utilisateur = [
 
     </main>
 
+<?php include_once __DIR__ . '/../includes/footer.php'; ?>
 </body>
 </html>

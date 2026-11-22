@@ -129,6 +129,8 @@
 <?php if ($standalone) { ?>
 </head>
 <body class="yq-community-page">
+<?php include_once __DIR__ . '/../partials/sidebar.php'; ?>
+<?php include_once __DIR__ . '/../partials/header.php'; ?>
 <?php } ?>
 <div class="yq-community yq-community-admin">
   <?php if ($flash) { ?>
@@ -237,6 +239,7 @@
 </div>
 <script src="../../js/communaute-validation.js" defer></script>
 <?php if ($standalone) { ?>
+<?php include_once __DIR__ . '/../partials/footer.php'; ?>
 </body>
 </html>
 <?php } ?>
