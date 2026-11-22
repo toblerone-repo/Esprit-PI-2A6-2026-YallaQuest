@@ -1,135 +1,205 @@
 <?php
+/* =====================================================================
+   [DARINE · MVC UTILISATEUR] Modèle Utilisateur (table `utilisateur`)
+   Même forme que UserModel du workshop (partie 3.1) :
+   attributs privés + getters/setters + fromArray(). Aucune requête SQL.
 
+   ---------------------------------------------------------------------
+   [DARINE · GUIDE] COMMENT UTILISER CE MODÈLE
+   ---------------------------------------------------------------------
+   - Ligne SQL -> objet (dans le contrôleur) :
+       $u = Utilisateur::fromArray($row);
+   - Créer un objet pour un INSERT / UPDATE (comme register() du workshop) :
+       $u = new Utilisateur();
+       $u->setNom($nom);
+       $u->setPrenom($prenom);
+       $u->setEmail($email);
+       $u->setPassword(password_hash($motDePasse, PASSWORD_DEFAULT));
+       $u->setRole('user');
+   - Attribut -> colonne : id -> id_utilisateur, email -> mail,
+     password -> mot_de_passe_hash, totalXp -> total_xp, ...
+   - Valeurs possibles : role = 'user' | 'admin', statut = 'actif' | 'bloque'
+
+   [NOTE POUR LE MEMBRE DE modifier-profil.php]
+   Le constructeur est maintenant vide (comme le workshop). L'ancien appel
+       new Utilisateur($nom, $prenom, $email, $hash, new DateTimeImmutable("today"), "", $id)
+   ne fonctionne plus. À remplacer par :
+       $utilisateur = new Utilisateur();
+       $utilisateur->setNom($nom);
+       $utilisateur->setPrenom($prenom);
+       $utilisateur->setEmail($email);
+       $utilisateur->setPassword($nouvau_hash);
+   (getMp() s'appelle maintenant getPassword(), comme dans le workshop.)
+   ===================================================================== */
 class Utilisateur
 {
+    // ------------------------------------------------------------
+    // ATTRIBUTES
+    // ------------------------------------------------------------
+    private int $id = 0;
+    private string $nom = '';
+    private string $prenom = '';
+    private string $email = '';
+    private string $password = '';
+    private string $role = 'user';
+    private string $statut = 'actif';
+    private int $totalXp = 0;
+    private int $niveau = 1;
+    private string $derniereProlongationAt = '';
+    private int $idTotem = 0;
+    private string $dateObtentionTotem = '';
 
-    private ?int $id;
-    private string $nom;
-    private string $prenom;
-    private string $email;
-    private string $mp;
-    private int $xp;
-    private int $niveau;
-    private string $img_profil;
-    private DateTimeImmutable $derniere_prolongation_at;
-    private int $id_totem;
-    private DateTimeImmutable $date_obtention_totem;
-
-    function __construct(string $nom, string $prenom, string $email, string $mp, DateTimeImmutable $derniere_prolongation_at, string $img_profil, int $id = NULL)
+    // ------------------------------------------------------------
+    // CONSTRUCTOR
+    // ------------------------------------------------------------
+    public function __construct()
     {
-        $this->id = $id;
-        $this->nom = $nom;
-        $this->prenom = $prenom;
-        $this->email = $email;
-        $this->mp = $mp;
-        $this->xp = 0;
-        $this->niveau = 0;
-        $this->img_profil = $img_profil;
-        $this->derniere_prolongation_at = $derniere_prolongation_at;
-        $this->id_totem = 1;
-        $this->date_obtention_totem = new DateTimeImmutable("today");
     }
 
-    function getId()
+    // ------------------------------------------------------------
+    // GETTERS
+    // ------------------------------------------------------------
+    public function getId(): int
     {
         return $this->id;
     }
 
-    function getNom()
+    public function getNom(): string
     {
         return $this->nom;
     }
 
-    function setNom(string $nom)
-    {
-        $this->nom = $nom;
-    }
-
-    function getPrenom()
+    public function getPrenom(): string
     {
         return $this->prenom;
     }
 
-    function setPrenom(string $prenom)
-    {
-        $this->prenom = $prenom;
-    }
-
-    function getEmail()
+    public function getEmail(): string
     {
         return $this->email;
     }
 
-    function setEmail(string $email)
+    public function getPassword(): string
+    {
+        return $this->password;
+    }
+
+    public function getRole(): string
+    {
+        return $this->role;
+    }
+
+    public function getStatut(): string
+    {
+        return $this->statut;
+    }
+
+    public function getTotalXp(): int
+    {
+        return $this->totalXp;
+    }
+
+    public function getNiveau(): int
+    {
+        return $this->niveau;
+    }
+
+    public function getDerniereProlongationAt(): string
+    {
+        return $this->derniereProlongationAt;
+    }
+
+    public function getIdTotem(): int
+    {
+        return $this->idTotem;
+    }
+
+    public function getDateObtentionTotem(): string
+    {
+        return $this->dateObtentionTotem;
+    }
+
+    // ------------------------------------------------------------
+    // SETTERS
+    // ------------------------------------------------------------
+    public function setId(int $id): void
+    {
+        $this->id = $id;
+    }
+
+    public function setNom(string $nom): void
+    {
+        $this->nom = $nom;
+    }
+
+    public function setPrenom(string $prenom): void
+    {
+        $this->prenom = $prenom;
+    }
+
+    public function setEmail(string $email): void
     {
         $this->email = $email;
     }
 
-    function getMp()
+    public function setPassword(string $password): void
     {
-        return $this->mp;
+        $this->password = $password;
     }
 
-    function setMp(string $mp)
+    public function setRole(string $role): void
     {
-        $this->mp = $mp;
+        $this->role = $role;
     }
 
-    function getXp()
+    public function setStatut(string $statut): void
     {
-        return $this->xp;
+        $this->statut = $statut;
     }
 
-    function setXp(int $xp)
+    public function setTotalXp(int $totalXp): void
     {
-        $this->xp = $xp;
+        $this->totalXp = $totalXp;
     }
 
-    function getNiveau()
-    {
-        return $this->niveau;
-    }
-
-    function setNiveau(int $niveau)
+    public function setNiveau(int $niveau): void
     {
         $this->niveau = $niveau;
     }
 
-    function getDerniereProlongationAt()
+    public function setDerniereProlongationAt(string $derniereProlongationAt): void
     {
-        return $this->xp;
+        $this->derniereProlongationAt = $derniereProlongationAt;
     }
 
-    function setDerniereProlongationAt(DateTimeImmutable $derniere_prolongation_at)
+    public function setIdTotem(int $idTotem): void
     {
-        $this->derniere_prolongation_at = $derniere_prolongation_at;
+        $this->idTotem = $idTotem;
     }
 
-    function getDateObtentionTotem()
+    public function setDateObtentionTotem(string $dateObtentionTotem): void
     {
-        return $this->xp;
+        $this->dateObtentionTotem = $dateObtentionTotem;
     }
 
-    function setDateObtentionTotem(DateTimeImmutable $date_obtention_totem)
+    // ------------------------------------------------------------
+    // CONVERT ARRAY TO OBJECT
+    // ------------------------------------------------------------
+    public static function fromArray(array $row): self
     {
-        $this->date_obtention_totem = $date_obtention_totem;
-    }
-
-    function getIdTotem()
-    {
-        return $this->niveau;
-    }
-
-    function setIdTotem(int $id_totem)
-    {
-        $this->id_totem = $id_totem;
-    }
-
-    function getImgProfil() {
-        return $this->img_profil; 
-    }
-
-    function setImgProfil(string $img_profil) {
-        $this->img_profil = $img_profil; 
+        $utilisateur = new self();
+        $utilisateur->setId((int) ($row['id_utilisateur'] ?? 0));
+        $utilisateur->setNom((string) ($row['nom'] ?? ''));
+        $utilisateur->setPrenom((string) ($row['prenom'] ?? ''));
+        $utilisateur->setEmail((string) ($row['mail'] ?? ''));
+        $utilisateur->setPassword((string) ($row['mot_de_passe_hash'] ?? ''));
+        $utilisateur->setRole((string) ($row['role'] ?? 'user'));
+        $utilisateur->setStatut((string) ($row['statut'] ?? 'actif'));
+        $utilisateur->setTotalXp((int) ($row['total_xp'] ?? 0));
+        $utilisateur->setNiveau((int) ($row['niveau'] ?? 1));
+        $utilisateur->setDerniereProlongationAt((string) ($row['derniere_prolongation_at'] ?? ''));
+        $utilisateur->setIdTotem((int) ($row['id_totem'] ?? 0));
+        $utilisateur->setDateObtentionTotem((string) ($row['date_obtention_totem'] ?? ''));
+        return $utilisateur;
     }
 }
