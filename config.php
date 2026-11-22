@@ -7,6 +7,8 @@ class config
             $servername="localhost";
             $username="root";
             $password ="";
+            // [DARINE · CORRECTION] "gestionproduits" (base de l'exemple du cours) -> "yalla_quest",
+            // la base du projet. Ajout de charset=utf8mb4 (accents) comme dans gestion_produit/config.php.
             $dbname="yalla_quest";
             try {
                 self::$pdo = new PDO("mysql:host=$servername;dbname=$dbname;charset=utf8mb4",
@@ -17,7 +19,6 @@ class config
                 self::$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
                 self::$pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
                 self::$pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
-               
                
             } catch (Exception $e) {
                 error_log('Connexion SQL : ' . $e->getMessage());

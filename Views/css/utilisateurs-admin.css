@@ -1,0 +1,508 @@
+/* =====================================================================
+   [DARINE · LISTE UTILISATEURS] Feuille de style de la page Aventuriers
+   (Views/back-office/pages/listuser.php)
+   ---------------------------------------------------------------------
+   Design repris de YallaQuest1 (yq.css + admin.css) : fond noir,
+   lilas pour les actions, or pour les administrateurs.
+   Méthode du cours CSS3 :
+   - CSS externe, une règle par sélecteur, aucun style inline ;
+   - sélecteurs de classe ; box-sizing: border-box ;
+   - Flexbox (alignements sur un axe) et Grid (chiffres clés) avec gap ;
+   - Mobile first : règles de base pour téléphone, puis media queries
+     min-width (768px tablette, 1024px ordinateur).
+   ===================================================================== */
+
+/* ---------- 1. Variables (couleurs, polices, rayons) ---------- */
+:root {
+  --fond: #000000;
+  --surface: #111111;
+  --releve: #1b1b1b;
+  --bordure: #232323;
+  --filet: #1f1f1f;
+  --controle: #3d3d3d;
+  --texte: #ffffff;
+  --texte-doux: #d4d4d4;
+  --gris: #a8a8a8;
+  --lilas: #ebc1f2;
+  --or: #d7a64b;
+  --sauge: #7bae8c;
+  --rouge: #e5484d;
+
+  --police-titre: "Playfair Display", Georgia, serif;
+  --police-texte: "Inter", Arial, sans-serif;
+
+  --rayon-carte: 16px;
+}
+
+/* ---------- 2. Base ---------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background-color: var(--fond);
+  color: var(--texte);
+  font-family: var(--police-texte);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.canvas h1,
+.canvas p {
+  margin: 0;
+}
+
+/* Texte lu par les lecteurs d'écran mais invisible (cours HTML5 : accessibilité) */
+.sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* ---------- 3. Zone de contenu ---------- */
+.canvas {
+  width: 100%;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 24px 16px 40px;
+}
+
+/* ---------- 4. En-tête de page ---------- */
+.title-row {
+  display: flex;
+  flex-direction: column; /* téléphone : titre puis boutons, l'un sous l'autre */
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.kicker {
+  margin-bottom: 10px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--gris);
+}
+
+.title-row h1 {
+  font-family: var(--police-titre);
+  font-weight: 400;
+  font-size: 38px;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.title-row .about {
+  margin-top: 10px;
+  max-width: 60ch;
+  font-size: 15px;
+  font-style: italic;
+  color: var(--gris);
+}
+
+.title-row .sub {
+  margin-top: 14px;
+  font-size: 16px;
+  color: var(--texte-doux);
+}
+
+.title-row .sub strong {
+  font-weight: 600;
+  color: var(--texte);
+}
+
+.title-row .actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* ---------- 5. Chiffres clés (Grid) ---------- */
+.kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1px; /* le fond visible entre les cases fait office de séparateur */
+  margin-bottom: 24px;
+  background-color: var(--bordure);
+  border: 1px solid var(--bordure);
+  border-radius: var(--rayon-carte);
+  overflow: hidden;
+}
+
+.kpi {
+  padding: 16px 20px;
+  background-color: var(--surface);
+}
+
+.kpi-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--gris);
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--gris);
+}
+
+.dot-lilas {
+  background-color: var(--lilas);
+}
+
+.dot-or {
+  background-color: var(--or);
+}
+
+.kpi-value {
+  margin-top: 6px;
+  font-size: 28px;
+  font-weight: 500;
+  line-height: 1.15;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- 6. Boutons (prêts pour les parties Ajout / Modifier / Supprimer) ----------
+   [DARINE · GUIDE] Classes à réutiliser par les autres membres sur listuser.php :
+     <button class="btn primary">Inscrire un aventurier</button>   bouton principal (lilas)
+     <a class="btn sm" href="...">Modifier</a>                     petit bouton contour
+     <button class="btn danger sm">Supprimer</button>              petit bouton doré (danger)
+   Pastilles : "pill role-admin", "pill role-user", "pill st-actif", "pill st-bloque".
+   Mettre plusieurs boutons dans <span class="row-actions"> pour les aligner. */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 18px;
+  border: 1px solid var(--controle);
+  border-radius: 999px;
+  background-color: transparent;
+  color: var(--texte);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: border-color 150ms ease, background-color 150ms ease;
+}
+
+.btn:hover,
+.btn:focus-visible {
+  border-color: var(--texte);
+}
+
+.btn.primary {
+  height: 44px;
+  padding: 0 22px;
+  border-color: var(--lilas);
+  background-color: var(--lilas);
+  color: #000000;
+  font-weight: 600;
+}
+
+.btn.danger {
+  border-color: #4a3a1c;
+  color: var(--or);
+}
+
+.btn.danger:hover,
+.btn.danger:focus-visible {
+  border-color: var(--or);
+}
+
+.btn.sm {
+  height: 34px;
+  padding: 0 14px;
+  font-size: 13px;
+}
+
+/* ---------- 6 bis. [DARINE · RECHERCHE PAR ID] Formulaire de recherche (Flexbox) ---------- */
+.search-id {
+  display: flex;
+  flex-wrap: wrap; /* téléphone : les éléments passent à la ligne */
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.search-id label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--texte-doux);
+}
+
+.input {
+  width: 140px;
+  height: 40px;
+  padding: 0 14px;
+  border: 1px solid var(--controle);
+  border-radius: 12px;
+  background-color: #0a0a0a;
+  color: var(--texte);
+  font-family: inherit;
+  font-size: 14px;
+}
+
+.input:focus {
+  border-color: var(--lilas);
+  outline: none;
+}
+
+.search-error {
+  margin-bottom: 16px;
+  font-size: 13px;
+  color: var(--or);
+}
+
+/* ---------- 7. Tableau ---------- */
+.sheet {
+  padding: 4px 16px;
+  background-color: var(--surface);
+  border: 1px solid var(--bordure);
+  border-radius: var(--rayon-carte);
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Téléphone : chaque ligne devient une carte (l'en-tête du tableau est masqué) */
+.admin-table thead {
+  display: none;
+}
+
+.admin-table,
+.admin-table tbody {
+  display: block;
+}
+
+.admin-table tr {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px 12px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--filet);
+}
+
+.admin-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.admin-table td {
+  display: block;
+  padding: 0;
+  min-width: 0;
+}
+
+.admin-table td:first-child,
+.admin-table td:last-child {
+  grid-column: 1 / -1; /* nom et actions sur toute la largeur */
+}
+
+.admin-table .hide-md {
+  display: none; /* l'e-mail est déjà sous le nom */
+}
+
+.admin-table th {
+  padding: 14px 12px 12px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--gris);
+  border-bottom: 1px solid var(--bordure);
+}
+
+.admin-table .desc {
+  display: block;
+  margin-top: 2px;
+  font-size: 13px;
+  color: var(--gris);
+}
+
+.admin-table strong {
+  font-weight: 600;
+}
+
+/* Ligne de l'administrateur connecté */
+.admin-table .is-me {
+  background-color: #1a141c;
+}
+
+.you {
+  margin-left: 6px;
+  font-size: 12px;
+  color: var(--lilas);
+}
+
+.empty {
+  padding: 24px 0;
+  text-align: center;
+  color: var(--gris);
+}
+
+/* Cellule aventurier : avatar + nom (Flexbox) */
+.gcell {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.avatar {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: var(--lilas);
+  color: #000000;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase; /* initiales en majuscules */
+}
+
+.row-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+/* ---------- 8. Pastilles (rôle, statut, verrou) ---------- */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 24px;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  background-color: var(--releve);
+  color: #e6e6e6;
+}
+
+.pill svg {
+  width: 12px;
+  height: 12px;
+}
+
+.role-admin {
+  background-color: var(--or);
+  color: #000000;
+}
+
+.role-user {
+  background-color: var(--lilas);
+  color: #000000;
+}
+
+.st-actif {
+  background-color: var(--sauge);
+  color: #000000;
+}
+
+.st-bloque {
+  background-color: var(--rouge);
+  color: #000000;
+}
+
+.is-locked {
+  border: 1px solid var(--controle);
+  cursor: not-allowed;
+}
+
+/* ---------- 9. Tablette (≥ 768px) : vrai tableau ---------- */
+@media (min-width: 768px) {
+  .canvas {
+    padding: 40px 32px 64px;
+  }
+
+  .title-row {
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 32px;
+  }
+
+  .title-row h1 {
+    font-size: 56px;
+  }
+
+  .title-row .about {
+    font-size: 17px;
+  }
+
+  .sheet {
+    padding: 8px 20px;
+  }
+
+  .admin-table {
+    display: table;
+  }
+
+  .admin-table thead {
+    display: table-header-group;
+  }
+
+  .admin-table tbody {
+    display: table-row-group;
+  }
+
+  .admin-table tr {
+    display: table-row;
+  }
+
+  .admin-table td {
+    display: table-cell;
+    padding: 16px 12px;
+    vertical-align: middle;
+    border-bottom: 1px solid var(--filet);
+  }
+
+  .admin-table tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  .admin-table .n {
+    text-align: right;
+  }
+
+  .row-actions {
+    justify-content: flex-end;
+    flex-wrap: nowrap;
+  }
+}
+
+/* ---------- 10. Ordinateur (≥ 1024px) : colonne e-mail visible ---------- */
+@media (min-width: 1024px) {
+  .admin-table .hide-md {
+    display: table-cell;
+  }
+
+  .gcell .desc {
+    display: none; /* l'e-mail a maintenant sa propre colonne */
+  }
+}

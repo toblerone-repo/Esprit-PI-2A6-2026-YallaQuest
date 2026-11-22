@@ -69,11 +69,10 @@ $pageTitle = 'Modifier mon profil · Yalla Quest';
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta name="csrf-token" content="<?= htmlspecialchars($csrfToken ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($pageTitle, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></title>
-    <link rel="stylesheet" href="../../css/profil.css">
+  <?php
+    $currentPage = 'modifier-profil';
+    require_once __DIR__ . '/../includes/head.php';
+  ?>
 </head>
 <body class="page-modifier-profil">
 <?php include_once __DIR__ . '/../includes/navbar.php'; ?>

@@ -6,6 +6,7 @@
    Le lien actif est trouvé à partir du nom du fichier ouvert : rien à définir avant l'include.
    Pour ajouter une page : une ligne dans $boSidebarPages, 'fichier.php' => 'Libellé'. */
 $boSidebarPages = [
+    'listuser.php'       => 'Aventuriers', // [DARINE · LISTE UTILISATEURS]
     'quetes-listes.php'  => 'Quêtes',
     'activites.php'      => 'Activités',
     'types-activite.php' => "Types d'activité",

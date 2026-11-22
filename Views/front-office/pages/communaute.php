@@ -124,16 +124,15 @@ if (in_array($_SERVER['REQUEST_METHOD'] ?? 'GET', ['POST', 'PUT', 'PATCH', 'DELE
 <!doctype html>
 <html lang="fr">
 <head>
-    <meta name="csrf-token" content="<?= htmlspecialchars($csrfToken ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title><?= htmlspecialchars($pageTitle, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></title>
-<?php } ?>
-<link rel="stylesheet" href="../../css/communaute-base.css">
-<link rel="stylesheet" href="../../css/communaute.css">
-<?php if ($standalone) { ?>
+  <?php
+    $currentPage = 'communaute';
+    require_once __DIR__ . '/../includes/head.php';
+  ?>
 </head>
 <body class="yq-community-page">
+<?php } else { ?>
+<link rel="stylesheet" href="../../css/communaute-base.css">
+<link rel="stylesheet" href="../../css/communaute.css">
 <?php } ?>
 <div class="yq-community yq-community-front">
   <?php include_once __DIR__ . '/../includes/navbar.php'; ?>

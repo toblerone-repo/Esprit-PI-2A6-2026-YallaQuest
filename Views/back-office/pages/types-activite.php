@@ -9,23 +9,11 @@ if (in_array($_SERVER['REQUEST_METHOD'] ?? 'GET', ['POST', 'PUT', 'PATCH', 'DELE
     exit('Jeton de sécurité invalide. Rechargez la page.');
 }
 ?>
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta name="csrf-token" content="<?= htmlspecialchars($csrfToken ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Gestion des types d'activité de YallaQuest.">
-  <title>Types d'activité - Administration YallaQuest</title>
-
-  
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Playfair+Display&display=swap">
-
-  <link rel="stylesheet" href="../../css/journal-admin.css">
-</head>
-<body>
-<?php include_once __DIR__ . '/../partials/sidebar.php'; ?>
-<?php include_once __DIR__ . '/../partials/header.php'; ?>
+<?php
+$title           = "Types d'activité - Administration YallaQuest";
+$currentPage     = 'types-activite';
+require_once __DIR__ . '/../partials/head.php';
+?>
 
 
 <div class="journal-admin">

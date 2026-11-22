@@ -1,63 +1,163 @@
 <?php
-/*
- * GUIDE D'INTEGRATION - SECURITE DES REQUETES SQL ET DES MOTS DE PASSE
- *
- * Ce controleur utilise Models/UserModel.php, dont la classe s'appelle Utilisateur,
- * et la connexion PDO fournie par config::getConnexion(). Reprenez les principes
- * ci-dessous dans les autres controleurs lors de l'integration de vos modules.
- *
- * 1. REQUETES SQL PREPAREES
- *    login() et updateUtilisateur() utilisent prepare(), bindValue() et execute().
- *    Les valeurs variables passent par des parametres (:mail, :id, :nom, etc.) :
- *    ne concatenez pas directement une valeur de formulaire dans la requete SQL.
- *    Les identifiants sont lies avec PDO::PARAM_INT et les textes avec PARAM_STR.
- *    Conservez les parametres lies lorsque vous ajoutez des champs ou des requetes.
- *    La validation des champs reste necessaire avant l'appel de ces methodes.
- *
- * 2. HACHAGE AVANT L'ECRITURE EN BASE
- *    Pour updateUtilisateur(), le modele recoit le NOUVEAU mot de passe en clair.
- *    Le controleur calcule lui-meme :
- *    $passwordHash = password_hash($utilisateur->getMp(), PASSWORD_DEFAULT);
- *    Seul ce resultat est lie a :mp et stocke dans mot_de_passe_hash.
- *    Ne hachez pas le mot de passe avant de le transmettre a cette methode :
- *    cela provoquerait un double hachage et empecherait la connexion.
- *    Pour une future inscription, appliquez egalement password_hash() avant
- *    l'INSERT. Aucun traitement d'inscription n'est ajoute dans ce fichier.
- *
- * 3. VERIFICATION DES MOTS DE PASSE
- *    login($mail, $mp) attend le mot de passe saisi en clair et utilise
- *    password_verify($mp, $hashEnBase). Ne comparez pas deux password_hash() :
- *    leurs resultats peuvent etre differents pour un meme mot de passe.
- *    login() renvoie null si la connexion echoue. Si elle reussit, il renvoie
- *    les informations de l'utilisateur apres avoir retire mot_de_passe_hash.
- *    Ne remettez pas ce hash dans la session ou dans une reponse au navigateur.
- *
- * 4. MODIFICATION DU PROFIL
- *    updateUtilisateur($utilisateur, $id, $ancienMotDePasse) verifie d'abord
- *    l'ancien mot de passe avec password_verify(), puis hache le nouveau.
- *    L'id transmis doit venir de $_SESSION['utilisateur']['id'] pour le profil
- *    personnel, comme dans modifier-profil.php, et non d'un champ du formulaire.
- *    Le nouveau mot de passe doit avoir au moins 8 octets ; les champs obligatoires,
- *    l'e-mail et la confirmation du mot de passe sont verifies dans la page appelante.
- *    La condition :previous_hash dans l'UPDATE evite d'ecraser une modification
- *    du mot de passe intervenue entre sa lecture et son enregistrement.
- *    La methode renvoie true si une ligne a ete modifiee, sinon false.
- *
- * 5. CSRF, XSS ET ERREURS LORS DE L'INTEGRATION
- *    Avant d'appeler une methode qui modifie des donnees, verifiez le jeton CSRF
- *    avec AuthController dans la page ou le point d'entree. Ces methodes SQL
- *    ne verifient pas elles-memes le jeton ni l'utilisateur de la session.
- *    Pour afficher leurs resultats en HTML, utilisez htmlspecialchars() dans
- *    la vue avec ENT_QUOTES | ENT_SUBSTITUTE et UTF-8, pas avant le stockage.
- *    Les exceptions PDO sont journalisees avec error_log() ; le navigateur
- *    recoit un message generique et un statut 500. Conservez cette separation
- *    pour ne pas afficher les details SQL ou les informations de connexion.
- */
-include_once __DIR__ . '/../Models/UserModel.php';
-include_once __DIR__ . '/../config.php';
+/* =====================================================================
+   [DARINE · MVC UTILISATEUR] Contrôleur Utilisateur
+   Même forme que AuthController du workshop (parties 3.2 et 6.1) :
+   toute la logique et toutes les requêtes SQL sont ici, les Vues
+   ne font qu'afficher.
+
+   ---------------------------------------------------------------------
+   [DARINE · GUIDE] COMMENT UTILISER MES MÉTHODES DEPUIS VOTRE PAGE
+   ---------------------------------------------------------------------
+   require_once __DIR__ . '/../../../Controllers/utilisateurC.php';
+   $utilisateurC = new UtilisateurC();
+
+   $utilisateurC->listUtilisateurs()            -> Utilisateur[] (tous les comptes)
+   $utilisateurC->getUtilisateur($id)           -> Utilisateur ou null
+   $utilisateurC->rechercherParId($id)          -> Utilisateur[] (0 ou 1 compte)
+   $utilisateurC->countAllUtilisateurs()        -> int
+   $utilisateurC->countByRole('admin')          -> int
+   UtilisateurC::estSoiMeme($id)                -> true si $id = compte connecté
+   $utilisateurC->verifierSuppression($id)           -> tableau d'erreurs
+   $utilisateurC->verifierChangementRole($id, $role) -> tableau d'erreurs
+
+   Les méthodes renvoient des OBJETS Utilisateur : on lit les valeurs
+   avec les getters ($u->getNom(), $u->getEmail(), $u->getRole()...).
+   Le compte connecté est lu dans $_SESSION['user_id'] (clé du workshop,
+   remplie au login par la partie Sécurité).
+
+   Autres membres (ajout, modification, suppression, rôle, blocage,
+   recherche) : ajoutez vos méthodes dans cette classe avec $this->db.
+   ===================================================================== */
+
+require_once __DIR__ . '/../config.php';
+require_once __DIR__ . '/../Models/utilisateur.php';
 
 class UtilisateurC
 {
+    private PDO $db;
+
+    public function __construct()
+    {
+        $this->db = config::getConnexion();
+    }
+
+    // ==============================================================
+    // [DARINE · LISTE] ADMIN BACKOFFICE DATA (workshop 6.1)
+    // ==============================================================
+
+    /**
+     * Récupère tous les utilisateurs (liste du back-office).
+     * Utilisation : foreach ($utilisateurC->listUtilisateurs() as $u) { echo $u->getNom(); }
+     * [Recherche] : votre méthode de recherche doit aussi renvoyer
+     * des objets Utilisateur (Utilisateur::fromArray), pour que
+     * listuser.php puisse l'afficher avec la même boucle.
+     * @return Utilisateur[]
+     */
+    public function listUtilisateurs(): array
+    {
+        $stmt = $this->db->query('SELECT * FROM utilisateur ORDER BY id_utilisateur ASC');
+        $rows = $stmt->fetchAll();
+
+        return array_map(fn(array $row) => Utilisateur::fromArray($row), $rows);
+    }
+
+    /**
+     * Récupère un utilisateur par son id (null s'il n'existe pas).
+     * Utilisation : $u = $utilisateurC->getUtilisateur((int) $_GET['id']);
+     */
+    public function getUtilisateur(int $id): ?Utilisateur
+    {
+        $stmt = $this->db->prepare('SELECT * FROM utilisateur WHERE id_utilisateur = :id LIMIT 1');
+        $stmt->execute(['id' => $id]);
+        $row = $stmt->fetch();
+
+        return $row ? Utilisateur::fromArray($row) : null;
+    }
+
+    /**
+     * [DARINE · RECHERCHE PAR ID] Bouton "Rechercher" de listuser.php.
+     * Renvoie un tableau avec l'utilisateur trouvé, ou un tableau vide :
+     * même forme que listUtilisateurs(), donc la page l'affiche avec la même boucle.
+     * Utilisation : $liste = $utilisateurC->rechercherParId(3);
+     * @return Utilisateur[]
+     */
+    public function rechercherParId(int $id): array
+    {
+        $utilisateur = $this->getUtilisateur($id);
+
+        if ($utilisateur === null) {
+            return [];
+        }
+        return [$utilisateur];
+    }
+
+    /**
+     * Compte les utilisateurs d'un rôle ('user' ou 'admin').
+     */
+    public function countByRole(string $role): int
+    {
+        $stmt = $this->db->prepare('SELECT COUNT(*) FROM utilisateur WHERE role = :role');
+        $stmt->execute(['role' => $role]);
+        return (int) $stmt->fetchColumn();
+    }
+
+    /**
+     * Nombre total de comptes.
+     */
+    public function countAllUtilisateurs(): int
+    {
+        return (int) $this->db->query('SELECT COUNT(*) FROM utilisateur')->fetchColumn();
+    }
+
+    // ==============================================================
+    // [DARINE · RÈGLE ADMIN] Un admin ne peut pas se supprimer
+    // ni se retirer le rôle admin.
+    // --------------------------------------------------------------
+    // À appeler par les membres Suppression / Rôle AVANT leur requête :
+    //
+    //   $errors = $utilisateurC->verifierSuppression((int) $_POST['id']);
+    //   if (empty($errors)) { ...votre DELETE... }
+    //
+    //   $errors = $utilisateurC->verifierChangementRole((int) $_POST['id'], $_POST['role']);
+    //   if (empty($errors)) { ...votre UPDATE du rôle... }
+    //
+    // Tableau vide = autorisé (même principe que register() du workshop).
+    // Le cadenas affiché dans listuser.php n'est qu'un repère visuel :
+    // c'est cet appel, côté serveur, qui bloque vraiment l'action.
+    // ==============================================================
+
+    /**
+     * true si $id est le compte actuellement connecté.
+     * (int) : l'id peut avoir été rangé en texte ('1') dans la session ;
+     * sans conversion, '1' === 1 serait faux et la règle ne bloquerait rien.
+     * Personne de connecté -> 0, qui ne correspond à aucun compte.
+     */
+    public static function estSoiMeme(int $id): bool
+    {
+        return (int) ($_SESSION['user_id'] ?? 0) === $id;
+    }
+
+    public function verifierSuppression(int $id): array
+    {
+        $errors = [];
+
+        if (self::estSoiMeme($id)) {
+            $errors[] = "Vous ne pouvez pas supprimer votre propre compte.";
+        }
+
+        return $errors;
+    }
+
+    public function verifierChangementRole(int $id, string $nouveauRole): array
+    {
+        $errors = [];
+
+        if (self::estSoiMeme($id) && $nouveauRole !== 'admin') {
+            $errors[] = "Vous ne pouvez pas retirer votre propre rôle administrateur.";
+        }
+
+        return $errors;
+    }
 
     // Le modèle fournit le nouveau mot de passe en clair.
     function updateUtilisateur(Utilisateur $utilisateur, int $id, string $ancienMotDePasse): bool
@@ -131,4 +231,4 @@ class UtilisateurC
         unset($utilisateur['mot_de_passe_hash']);
         return $utilisateur;
     }
-};
+}

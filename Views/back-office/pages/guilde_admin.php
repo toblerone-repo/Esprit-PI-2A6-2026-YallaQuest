@@ -14,18 +14,9 @@ if (in_array($_SERVER['REQUEST_METHOD'] ?? 'GET', ['POST', 'PUT', 'PATCH', 'DELE
 $currentPage = 'guildes';
 $pageTitle = 'Guildes · Administration · Yalla Quest';
 ?>
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta name="csrf-token" content="<?= htmlspecialchars($csrfToken ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($pageTitle, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></title>
-    <link rel="stylesheet" href="../../css/guilde.css">
-</head>
-<body>
-<?php include_once __DIR__ . '/../partials/sidebar.php'; ?>
-<?php include_once __DIR__ . '/../partials/header.php'; ?>
+<?php
+require_once __DIR__ . '/../partials/head.php';
+?>
 <div class="app">
 <main class="canvas" id="canvas" tabindex="-1">
     <div class="title-row">

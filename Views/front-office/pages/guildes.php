@@ -12,12 +12,11 @@ if (in_array($_SERVER['REQUEST_METHOD'] ?? 'GET', ['POST', 'PUT', 'PATCH', 'DELE
 <!DOCTYPE html>
 <html lang="fr" data-yq-page="guildes">
 <head>
-    <meta name="csrf-token" content="<?= htmlspecialchars($csrfToken ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Guildes · Yalla Quest</title>
-<!-- Feuille unique du projet : styles de la page (partie « page Guildes »), règles communes et effets. -->
-<link rel="stylesheet" href="../../css/guilde.css">
+  <?php
+    $pageTitle = 'Guildes · Yalla Quest';
+    $currentPage = 'guildes';
+    require_once __DIR__ . '/../includes/head.php';
+  ?>
 <!-- Effets (scroll & souris) : styles dans Views/css/guilde.css, scripts dans Views/js/effects/. Pour les désactiver,
      retirer le script fx-boot ci-dessous et le bloc « Effets » en bas de page. -->
 <script>/* masque #canvas le temps que les effets démarrent (jamais plus de 2,5 s, jamais en mouvement réduit) */
