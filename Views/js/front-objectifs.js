@@ -159,7 +159,13 @@ function filtrerObjectifs(statut, btn) {
 function escapeHtml(text) {
     if (text === null || text === undefined) return '';
     var map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
-    return text.toString().replace(/[&<>"']/g, function(m) { return map[m]; });
+    var str = text.toString();
+    var out = '';
+    for (var i = 0; i < str.length; i++) {
+        var c = str.charAt(i);
+        out += map[c] !== undefined ? map[c] : c;
+    }
+    return out;
 }
 
 // Initialisation au chargement du DOM
