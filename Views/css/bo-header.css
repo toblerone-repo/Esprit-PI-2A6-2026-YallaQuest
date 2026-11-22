@@ -1,0 +1,90 @@
+/* Yalla Quest · Back-office : en-tête commun (Views/back-office/partials/header.php).
+   Même apparence que l'en-tête d'origine de la page Guildes, mais tout est préfixé « bo-header »
+   et ne dépend d'aucune autre feuille de style : il s'affiche pareil sur toutes les pages. */
+
+.bo-header {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 12px 24px;
+  flex-wrap: wrap;
+  margin: 0;
+  padding: 18px 32px;
+  /* Fond propre (le même que la barre latérale) : l'en-tête ne dépend pas du fond de la page. */
+  background: #111115;
+  border-bottom: 1px solid #2a2a33;
+  color: #ffffff;
+  font: 400 15px/1.5 "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  text-align: left;
+}
+
+.bo-header-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.bo-header-brand strong {
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+
+.bo-header-tag {
+  margin-top: 3px;
+  color: #a8a8a8;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+}
+
+.bo-header nav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.bo-header .bo-header-link {
+  display: flex;
+  align-items: center;
+  height: 38px;
+  padding: 0 10px;
+  border-radius: 10px;
+  color: #d4d4d4;
+  font-size: 14px;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color 150ms ease, color 150ms ease;
+}
+
+.bo-header .bo-header-link:hover {
+  background: #1b1b1b;
+  color: #ffffff;
+  text-decoration: none;
+}
+
+.bo-header .bo-header-link[aria-current="page"] {
+  background: #ffffff;
+  color: #000000;
+  font-weight: 500;
+}
+
+.bo-header .bo-header-link:focus-visible {
+  outline: 2px solid #ebc1f2;
+  outline-offset: 2px;
+}
+
+@media (max-width: 860px) {
+  .bo-header {
+    padding: 14px 16px;
+  }
+
+  .bo-header nav {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    width: 100%;
+    scrollbar-width: none;
+  }
+}

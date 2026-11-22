@@ -1,0 +1,223 @@
+
+.competences-admin,
+.competences-admin * {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background-color: #0B0B0B; /* même fond que .competences-admin : pas de blanc autour du contenu */
+}
+
+
+.competences-admin {
+  --noir: #0B0B0B;
+  --gris-fonce: #121212;
+  --bordure: #262626;
+  --gris: #A8A8A8;
+  --blanc: #F6F4F8;
+  --lilas: #EBC1F2;
+  --or: #D7A64B;
+  --rouge: #E5484D;
+  --police-titre: "Playfair Display", Georgia, serif;
+  --police-texte: "Inter", Arial, sans-serif;
+
+  min-height: 100vh;
+  background-color: var(--noir);
+  padding: 32px;
+  color: var(--blanc);
+  font-family: var(--police-texte);
+  line-height: 1.5;
+}
+
+.competences-admin h1,
+.competences-admin h2,
+.competences-admin p {
+  margin: 0;
+}
+
+/* ----- Haut de page ----- */
+.competences-admin-entete {
+  display: flex;
+  flex-wrap: wrap; /* permet aux éléments de passer à la ligne si l'espace est insuffisant */
+  justify-content: space-between; /* pousse les éléments aux extrémités du conteneur */
+  align-items: flex-end; /* aligne les éléments sur la ligne de base */
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.competences-admin-sur-titre {
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--gris);
+}
+
+.competences-admin h1 {
+  font-family: var(--police-titre);
+  font-weight: normal;
+  font-size: 3rem;
+  line-height: 1.1;
+  text-transform: uppercase;
+}
+
+.competences-admin h2 {
+  font-family: var(--police-titre);
+  font-weight: normal;
+  font-size: 1.3rem;
+}
+
+/* ----- Blocs (liste et formulaire) ----- */
+.competences-admin-bloc {
+  margin-bottom: 24px;
+  padding: 20px;
+  background-color: var(--gris-fonce);
+  border: 1px solid var(--bordure);
+  border-radius: 16px;
+}
+
+.competences-admin-bloc-titre {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.competences-admin-info {
+  font-size: 0.85rem;
+  color: var(--gris);
+}
+
+/* ----- Boutons ----- */
+.competences-admin-bouton {
+  display: inline-block; /* pour que le bouton ait la largeur de son contenu */
+  padding: 8px 18px;
+  font-family: var(--police-texte);
+  font-size: 0.85rem;
+  color: var(--blanc);
+  background-color: transparent;
+  border: 1px solid var(--bordure);
+  border-radius: 20px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.competences-admin-bouton:hover {
+  border-color: var(--gris);
+}
+
+.competences-admin-bouton-principal {
+  font-weight: bold;
+  color: var(--noir);
+  background-color: var(--lilas);
+  border-color: var(--lilas);
+}
+
+.competences-admin-bouton-petit {
+  padding: 4px 12px;
+  font-size: 0.8rem;
+}
+
+.competences-admin-bouton-supprimer:hover {
+  color: var(--rouge);
+  border-color: var(--rouge);
+}
+
+/* ----- Tableau ----- */
+.competences-admin-tableau {
+  overflow-x: auto;
+}
+
+.competences-admin table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.competences-admin th,
+.competences-admin td {
+  padding: 12px 10px;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.competences-admin th {
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gris);
+}
+
+.competences-admin td {
+  border-top: 1px solid var(--bordure);
+}
+
+.competences-admin tr:hover td {
+  background-color: #181818;
+}
+
+.competences-admin-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.competences-admin-pourcentage {
+  display: inline-block;
+  padding: 2px 10px;
+  font-size: 0.8rem;
+  background-color: var(--bordure);
+  border-radius: 10px;
+}
+
+.competences-admin-totem {
+  color: var(--or);
+}
+
+/* ----- Formulaire ----- */
+.competences-admin-champs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); /* autant de colonnes que possible, largeur minimale 240px, largeur maximale 1fr (partage l'espace disponible) */
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.competences-admin-champ {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.competences-admin label {
+  font-size: 0.85rem;
+  font-weight: bold;
+}
+
+.competences-admin input,
+.competences-admin select,
+.competences-admin textarea {
+  padding: 10px 12px;
+  font-family: var(--police-texte);
+  font-size: 1rem;
+  color: var(--blanc);
+  background-color: var(--noir);
+  border: 1px solid var(--bordure);
+  border-radius: 10px;
+}
+
+.competences-admin-boutons {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+/* ----- Responsive ----- */
+@media (max-width: 768px) {
+  .competences-admin {
+    padding: 24px 16px;
+  }
+
+  .competences-admin h1 {
+    font-size: 2.2rem;
+  }
+}
