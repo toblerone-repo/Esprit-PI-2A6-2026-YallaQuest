@@ -134,21 +134,13 @@
     $standalone = realpath($_SERVER['SCRIPT_FILENAME'] ?? '') === realpath(__FILE__)
         && realpath(get_included_files()[0] ?? '') === realpath(__FILE__);
 ?>
-<?php if ($standalone) { ?>
-<!doctype html>
-<html lang="fr">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title><?= htmlspecialchars($title) ?> — YallaQuest</title>
-<?php } ?>
+<?php if ($standalone) {
+    $pageTitle   = $title . ' — YallaQuest';
+    $currentPage = 'publications';
+    require_once __DIR__ . '/../partials/head.php';
+} else { ?>
 <link rel="stylesheet" href="../../css/communaute-base.css">
 <link rel="stylesheet" href="../../css/communaute-admin.css">
-<?php if ($standalone) { ?>
-</head>
-<body class="yq-community-page">
-<?php include_once __DIR__ . '/../partials/sidebar.php'; ?>
-<?php include_once __DIR__ . '/../partials/header.php'; ?>
 <?php } ?>
 <div class="yq-community yq-community-admin">
   <?php if ($flash) { ?>

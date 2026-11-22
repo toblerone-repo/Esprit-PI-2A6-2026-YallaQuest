@@ -114,15 +114,15 @@
 <!doctype html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title><?= htmlspecialchars($pageTitle) ?></title>
-<?php } ?>
-<link rel="stylesheet" href="../../css/communaute-base.css">
-<link rel="stylesheet" href="../../css/communaute.css">
-<?php if ($standalone) { ?>
+  <?php
+    $currentPage = 'communaute';
+    require_once __DIR__ . '/../includes/head.php';
+  ?>
 </head>
 <body class="yq-community-page">
+<?php } else { ?>
+<link rel="stylesheet" href="../../css/communaute-base.css">
+<link rel="stylesheet" href="../../css/communaute.css">
 <?php } ?>
 <div class="yq-community yq-community-front">
   <?php include_once __DIR__ . '/../includes/navbar.php'; ?>

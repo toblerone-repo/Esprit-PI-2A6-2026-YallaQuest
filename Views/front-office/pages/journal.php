@@ -1,20 +1,11 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Journal d'activité YallaQuest : suis la progression de tes quêtes.">
-  <title>Mon journal - YallaQuest</title>
-
-  
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Playfair+Display&display=swap">
-
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css">
-
-  
-  <link rel="stylesheet" href="../../css/journal.css">
+  <?php
+    $pageTitle = 'Mon journal - YallaQuest';
+    $currentPage = 'journal';
+    require_once __DIR__ . '/../includes/head.php';
+  ?>
 </head>
 <body>
 <?php include_once __DIR__ . '/../includes/navbar.php'; ?>

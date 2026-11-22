@@ -1,20 +1,8 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Gestion des activités de chaque quête sur YallaQuest.">
-  <title>Activités - Administration YallaQuest</title>
-
-
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Playfair+Display&display=swap">
-
-  
-  <link rel="stylesheet" href="../../css/journal-admin.css">
-</head>
-<body>
-<?php include_once __DIR__ . '/../partials/sidebar.php'; ?>
-<?php include_once __DIR__ . '/../partials/header.php'; ?>
+<?php
+$title           = 'Activités - Administration YallaQuest';
+$currentPage     = 'activites';
+require_once __DIR__ . '/../partials/head.php';
+?>
 
 
 <div class="journal-admin">
