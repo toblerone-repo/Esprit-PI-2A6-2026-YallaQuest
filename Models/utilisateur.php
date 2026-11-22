@@ -10,12 +10,14 @@ class Utilisateur
     private string $mp;
     private int $xp;
     private int $niveau;
+    private ?string $statut; 
+    private ?string $role; 
     private string $img_profil;
-    private DateTimeImmutable $derniere_prolongation_at;
-    private int $id_totem;
-    private DateTimeImmutable $date_obtention_totem;
+    private ?DateTimeImmutable $derniere_prolongation_at;
+    private ?int $id_totem;
+    private ?DateTimeImmutable $date_obtention_totem;
 
-    function __construct(string $nom, string $prenom, string $email, string $mp, DateTimeImmutable $derniere_prolongation_at, string $img_profil, int $id = NULL)
+    function __construct(string $nom, string $prenom, string $email, string $mp, string $id_img, int $id = NULL)
     {
         $this->id = $id;
         $this->nom = $nom;
@@ -24,8 +26,7 @@ class Utilisateur
         $this->mp = $mp;
         $this->xp = 0;
         $this->niveau = 0;
-        $this->img_profil = $img_profil;
-        $this->derniere_prolongation_at = $derniere_prolongation_at;
+        $this->img_profil = $id_img;
         $this->id_totem = 1;
         $this->date_obtention_totem = new DateTimeImmutable("today");
     }
@@ -97,7 +98,7 @@ class Utilisateur
 
     function getDerniereProlongationAt()
     {
-        return $this->xp;
+        return $this->derniere_prolongation_at;
     }
 
     function setDerniereProlongationAt(DateTimeImmutable $derniere_prolongation_at)
@@ -107,7 +108,7 @@ class Utilisateur
 
     function getDateObtentionTotem()
     {
-        return $this->xp;
+        return $this->date_obtention_totem;
     }
 
     function setDateObtentionTotem(DateTimeImmutable $date_obtention_totem)
@@ -117,7 +118,7 @@ class Utilisateur
 
     function getIdTotem()
     {
-        return $this->niveau;
+        return $this->id_totem;
     }
 
     function setIdTotem(int $id_totem)
@@ -132,4 +133,26 @@ class Utilisateur
     function setImgProfil(string $img_profil) {
         $this->img_profil = $img_profil; 
     }
+
+    function getRole()
+    {
+        return $this->role;
+    }
+
+    function setrole(string $role)
+    {
+        $this->role = $role;
+    }
+
+    function getStatut()
+    {
+        return $this->statut;
+    }
+
+    function setStatut(string $statut)
+    {
+        $this->statut = $statut;
+    }
+
 }
+

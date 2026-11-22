@@ -2,15 +2,17 @@
 <?php
 $utilisateur = [
     'id_utilisateur' => 1,
-    'nom' => 'Nom',
-    'prenom' => 'Prenom',
-    'mail' => 'prenom.nom@exemple.com',
+    'nom' => 'Martin',
+    'prenom' => 'Camille',
+    'mail' => 'camille.demo@gmail.com',
     'mot_de_passe_hash' => 'hash_fictif',
     'total_xp' => 2450,
     'niveau' => 8,
-    'derniere_prolongation_at' => '2026-11-19 14:30:00',
+    'derniere_prolongation_at' => '2026-11-21',
     'id_totem' => 3,
-    'date_obtention_totem' => '2026-11-14'
+    'date_obtention_totem' => '2026-11-14',
+    'img_profil' => 'chat',
+    'chemin' => '../../img/avatars/chat.png',
 ];
 ?>
 <!DOCTYPE html>
@@ -22,7 +24,7 @@ $utilisateur = [
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="../../css/profil.css">
+    <link rel="stylesheet" href="../../css/profil.css?v=<?= filemtime(__DIR__ . '/../../css/profil.css') ?>">
 </head>
 
 <body class="page-profil">
@@ -46,7 +48,11 @@ $utilisateur = [
             <div class="ligne-identite">
 
                 <div class="avatar-profil">
-                    <?= htmlspecialchars($utilisateur['prenom'][0] . $utilisateur['nom'][0]) ?>
+                    <?php if (!empty($utilisateur['chemin'])): ?>
+                        <img src="<?= htmlspecialchars($utilisateur['chemin']) ?>" alt="">
+                    <?php else: ?>
+                        <?= htmlspecialchars($utilisateur['prenom'][0] . $utilisateur['nom'][0]) ?>
+                    <?php endif; ?>
                 </div>
 
                 <div class="infos-identite">

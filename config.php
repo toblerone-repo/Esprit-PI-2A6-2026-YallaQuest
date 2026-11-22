@@ -7,7 +7,7 @@ class config
             $servername="localhost";
             $username="root";
             $password ="";
-            $dbname="gestionproduits";
+            $dbname="yalla_quest";
             try {
                 self::$pdo = new PDO("mysql:host=$servername;dbname=$dbname",
                         $username,
@@ -25,7 +25,6 @@ class config
         return self::$pdo;
     }
 }
-config::getConnexion();
 ?>
 
 

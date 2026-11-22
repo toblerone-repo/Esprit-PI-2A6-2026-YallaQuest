@@ -14,7 +14,7 @@ class UtilisateurC
     prenom = :prenom, 
     mail = :mail, 
     mot_de_passe_hash = :mp
-    WHERE id= :id";
+    WHERE id_utilisateur = :id";
 
 
         try {
@@ -26,6 +26,19 @@ class UtilisateurC
                 'mail' => $utilisateur->getEmail(),
                 'mp' => $utilisateur->getMp(),
             ]);
+        } catch (PDOException $e) {
+            die("Erreur: " . $e->getMessage());
+        };
+    }
+
+    function listerImagesProfil()
+    {
+        $sql = "SELECT * FROM images";
+        $db = config::getConnexion();
+
+        try {
+            $list = $db->query($sql);
+            return $list;
         } catch (PDOException $e) {
             die("Erreur: " . $e->getMessage());
         };

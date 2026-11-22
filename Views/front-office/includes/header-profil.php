@@ -4,6 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($pageTitle) ?></title>
-    <link rel="stylesheet" href="../../css/profil.css">
+    <link rel="stylesheet" href="../../css/profil.css?v=<?= filemtime(__DIR__ . '/../../css/profil.css') ?>">
 </head>
 <body class="page-modifier-profil">
