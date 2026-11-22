@@ -12,6 +12,8 @@
   <link rel="stylesheet" href="../../css/journal-admin.css">
 </head>
 <body>
+<?php include_once __DIR__ . '/../partials/sidebar.php'; ?>
+<?php include_once __DIR__ . '/../partials/header.php'; ?>
 
 
 <div class="journal-admin">
@@ -216,7 +218,7 @@
 
 </div>
 
-<?php require_once '../partials/footer.php'; ?>
+<?php include_once __DIR__ . '/../partials/footer.php'; ?>
 
 </body>
 </html>

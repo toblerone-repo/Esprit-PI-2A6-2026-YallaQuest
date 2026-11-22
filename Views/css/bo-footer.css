@@ -1,0 +1,32 @@
+/* Yalla Quest · Back-office : pied de page commun (Views/back-office/partials/footer.php).
+   Même apparence que l'en-tête commun (bo-header.css), tout est préfixé « bo-footer »
+   et ne dépend d'aucune autre feuille de style. */
+
+.bo-footer {
+  box-sizing: border-box;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 24px;
+  margin: 0;
+  padding: 18px 32px;
+  /* Fond propre (le même que la barre latérale) : le pied de page ne dépend pas du fond de la page. */
+  background: #111115;
+  border-top: 1px solid #2a2a33;
+  color: #a8a8a8;
+  font: 400 13px/1.5 "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  text-align: left;
+}
+
+.bo-footer p {
+  margin: 0;
+  color: inherit;
+  font: inherit;
+}
+
+@media (max-width: 860px) {
+  .bo-footer {
+    padding: 14px 16px;
+  }
+}
