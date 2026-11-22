@@ -60,42 +60,6 @@ C:\xampp\htdocs\objectif/
 
 ---
 
-## 🗄️ Schéma de la Base de Données
-
-Le module s'appuie sur la base de données `yallaquest` et deux tables reliées par clé étrangère en cascade :
-
-```sql
-CREATE DATABASE IF NOT EXISTS `yallaquest` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE `yallaquest`;
-
--- 1. Table des objectifs
-CREATE TABLE IF NOT EXISTS `objectif` (
-  `id` INT AUTO_INCREMENT PRIMARY KEY,
-  `titre` VARCHAR(150) NOT NULL,
-  `note` TEXT NULL,
-  `description` TEXT NULL,
-  `categorie` VARCHAR(50) DEFAULT 'Activité physique',
-  `date_debut` DATETIME NULL,
-  `date_fin` DATETIME NULL,
-  `date_limite` DATE NULL,
-  `statut` ENUM('a_venir', 'en_cours', 'atteint') DEFAULT 'en_cours',
-  `xp_recompense` INT DEFAULT 50,
-  `date_creation` DATETIME DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- 2. Table des étapes d'objectifs (composition 1 à n)
-CREATE TABLE IF NOT EXISTS `etape_objectif` (
-  `IdEO` INT AUTO_INCREMENT PRIMARY KEY,
-  `titre` VARCHAR(255) NOT NULL,
-  `est_validee` TINYINT(1) DEFAULT 0,
-  `date_validation` DATETIME NULL,
-  `id_objectif` INT NOT NULL,
-  INDEX (`id_objectif`),
-  CONSTRAINT `fk_etape_objectif` FOREIGN KEY (`id_objectif`) REFERENCES `objectif`(`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-```
-
----
 
 ## 🚀 Guide d'Accès Local dans le Navigateur
 
