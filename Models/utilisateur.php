@@ -20,16 +20,9 @@
      password -> mot_de_passe_hash, totalXp -> total_xp, ...
    - Valeurs possibles : role = 'user' | 'admin', statut = 'actif' | 'bloque'
 
-   [NOTE POUR LE MEMBRE DE modifier-profil.php]
-   Le constructeur est maintenant vide (comme le workshop). L'ancien appel
-       new Utilisateur($nom, $prenom, $email, $hash, new DateTimeImmutable("today"), "", $id)
-   ne fonctionne plus. À remplacer par :
-       $utilisateur = new Utilisateur();
-       $utilisateur->setNom($nom);
-       $utilisateur->setPrenom($prenom);
-       $utilisateur->setEmail($email);
-       $utilisateur->setPassword($nouvau_hash);
-   (getMp() s'appelle maintenant getPassword(), comme dans le workshop.)
+   [INTEGRATION] Le constructeur vide de Darine et les anciens appels
+   positionnels de Houssem, Amine et Dorra restent acceptés.
+   getPassword()/getMp() et getTotalXp()/getXp() lisent les mêmes données.
    ===================================================================== */
 class Utilisateur
 {
@@ -41,6 +34,7 @@ class Utilisateur
     private string $prenom = '';
     private string $email = '';
     private string $password = '';
+    private string $imgProfil = '';
     private string $role = 'user';
     private string $statut = 'actif';
     private int $totalXp = 0;
@@ -52,8 +46,20 @@ class Utilisateur
     // ------------------------------------------------------------
     // CONSTRUCTOR
     // ------------------------------------------------------------
-    public function __construct()
+    public function __construct(string $nom = '', string $prenom = '', string $email = '', string $mp = '', string|DateTimeImmutable $imageOuDate = '', string|int|null $imageOuId = null, ?int $id = null)
     {
+        $this->nom = $nom;
+        $this->prenom = $prenom;
+        $this->email = $email;
+        $this->password = $mp;
+        if ($imageOuDate instanceof DateTimeImmutable) {
+            $this->derniereProlongationAt = $imageOuDate->format('Y-m-d H:i:s');
+            $this->imgProfil = (string) ($imageOuId ?? '');
+            $this->id = $id ?? 0;
+        } else {
+            $this->imgProfil = $imageOuDate;
+            $this->id = is_numeric($imageOuId) ? (int) $imageOuId : ($id ?? 0);
+        }
     }
 
     // ------------------------------------------------------------
@@ -200,6 +206,15 @@ class Utilisateur
         $utilisateur->setDerniereProlongationAt((string) ($row['derniere_prolongation_at'] ?? ''));
         $utilisateur->setIdTotem((int) ($row['id_totem'] ?? 0));
         $utilisateur->setDateObtentionTotem((string) ($row['date_obtention_totem'] ?? ''));
+        $utilisateur->setImgProfil((string) ($row['img_profil'] ?? ''));
         return $utilisateur;
     }
+    // Compatibilité des getters/setters utilisés par les différentes contributions.
+    public function getMp(): string { return $this->getPassword(); }
+    public function setMp(string $mp): void { $this->setPassword($mp); }
+    public function getXp(): int { return $this->getTotalXp(); }
+    public function setXp(int $xp): void { $this->setTotalXp($xp); }
+    public function getImgProfil(): string { return $this->imgProfil; }
+    public function setImgProfil(string $imgProfil): void { $this->imgProfil = $imgProfil; }
+
 }

@@ -1,37 +1,42 @@
 <?php
-require_once __DIR__ . '/../../../Controllers/AuthController.php';
-$csrfToken = AuthController::getCsrfToken();
-
-if (in_array($_SERVER['REQUEST_METHOD'] ?? 'GET', ['POST', 'PUT', 'PATCH', 'DELETE'], true)
-    && !AuthController::verifyCsrfToken($_POST['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? null)) {
-    http_response_code(403);
-    header('Content-Type: text/plain; charset=utf-8');
-    exit('Jeton de sécurité invalide. Rechargez la page.');
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
 }
-?>
 
-<?php
-$utilisateur = [
-    'id_utilisateur' => 1,
-    'nom' => 'Nom',
-    'prenom' => 'Prenom',
-    'mail' => 'prenom.nom@exemple.com',
-    'mot_de_passe_hash' => 'hash_fictif',
-    'total_xp' => 2450,
-    'niveau' => 8,
-    'derniere_prolongation_at' => '2026-11-19 14:30:00',
-    'id_totem' => 3,
-    'date_obtention_totem' => '2026-11-14'
-];
+// $utilisateur = [
+//     'prenom' => 'Camille',
+//     'nom' => 'Martin',
+//     'mail' => 'camille.demo@gmail.com',
+//     'mot_de_passe_hash' => password_hash('MotDePasseDemo123!', PASSWORD_DEFAULT),
+//     'total_xp' => 2450,
+//     'niveau' => 8,
+//     'derniere_prolongation_at' => '2026-11-21',
+//     'id_totem' => 3,
+//     'date_obtention_totem' => '2026-11-14',
+//     'img_profil' => 'chat',
+//     'chemin' => '../../img/avatars/chat.png',
+// ];
+
+$id = $_SESSION['user_id'] ?? null;
+if ($id === null) {
+    exit('Connexion requise.');
+}
+
+include_once __DIR__ . '/../../../Controllers/utilisateurC.php';
+$utilisateurC = new UtilisateurC();
+$utilisateur = $utilisateurC->getProfilUtilisateur((int) $id);
+if (!$utilisateur) { http_response_code(404); exit('Compte introuvable.'); }
 ?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <?php
-    $pageTitle = 'Mon profil | YallaQuest';
-    $currentPage = 'page-profil';
-    require_once __DIR__ . '/../includes/head.php';
-  ?>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mon profil | YallaQuest</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/profilUtilisateur.css?v=<?= filemtime(__DIR__ . '/../../css/profilUtilisateur.css') ?>">
 </head>
 
 <body class="page-profil">
@@ -56,21 +61,25 @@ $utilisateur = [
             <div class="ligne-identite">
 
                 <div class="avatar-profil">
-                    <?= htmlspecialchars($utilisateur['prenom'][0] . $utilisateur['nom'][0], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
+                    <?php if (!empty($utilisateur['chemin'])): ?>
+                        <img src="<?= htmlspecialchars($utilisateur['chemin']) ?>" alt="">
+                    <?php else: ?>
+                        <?= htmlspecialchars($utilisateur['prenom'][0] . $utilisateur['nom'][0]) ?>
+                    <?php endif; ?>
                 </div>
 
                 <div class="infos-identite">
                     <h2 class="nom-profil">
-                        <?= htmlspecialchars($utilisateur['prenom'] . ' ' . $utilisateur['nom'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
+                        <?= htmlspecialchars($utilisateur['prenom'] . ' ' . $utilisateur['nom']) ?>
                     </h2>
 
                     <p class="email-profil">
-                        <?= htmlspecialchars($utilisateur['mail'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
+                        <?= htmlspecialchars($utilisateur['mail']) ?>
                     </p>
 
                     <p class="niveau-profil">
                         <i class="bi bi-stars"></i>
-                        AVENTURIER · NIVEAU <?= (int) ($utilisateur['niveau']) ?>
+                        AVENTURIER · NIVEAU <?= $utilisateur['niveau'] ?>
                     </p>
                 </div>
 
@@ -101,7 +110,7 @@ $utilisateur = [
                 <p class="etiquette-carte">NIVEAU ACTUEL</p>
 
                 <p class="valeur-statistique">
-                    <?= (int) ($utilisateur['niveau']) ?>
+                    <?= $utilisateur['niveau'] ?>
                 </p>
 
                 <p class="texte-accent">Progression</p>
@@ -128,7 +137,7 @@ $utilisateur = [
 
                 <div class="infos-totem">
                     <h3 class="nom-totem">
-                        Totem n°<?= (int) ($utilisateur['id_totem']) ?>
+                        Totem n°<?= $utilisateur['id_totem'] ?>
                     </h3>
 
                     <p class="texte-secondaire">
@@ -137,7 +146,7 @@ $utilisateur = [
 
                     <p class="date-totem">
                         <i class="bi bi-calendar3"></i>
-                        Obtenu le <?= htmlspecialchars($utilisateur['date_obtention_totem'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
+                        Obtenu le <?= htmlspecialchars($utilisateur['date_obtention_totem']) ?>
                     </p>
                 </div>
 
@@ -157,7 +166,7 @@ $utilisateur = [
             </p>
 
             <p class="date-prolongation">
-                <?= htmlspecialchars($utilisateur['derniere_prolongation_at'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
+                <?= htmlspecialchars($utilisateur['derniere_prolongation_at']) ?>
             </p>
 
             <div class="information-prolongation">
@@ -184,7 +193,7 @@ $utilisateur = [
                     <p class="etiquette-carte">PRÉNOM</p>
 
                     <p class="valeur-information">
-                        <?= htmlspecialchars($utilisateur['prenom'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
+                        <?= htmlspecialchars($utilisateur['prenom']) ?>
                     </p>
                 </div>
 
@@ -192,7 +201,7 @@ $utilisateur = [
                     <p class="etiquette-carte">NOM</p>
 
                     <p class="valeur-information">
-                        <?= htmlspecialchars($utilisateur['nom'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
+                        <?= htmlspecialchars($utilisateur['nom']) ?>
                     </p>
                 </div>
 
@@ -202,7 +211,7 @@ $utilisateur = [
                 <p class="etiquette-carte">ADRESSE E-MAIL</p>
 
                 <p class="valeur-information">
-                    <?= htmlspecialchars($utilisateur['mail'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
+                    <?= htmlspecialchars($utilisateur['mail']) ?>
                 </p>
             </div>
 

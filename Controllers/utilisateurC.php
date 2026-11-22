@@ -254,4 +254,105 @@ class UtilisateurC
             die('Erreur: ' . $e->getMessage());
         }
     }
+    function listerImagesProfil()
+    {
+        $sql = "SELECT id_image AS id, chemin FROM images";
+        $db = config::getConnexion();
+
+        try {
+            $list = $db->query($sql);
+            return $list->fetchAll();
+        } catch (PDOException $e) {
+            die("Erreur: " . $e->getMessage());
+        };
+    }
+    // Dorra garde ses tableaux pour l'affichage du profil ; la liste garde ses objets.
+    public function getProfilUtilisateur(int $id): ?array
+    {
+        $db = config::getConnexion();
+        $query = $db->prepare('SELECT u.*, i.chemin FROM utilisateur u
+            LEFT JOIN images i ON i.id_image = u.img_profil
+            WHERE u.id_utilisateur = :id LIMIT 1');
+        $query->bindValue(':id', $id, PDO::PARAM_INT);
+        $query->execute();
+        $profil = $query->fetch(PDO::FETCH_ASSOC);
+        return $profil ?: null;
+    }
+
+    // Le formulaire de Dorra transmet un hash : il ne doit pas être haché une seconde fois.
+    public function updateProfilUtilisateur(Utilisateur $utilisateur, int $id, string $ancienMotDePasse = ''): bool
+    {
+        if ($id < 1 || $id !== self::getIdConnecte()) {
+            return false;
+        }
+        $profil = $this->getProfilUtilisateur($id);
+        if (!$profil || password_get_info($utilisateur->getMp())['algo'] === null) {
+            return false;
+        }
+        if ($utilisateur->getMp() !== $profil['mot_de_passe_hash']
+            && !password_verify($ancienMotDePasse, $profil['mot_de_passe_hash'])) {
+            return false;
+        }
+        $db = config::getConnexion();
+        $sql = 'UPDATE utilisateur SET nom = :nom, prenom = :prenom, mail = :mail,
+            mot_de_passe_hash = :mp, img_profil = :img_profil
+            WHERE id_utilisateur = :id AND mot_de_passe_hash = :ancien_hash';
+        $query = $db->prepare($sql);
+        return $query->execute([
+            'id' => $id, 'nom' => $utilisateur->getNom(), 'prenom' => $utilisateur->getPrenom(),
+            'mail' => $utilisateur->getEmail(), 'mp' => $utilisateur->getMp(),
+            'img_profil' => $utilisateur->getImgProfil(), 'ancien_hash' => $profil['mot_de_passe_hash'],
+        ]);
+    }
+
+
+    /**
+     * Recherche par nom, prénom ou e-mail, avec rôle et ID facultatifs.
+     * Les filtres se cumulent et le résultat conserve la forme Utilisateur[].
+     */
+    public function rechercherUtilisateurs(string $recherche = '', string $role = '', ?int $id = null): array
+    {
+        if (!in_array($role, ['', 'admin', 'user'], true) || ($id !== null && $id < 1)) {
+            return [];
+        }
+
+        $sql = 'SELECT * FROM utilisateur WHERE 1 = 1';
+        $parametres = [];
+        $recherche = trim($recherche);
+        if ($recherche !== '') {
+            $sql .= " AND (nom LIKE :nom ESCAPE '!' OR prenom LIKE :prenom ESCAPE '!'
+                OR mail LIKE :mail ESCAPE '!'
+                OR CONCAT(prenom, ' ', nom) LIKE :nom_complet ESCAPE '!'
+                OR CONCAT(nom, ' ', prenom) LIKE :nom_inverse ESCAPE '!')";
+            $motif = '%' . strtr($recherche, ['!' => '!!', '%' => '!%', '_' => '!_']) . '%';
+            foreach ([':nom', ':prenom', ':mail', ':nom_complet', ':nom_inverse'] as $parametre) {
+                $parametres[$parametre] = $motif;
+            }
+        }
+        if ($role !== '') {
+            $sql .= ' AND role = :role';
+            $parametres[':role'] = $role;
+        }
+        if ($id !== null) {
+            $sql .= ' AND id_utilisateur = :id';
+            $parametres[':id'] = $id;
+        }
+        $sql .= ' ORDER BY id_utilisateur ASC';
+
+        try {
+            $stmt = $this->db->prepare($sql);
+            foreach ($parametres as $nom => $valeur) {
+                $stmt->bindValue($nom, $valeur, is_int($valeur) ? PDO::PARAM_INT : PDO::PARAM_STR);
+            }
+            $stmt->execute();
+            $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log('Recherche utilisateurs : ' . $e->getMessage());
+            http_response_code(500);
+            die('Une erreur est survenue lors du traitement des données.');
+        }
+
+        return array_map(fn(array $row) => Utilisateur::fromArray($row), $rows);
+    }
+
 }

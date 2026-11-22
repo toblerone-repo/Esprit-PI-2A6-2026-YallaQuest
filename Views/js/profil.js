@@ -6,49 +6,51 @@ document.getElementById("formulaire-modification").addEventListener("submit", as
 
     const ancienMpInput = document.querySelector("#formulaire-modification #ancien-mot-de-passe");
 
-    // Les formats (nom, e-mail, mot de passe) viennent de regex.js (YQRegex), chargé avant ce fichier.
     const prenomInput = document.querySelector("#formulaire-modification #prenom");
-    if (prenomInput.value.trim().length === 0) {
-        prenomInput.nextElementSibling.textContent = "Le prénom est obligatoire.";
-        prenomInput.classList.add("warning-border");
-        modificationValidee = false;
-    } else if (!YQRegex.tester("nom", prenomInput.value)) {
-        prenomInput.nextElementSibling.textContent = YQRegex.message("nom");
+    if (prenomInput.validity.valueMissing || !YQRegex.tester("nom", prenomInput.value)) {
+        prenomInput.nextElementSibling.textContent = "Le nom est obligatoire.";
         prenomInput.classList.add("warning-border");
         modificationValidee = false;
     };
 
     const nomInput = document.querySelector("#formulaire-modification #nom");
-    if (nomInput.value.trim().length === 0) {
+    if (nomInput.validity.valueMissing || !YQRegex.tester("nom", nomInput.value)) {
         nomInput.nextElementSibling.textContent = "Le nom est obligatoire.";
-        nomInput.classList.add("warning-border");
-        modificationValidee = false;
-    } else if (!YQRegex.tester("nom", nomInput.value)) {
-        nomInput.nextElementSibling.textContent = YQRegex.message("nom");
         nomInput.classList.add("warning-border");
         modificationValidee = false;
     };
 
+    const emailPattern = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}$/;
     const emailInput = document.querySelector("#formulaire-modification #email");
-    if (!YQRegex.tester("email", emailInput.value)) {
-        emailInput.nextElementSibling.textContent = YQRegex.message("email");
+    if (emailInput.validity.valueMissing || emailPattern.test(emailInput.value.trim()) === false) {
+        emailInput.nextElementSibling.textContent = "L'adresse e-mail n'est pas valide. ";
         emailInput.classList.add("warning-border");
         modificationValidee = false;
     };
 
 
     const mpInput = document.querySelector("#formulaire-modification #nouveau-mot-de-passe");
-    if (!YQRegex.tester("motDePasse", mpInput.value)) {
-        mpInput.nextElementSibling.textContent = YQRegex.message("motDePasse");
-        mpInput.classList.add("warning-border");
-        modificationValidee = false;
-    };
-
     const mpConfirmInput = document.querySelector("#formulaire-modification #confirmer-mot-de-passe");
-    if (mpConfirmInput.validity.valueMissing || mpInput.validity.valueMissing || mpConfirmInput.value !== mpInput.value) {
-        mpConfirmInput.nextElementSibling.textContent = "Les mots de passe ne correspondent pas.";
-        mpConfirmInput.classList.add("warning-border");
-        modificationValidee = false;
+    const changerMotDePasse = [ancienMpInput, mpInput, mpConfirmInput].some(input => input.value !== "");
+
+    if (changerMotDePasse) {
+        if (ancienMpInput.value === "") {
+            ancienMpInput.nextElementSibling.textContent = "L'ancien mot de passe est obligatoire.";
+            ancienMpInput.classList.add("warning-border");
+            modificationValidee = false;
+        };
+
+        if (mpInput.validity.valueMissing || !YQRegex.tester("motDePasse", mpInput.value)) {
+            mpInput.nextElementSibling.textContent = "Le mot de passe doit contenir au moins 8 caractères.";
+            mpInput.classList.add("warning-border");
+            modificationValidee = false;
+        };
+
+        if (mpConfirmInput.value === "" || mpConfirmInput.value !== mpInput.value) {
+            mpConfirmInput.nextElementSibling.textContent = "Les mots de passe ne correspondent pas.";
+            mpConfirmInput.classList.add("warning-border");
+            modificationValidee = false;
+        };
     };
 
     if (modificationValidee) {
@@ -56,6 +58,7 @@ document.getElementById("formulaire-modification").addEventListener("submit", as
         const submitBtn = form.querySelector('button[type="submit"]');
         submitBtn.disabled = true;
         submitBtn.textContent = "Enregistrement...";
+        let redirectionEnCours = false;
 
         try {
             let donnees = new FormData(form);
@@ -68,6 +71,7 @@ document.getElementById("formulaire-modification").addEventListener("submit", as
 
             if (response.ok && resultat === true) {
                 window.location.assign("page-profil.php");
+                redirectionEnCours = true;
                 return;
             }
 
@@ -79,8 +83,10 @@ document.getElementById("formulaire-modification").addEventListener("submit", as
         } catch (err) {
             console.log(err);
         } finally {
-            submitBtn.disabled = false;
-            submitBtn.textContent = "Enregistrer";
+            if (!redirectionEnCours) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = "Enregistrer";
+            }
         }; 
 
 
@@ -100,4 +106,4 @@ for (let i = 0; i < inputs.length; i++) {
             inputs[i].classList.remove("warning-border");
         }
     })
-};
+}; 

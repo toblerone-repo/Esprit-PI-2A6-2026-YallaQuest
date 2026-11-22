@@ -1,78 +1,103 @@
 <?php
-require_once __DIR__ . '/../../../Controllers/AuthController.php';
-$csrfToken = AuthController::getCsrfToken();
 
-if (in_array($_SERVER['REQUEST_METHOD'] ?? 'GET', ['POST', 'PUT', 'PATCH', 'DELETE'], true)
-    && !AuthController::verifyCsrfToken($_POST['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? null)) {
-    http_response_code(403);
-    header('Content-Type: application/json; charset=utf-8');
-    echo json_encode('Jeton de sécurité invalide. Rechargez la page.');
-    exit();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
 }
 
+$id = $_SESSION['user_id'] ?? null;
+if ($id === null) {
+     exit('Connexion requise.');
+}
+
+//$id = 1; 
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    header('Content-Type: application/json; charset=utf-8');
+    header('Content-type: application/json');
+}
 
-    $id = filter_var(
-        $_SESSION['utilisateur']['id'] ?? null,
-        FILTER_VALIDATE_INT,
-        ['options' => ['min_range' => 1]]
-    );
+// $ancienUtilisateur = [
+//     'prenom' => 'Camille',
+//     'nom' => 'Martin',
+//     'mail' => 'camille.demo@gmail.com',
+//     'mot_de_passe_hash' => password_hash('MotDePasseDemo123!', PASSWORD_DEFAULT),
+//     'derniere_prolongation_at' => '2026-11-21',
+//     'img_profil' => 'chat',
+//     'chemin' => '../../img/avatars/chat.png',
+// ];
 
-    if ($id === false) {
-        http_response_code(401);
-        echo json_encode('Veuillez vous connecter.', JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
-        exit();
-    }
+// $images = [
+//     ['id' => 'renard', 'chemin' => '../../img/avatars/renard.png'],
+//     ['id' => 'chat', 'chemin' => '../../img/avatars/chat.png'],
+//     ['id' => 'grenouille', 'chemin' => '../../img/avatars/grenouille.png'],
+//     ['id' => 'hibou', 'chemin' => '../../img/avatars/hibou.png'],
+//     ['id' => 'lapin', 'chemin' => '../../img/avatars/lapin.png'],
+//     ['id' => 'panda', 'chemin' => '../../img/avatars/panda.png'],
+//     ['id' => 'loutre', 'chemin' => '../../img/avatars/loutre.png'],
+// ];
 
-    foreach (['nom', 'prenom', 'email', 'ancien-mot-de-passe', 'nouveau-mot-de-passe', 'confirmer-mot-de-passe'] as $field) {
-        if (!isset($_POST[$field]) || !is_string($_POST[$field])) {
-            http_response_code(400);
-            echo json_encode('Données invalides.', JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
+include_once __DIR__ . '/../../../Controllers/utilisateurC.php';
+$utilisateurC = new UtilisateurC();
+$ancienUtilisateur = $utilisateurC->getProfilUtilisateur((int) $id);
+$images = $utilisateurC->listerImagesProfil();
+if (!$ancienUtilisateur) { http_response_code(404); exit('Compte introuvable.'); }
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $hash = $ancienUtilisateur['mot_de_passe_hash'];
+
+    $nom = $_POST['nom'];
+    $prenom = $_POST['prenom'];
+    $email = $_POST['email'];
+    $nom = $_POST['nom'];
+    $ancien_mot_de_passe = $_POST['ancien-mot-de-passe'] ?? '';
+    $nouveau_mp = $_POST['nouveau-mot-de-passe'] ?? '';
+    $confirmation_mp = $_POST['confirmer-mot-de-passe'] ?? '';
+    $changerMotDePasse = $ancien_mot_de_passe !== '' || $nouveau_mp !== '' || $confirmation_mp !== '';
+
+    if ($changerMotDePasse) {
+        if (!is_string($ancien_mot_de_passe) || $ancien_mot_de_passe === '' ||
+            !is_string($nouveau_mp) || strlen(trim($nouveau_mp)) < 8 || $nouveau_mp !== $confirmation_mp) {
+            echo json_encode("Données invalides.");
+            exit();
+        }
+
+        $resultat = password_verify($ancien_mot_de_passe, $hash);
+
+        if (!$resultat) {
+            echo json_encode(false);
             exit();
         }
     }
 
-    $nom = trim($_POST['nom']);
-    $prenom = trim($_POST['prenom']);
-    $email = trim($_POST['email']);
-    $ancien_mot_de_passe = $_POST['ancien-mot-de-passe'];
-    $nouveau_mp = $_POST['nouveau-mot-de-passe'];
+    if (empty(trim($nom)) || empty(trim($prenom)) || filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
+        echo json_encode("Données invalides.");
+        exit();
+    }
+    $imgProfil = $_POST['img_profil'] ?? null;
+    $id_images = array_map('strval', array_column($images, 'id'));
 
-    if ($nom === '' || $prenom === '' || filter_var($email, FILTER_VALIDATE_EMAIL) === false
-        || strlen($nouveau_mp) < 8 || $nouveau_mp !== $_POST['confirmer-mot-de-passe']) {
-        http_response_code(400);
-        echo json_encode('Données invalides.', JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
+    if (!is_string($imgProfil) || !in_array($imgProfil, $id_images, true)) {
+        echo json_encode('Imadge de profil invalide.');
         exit();
     }
 
-    include_once __DIR__ . '/../../../Controllers/utilisateurC.php';
+    $nouveau_hash = $changerMotDePasse ? password_hash($nouveau_mp, PASSWORD_DEFAULT) : $hash;
 
-    $utilisateur = new Utilisateur($nom, $prenom, $email, $nouveau_mp, '', $id);
-    $utilisateurC = new UtilisateurC();
-    $resultat = $utilisateurC->updateUtilisateur($utilisateur, $id, $ancien_mot_de_passe);
+    $utilisateur = new Utilisateur($nom, $prenom, $email, $nouveau_hash, $imgProfil, $id);
+    $resultat = $utilisateurC->updateProfilUtilisateur($utilisateur, (int) $id, $ancien_mot_de_passe);
 
-    if ($resultat) {
-        $_SESSION['utilisateur']['nom'] = $nom;
-        $_SESSION['utilisateur']['prenom'] = $prenom;
-        $_SESSION['utilisateur']['mail'] = $email;
-    } else {
-        http_response_code(403);
-    }
-
-    echo json_encode($resultat, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
+    echo json_encode($resultat);
     exit();
-}
+};
 
 $pageTitle = 'Modifier mon profil · Yalla Quest';
 ?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <?php
-    $currentPage = 'modifier-profil';
-    require_once __DIR__ . '/../includes/head.php';
-  ?>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?= htmlspecialchars($pageTitle) ?></title>
+    <link rel="stylesheet" href="../../css/profilUtilisateur.css">
 </head>
 <body class="page-modifier-profil">
 <?php include_once __DIR__ . '/../includes/navbar.php'; ?>
@@ -92,23 +117,40 @@ $pageTitle = 'Modifier mon profil · Yalla Quest';
             <?php endif; ?>
 
             <form id="formulaire-modification" method="post" action="modifier-profil.php" novalidate>
-                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
                 <div class="field-grid">
                     <div class="field">
                         <label for="prenom">Prénom</label>
-                        <input class="input" type="text" id="prenom" name="prenom">
+                        <input class="input" type="text" id="prenom" name="prenom" value="<?php echo htmlspecialchars($ancienUtilisateur['prenom']) ?>">
                         <span></span>
                     </div>
                     <div class="field">
                         <label for="nom">Nom</label>
-                        <input class="input" type="text" id="nom" name="nom">
+                        <input class="input" type="text" id="nom" name="nom" value="<?php echo htmlspecialchars($ancienUtilisateur['nom']) ?>">
                         <span></span>
                     </div>
                     <div class="field full">
                         <label for="email">E-mail</label>
-                        <input class="input" type="email" id="email" name="email">
+                        <input class="input" type="email" id="email" name="email" value="<?php echo htmlspecialchars($ancienUtilisateur['mail']) ?>">
                         <span></span>
                     </div>
+                    <fieldset class="choix-avatars full">
+                        <legend>Image de profil</legend>
+                        <div class="grille-avatars">
+                            <?php foreach ($images ?? [] as $image) {
+                                $idImage = (string) $image['id'];
+                                $estSelectionnee = $idImage === ($ancienUtilisateur['img_profil'] ?? '');
+                            ?>
+                                <label class="option-avatar">
+                                    <input type="radio" name="img_profil"
+                                        value="<?= htmlspecialchars($idImage) ?>"
+                                        aria-label="<?= htmlspecialchars('Image de profil ' . $idImage) ?>"
+                                        <?= $estSelectionnee ? 'checked' : '' ?>>
+                                    <img src="<?= htmlspecialchars($image['chemin']) ?>"
+                                        alt="" width="64" height="64">
+                                </label>
+                            <?php } ?>
+                        </div>
+                    </fieldset>
                     <div class="field full">
                         <label for="ancien-mot-de-passe">Ancien mot de passe</label>
                         <input class="input" type="password" id="ancien-mot-de-passe" name="ancien-mot-de-passe">
@@ -132,7 +174,6 @@ $pageTitle = 'Modifier mon profil · Yalla Quest';
         </section>
     </div>
 
-    <script src="../../js/regex.js"></script>
     <script src="../../js/profil.js"></script>
 </main>
 <?php include_once __DIR__ . '/../includes/footer.php'; ?>
