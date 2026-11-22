@@ -34,6 +34,7 @@ class Utilisateur
     private string $prenom = '';
     private string $email = '';
     private string $password = '';
+    private string $pseudo = '';
     private string $imgProfil = '';
     private string $role = 'user';
     private string $statut = 'actif';
@@ -207,6 +208,7 @@ class Utilisateur
         $utilisateur->setIdTotem((int) ($row['id_totem'] ?? 0));
         $utilisateur->setDateObtentionTotem((string) ($row['date_obtention_totem'] ?? ''));
         $utilisateur->setImgProfil((string) ($row['img_profil'] ?? ''));
+        $utilisateur->setPseudo((string) ($row['pseudo'] ?? ''));
         return $utilisateur;
     }
     // Compatibilité des getters/setters utilisés par les différentes contributions.
@@ -217,4 +219,7 @@ class Utilisateur
     public function getImgProfil(): string { return $this->imgProfil; }
     public function setImgProfil(string $imgProfil): void { $this->imgProfil = $imgProfil; }
 
+    // Eya : pseudo unique utilisé par l’inscription.
+    public function getPseudo(): string { return $this->pseudo; }
+    public function setPseudo(string $pseudo): void { $this->pseudo = $pseudo; }
 }

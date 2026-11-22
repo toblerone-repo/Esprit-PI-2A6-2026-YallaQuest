@@ -87,6 +87,11 @@ switch ($action) {
         header('Location: index.php?action=' . $destination);
         exit;
 
+    // Eya : inscription conservée dans join_now.php et UtilisateurC.
+    case 'register':
+        header('Location: Views/front-office/pages/join_now.php', true, ($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST' ? 307 : 302);
+        exit;
+
     default:
         http_response_code(404);
         echo '<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><title>Page introuvable</title></head>'

@@ -41,9 +41,9 @@
       regex: nomDeMots(2, 100),
       message: "Le nom de l'auteur ne peut contenir que des lettres, espaces, tirets et apostrophes.",
     },
-    // Pseudo de quête : 3 à 20 lettres, chiffres ou tirets
+    // Pseudo de quête : 3 à 50 lettres, chiffres ou tirets
     pseudo: {
-      regex: /^[A-Za-z0-9-]{3,20}$/,
+      regex: /^[A-Za-z0-9_-]{3,50}$/,
       message: 'Le pseudo doit contenir 3 à 20 lettres, chiffres ou tirets, sans espace ni accent.',
     },
     // Nouveau mot de passe : 8 à 64 caractères, au moins une lettre et un chiffre

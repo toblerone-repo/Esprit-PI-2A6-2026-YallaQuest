@@ -16,7 +16,7 @@ if (in_array($_SERVER['REQUEST_METHOD'] ?? 'GET', ['POST', 'PUT', 'PATCH', 'DELE
 
 // Accès direct au fichier : on repasse par le routeur.
 if (!defined('YQ_ROUTEUR')) {
-    header('Location: ../../../index.php?action=login');
+    header('Location: ../../../index.php?action=login' . (!empty($_GET['registered']) ? '&registered=1' : ''));
     exit();
 }
 
@@ -45,6 +45,10 @@ $email = $email ?? '';
                     <p class="about">« Chaque habitude est une quête. »</p>
                 </div>
 
+                <?php if (!empty($_GET['registered']) && $erreur === ''): ?>
+                <!-- Eya : confirmation après inscription. -->
+                <div class="alert success" role="status">Compte créé avec succès, tu peux maintenant te connecter.</div>
+                <?php endif; ?>
                 <div id="loginError" class="alert" role="alert"<?= $erreur === '' ? ' hidden' : '' ?>><?= htmlspecialchars($erreur, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></div>
 
                 <form id="loginForm" method="post" action="../../../index.php?action=login" novalidate>

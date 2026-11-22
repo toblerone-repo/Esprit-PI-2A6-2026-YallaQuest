@@ -238,3 +238,8 @@ CREATE TABLE signalement (
     CONSTRAINT fk_signalement_publication
         FOREIGN KEY (id_publication) REFERENCES publication (id_publication)
 ) ENGINE=InnoDB;
+
+-- Eya : pseudo utilisé par l’inscription, compatible avec les anciens comptes.
+ALTER TABLE utilisateur
+  ADD COLUMN pseudo VARCHAR(50) NULL AFTER prenom,
+  ADD CONSTRAINT uq_utilisateur_pseudo UNIQUE (pseudo);

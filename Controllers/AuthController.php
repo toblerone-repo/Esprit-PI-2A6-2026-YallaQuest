@@ -135,7 +135,7 @@ class AuthController
         $_SESSION['username']      = $user->getPrenom() . ' ' . $user->getNom();
         $_SESSION['role']          = $user->getRole();
         $_SESSION['last_activity'] = time();
-        $_SESSION['utilisateur'] = ['id' => $user->getId(), 'nom' => $user->getNom(), 'prenom' => $user->getPrenom(), 'mail' => $user->getEmail(), 'role' => $user->getRole()];
+        $_SESSION['utilisateur'] = ['id' => $user->getId(), 'id_utilisateur' => $user->getId(), 'nom' => $user->getNom(), 'prenom' => $user->getPrenom(), 'mail' => $user->getEmail(), 'role' => $user->getRole()];
         unset($_SESSION['csrf_token']);
 
         return [];
@@ -181,6 +181,9 @@ class AuthController
             exit;
         }
         $_SESSION['role'] = $user->getRole();
+        $_SESSION['utilisateur']['id'] = $user->getId();
+        $_SESSION['utilisateur']['role'] = $user->getRole();
+        $_SESSION['utilisateur']['id_utilisateur'] = $user->getId();
     }
     public static function getCsrfToken(): string
     {

@@ -50,6 +50,9 @@ unset($_SESSION['flash_liste_utilisateurs']);
 
 // [DARINE · LISTE] Données préparées par le contrôleur
 $utilisateurC = new UtilisateurC();
+// Eya : message laissé par le changement de statut.
+$messageStatut = $_SESSION['message_statut'] ?? null;
+unset($_SESSION['message_statut']);
 $liste      = $utilisateurC->listUtilisateurs();
 $totalUsers   = $utilisateurC->countAllUtilisateurs();
 $totalAdmins  = $utilisateurC->countByRole('admin');
@@ -116,6 +119,10 @@ $pageTitle = 'Aventuriers · Administration · Yalla Quest';
 
     <!-- [À COMPLÉTER · partie Recherche / filtre] formulaire GET : recherche (nom, e-mail) + filtre rôle -->
 
+    <?php if ($messageStatut): ?>
+    <!-- Eya : résultat du blocage/déblocage. -->
+    <p class="search-error" role="status"><?= htmlspecialchars($messageStatut['texte'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></p>
+    <?php endif; ?>
     <!-- [DARINE · LISTE] Tableau des utilisateurs -->
     <section class="sheet">
         <div class="table-wrap">
@@ -177,6 +184,13 @@ $pageTitle = 'Aventuriers · Administration · Yalla Quest';
                                     Votre compte
                                 </span>
                             <?php else: ?>
+                                <!-- Eya : bloquer/débloquer, avec token de Houssem. -->
+                                <form method="post" action="changerStatut.php" class="form-supprimer">
+<input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
+                                    <input type="hidden" name="id" value="<?= (int) $u->getId() ?>">
+                                    <button type="submit" class="btn sm" name="action" value="<?= $u->getStatut() === 'bloque' ? 'debloquer' : 'bloquer' ?>"><?= $u->getStatut() === 'bloque' ? 'Débloquer' : 'Bloquer' ?></button>
+                                </form>
+
                                 <!-- [À COMPLÉTER · parties Modifier / Rôle / Bloquer]
                                      Classe prête : <a class="btn sm">Modifier</a>. -->
 

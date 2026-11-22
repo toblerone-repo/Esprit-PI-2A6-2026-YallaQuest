@@ -211,7 +211,7 @@ class UtilisateurC
     function login(string $mail, string $mp): ?array
     {
         $db = config::getConnexion();
-        $sql = "SELECT id_utilisateur AS id, nom, prenom, mail, mot_de_passe_hash FROM utilisateur WHERE mail = :mail LIMIT 1";
+        $sql = "SELECT id_utilisateur AS id, id_utilisateur, nom, prenom, mail, role, statut, mot_de_passe_hash FROM utilisateur WHERE mail = :mail LIMIT 1";
 
         try {
             $query = $db->prepare($sql);
@@ -228,6 +228,7 @@ class UtilisateurC
             return null;
         }
 
+        if (($utilisateur['statut'] ?? '') === 'bloque') { return null; }
         unset($utilisateur['mot_de_passe_hash']);
         return $utilisateur;
     }
@@ -359,4 +360,178 @@ class UtilisateurC
         return array_map(fn(array $row) => Utilisateur::fromArray($row), $rows);
     }
 
+    // Eya : inscription et blocage/déblocage.
+    public static function isAuthenticated(): bool
+    {
+        return !empty($_SESSION['utilisateur']);
+    }
+    // Eya : inscription et blocage/déblocage.
+    public static function hasRole(string $role): bool
+    {
+        return self::isAuthenticated() && ($_SESSION['utilisateur']['role'] ?? null) === $role;
+    }
+    // Eya : inscription et blocage/déblocage.
+    private function existsByEmailOrUsername(string $email, string $pseudo): bool
+    {
+        $db = config::getConnexion();
+        $sql = "SELECT id_utilisateur FROM utilisateur WHERE mail = :mail OR pseudo = :pseudo LIMIT 1";
+
+        try {
+            $query = $db->prepare($sql);
+            $query->execute(['mail' => $email, 'pseudo' => $pseudo]);
+            return (bool) $query->fetch();
+        } catch (PDOException $e) {
+            error_log('SQL utilisateur : ' . $e->getMessage());
+            http_response_code(500);
+            die('Une erreur est survenue lors du traitement des données.');
+        }
+    }
+    // Eya : inscription et blocage/déblocage.
+    private function insertUser(Utilisateur $utilisateur): bool
+    {
+        $db = config::getConnexion();
+        $sql = "INSERT INTO utilisateur (nom, prenom, pseudo, mail, mot_de_passe_hash, role, statut)
+                VALUES (:nom, :prenom, :pseudo, :mail, :mp, 'user', 'actif')";
+
+        try {
+            $query = $db->prepare($sql);
+            return $query->execute([
+                'nom' => $utilisateur->getNom(),
+                'prenom' => $utilisateur->getPrenom(),
+                'pseudo' => $utilisateur->getPseudo(),
+                'mail' => $utilisateur->getEmail(),
+                'mp' => $utilisateur->getMp(),
+            ]);
+        } catch (PDOException $e) {
+            error_log('SQL utilisateur : ' . $e->getMessage());
+            http_response_code(500);
+            die('Une erreur est survenue lors du traitement des données.');
+        }
+    }
+    // Eya : inscription et blocage/déblocage.
+    public function register(array $post): array
+    {
+        $errors = [];
+        if (!AuthController::verifyCsrfToken($post['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? null)) { return ['Jeton de sécurité invalide. Rechargez la page.']; }
+        foreach (['prenom', 'nom', 'pseudo', 'email', 'mot_de_passe', 'confirmer_mot_de_passe'] as $field) {
+            if (!is_string($post[$field] ?? null)) { return ['Tous les champs sont obligatoires.']; }
+        }
+
+        $prenom = trim($post['prenom'] ?? '');
+        $nom = trim($post['nom'] ?? '');
+        $pseudo = trim($post['pseudo'] ?? '');
+        $email = trim($post['email'] ?? '');
+        $motDePasse = $post['mot_de_passe'] ?? '';
+        $confirmation = $post['confirmer_mot_de_passe'] ?? '';
+
+        if ($prenom === '' || $nom === '' || $pseudo === '' || $email === '' || $motDePasse === '') {
+            $errors[] = "Tous les champs sont obligatoires.";
+        }
+        if (mb_strlen($prenom) > 100 || mb_strlen($nom) > 100) {
+            $errors[] = "Le nom et le prénom ne doivent pas dépasser 100 caractères.";
+        }
+        if (!preg_match('/^[a-zA-Z0-9_\-]{3,50}$/', $pseudo)) {
+            $errors[] = "Le pseudo doit contenir de 3 à 50 caractères (lettres, chiffres, _ ou -).";
+        }
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL) || mb_strlen($email) > 254) {
+            $errors[] = "L'adresse e-mail n'est pas valide.";
+        }
+        if (strlen($motDePasse) < 8 || strpos($motDePasse, chr(0)) !== false) {
+            $errors[] = "Le mot de passe doit contenir au moins 8 caractères.";
+        }
+        if ($motDePasse !== $confirmation) {
+            $errors[] = "Les mots de passe ne correspondent pas.";
+        }
+
+        if (!empty($errors)) {
+            return $errors;
+        }
+
+        if ($this->existsByEmailOrUsername($email, $pseudo)) {
+            $errors[] = "Cet e-mail ou ce pseudo est déjà utilisé.";
+            return $errors;
+        }
+
+        // Hachage sécurisé du mot de passe (bcrypt)
+        $hash = password_hash($motDePasse, PASSWORD_DEFAULT);
+
+        $utilisateur = new Utilisateur($nom, $prenom, $email, $hash, new DateTimeImmutable("now"), "");
+        $utilisateur->setPseudo($pseudo);
+
+        if (!$this->insertUser($utilisateur)) {
+            $errors[] = "Une erreur est survenue lors de la création du compte.";
+        }
+
+        return $errors;
+    }
+    // Eya : inscription et blocage/déblocage.
+    public function bloquerUtilisateur(int $id): array
+    {
+        return $this->changerStatut($id, 'bloque');
+    }
+    // Eya : inscription et blocage/déblocage.
+    public function debloquerUtilisateur(int $id): array
+    {
+        return $this->changerStatut($id, 'actif');
+    }
+    // Eya : inscription et blocage/déblocage.
+    private function findStatutById(int $id): ?string
+    {
+        $db = config::getConnexion();
+        $sql = "SELECT statut FROM utilisateur WHERE id_utilisateur = :id LIMIT 1";
+
+        try {
+            $query = $db->prepare($sql);
+            $query->execute(['id' => $id]);
+            $ligne = $query->fetch();
+        } catch (PDOException $e) {
+            error_log('SQL utilisateur : ' . $e->getMessage());
+            http_response_code(500);
+            die('Une erreur est survenue lors du traitement des données.');
+        }
+
+        return $ligne ? $ligne['statut'] : null;
+    }
+    // Eya : inscription et blocage/déblocage.
+    private function changerStatut(int $id, string $statut): array
+    {
+        $errors = [];
+
+        // Seul un administrateur connecté peut bloquer / débloquer
+        if (!self::hasRole('admin')) {
+            $errors[] = "Accès refusé : action réservée aux administrateurs.";
+            return $errors;
+        }
+
+        $statutActuel = $this->findStatutById($id);
+        if ($statutActuel === null) {
+            $errors[] = "Ce compte n'existe pas.";
+            return $errors;
+        }
+
+        // Un admin ne doit pas pouvoir se bloquer lui-même (il ne pourrait plus se connecter)
+        if ($statut === 'bloque' && (int) ($_SESSION['utilisateur']['id_utilisateur'] ?? 0) === $id) {
+            $errors[] = "Vous ne pouvez pas bloquer votre propre compte.";
+            return $errors;
+        }
+
+        if ($statutActuel === $statut) {
+            $errors[] = $statut === 'bloque' ? "Ce compte est déjà bloqué." : "Ce compte est déjà actif.";
+            return $errors;
+        }
+
+        $db = config::getConnexion();
+        $sql = "UPDATE utilisateur SET statut = :statut WHERE id_utilisateur = :id";
+
+        try {
+            $query = $db->prepare($sql);
+            $query->execute(['statut' => $statut, 'id' => $id]);
+        } catch (PDOException $e) {
+            error_log('SQL utilisateur : ' . $e->getMessage());
+            http_response_code(500);
+            die('Une erreur est survenue lors du traitement des données.');
+        }
+
+        return $errors;
+    }
 }

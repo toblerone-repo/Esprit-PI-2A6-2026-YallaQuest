@@ -44,6 +44,9 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
 }
 require_once __DIR__ . '/../../../Controllers/utilisateurC.php';
 $utilisateurC = new UtilisateurC();
+// Eya : message laissé par le changement de statut.
+$messageStatut = $_SESSION['message_statut'] ?? null;
+unset($_SESSION['message_statut']);
 $totalUsers = $utilisateurC->countAllUtilisateurs();
 $totalAdmins = $utilisateurC->countByRole('admin');
 $totalRegular = $utilisateurC->countByRole('user');
@@ -144,6 +147,10 @@ require_once __DIR__ . '/../partials/head.php';
         <?= htmlspecialchars((string) (count($liste)), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?> résultat<?= count($liste) > 1 ? 's' : '' ?> sur <?= htmlspecialchars((string) ($totalUsers), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?> aventuriers
     </p>
 
+    <?php if ($messageStatut): ?>
+    <!-- Eya : résultat du blocage/déblocage. -->
+    <p class="search-error" role="status"><?= htmlspecialchars($messageStatut['texte'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></p>
+    <?php endif; ?>
     <!-- [DARINE · LISTE] Tableau des utilisateurs -->
     <section class="sheet">
         <div class="table-wrap">
@@ -201,6 +208,13 @@ require_once __DIR__ . '/../partials/head.php';
                                     Votre compte
                                 </span>
                             <?php else: ?>
+                                <!-- Eya : bloquer/débloquer, avec token de Houssem. -->
+                                <form method="post" action="changerStatut.php" class="form-supprimer">
+<input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
+                                    <input type="hidden" name="id" value="<?= (int) $u->getId() ?>">
+                                    <button type="submit" class="btn sm" name="action" value="<?= $u->getStatut() === 'bloque' ? 'debloquer' : 'bloquer' ?>"><?= $u->getStatut() === 'bloque' ? 'Débloquer' : 'Bloquer' ?></button>
+                                </form>
+
                                 <!-- [À COMPLÉTER · parties Modifier / Rôle / Bloquer / Supprimer]
                                      Classes prêtes : <a class="btn sm">Modifier</a>, <button class="btn danger sm">Supprimer</button>. -->
                             <?php endif; ?>
