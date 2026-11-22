@@ -1,4 +1,5 @@
 <?php
+// Darine : structure commune. Amine : gabarit du routeur. Houssem : sorties échappées.
 /* En-tête commun des pages Back-Office (tous les membres).
    À inclure juste après la barre latérale, au début de <body> :
        <?php include_once __DIR__ . '/../partials/sidebar.php'; ?>

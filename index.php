@@ -1,4 +1,5 @@
 <?php
+// Amine : routeur. Houssem : en-têtes et CSRF. Intégration : raccordements des vues.
 declare(strict_types=1);
 
 /* PARTIE 5.2 : point d'entrée unique (routeur) : index.php?action=...

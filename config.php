@@ -1,4 +1,5 @@
 <?php
+// Darine : connexion au projet. Houssem : configuration PDO sécurisée.
 class config
 {   private static $pdo = null;
     public static function getConnexion()

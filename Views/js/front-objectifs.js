@@ -1,3 +1,4 @@
+// Mohamed : objectifs. Houssem : token CSRF pour les actions AJAX.
 /**
  * YallaQuest - Front-Office Objectifs
  * Fichier unique regroupant toute la logique JavaScript du Front-Office

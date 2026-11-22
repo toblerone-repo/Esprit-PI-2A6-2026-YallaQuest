@@ -1,4 +1,5 @@
 <?php
+// Darine : structure commune. Amine : gabarit du routeur. Houssem : sorties échappées.
 /* Barre latérale commune à toutes les pages du back-office.
    À inclure juste après <body> d'une page de Views/back-office/pages/ :
        <?php include_once __DIR__ . '/../partials/sidebar.php'; ?>

@@ -1,4 +1,5 @@
 <?php
+// Darine : structure commune. Amine : gabarit du routeur. Houssem : sorties échappées.
 /* =====================================================================
    Contenu du <head> commun à toutes les pages du front-office
    (Atelier Intégration Template, partie 1, étape 3 : includes/head.php).

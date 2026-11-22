@@ -1,4 +1,5 @@
 <?php
+// Eya : bloquer/débloquer. Houssem : CSRF/XSS.
 /* =====================================================================
    [BLOCAGE] Action : bloquer / débloquer un compte (back-office)
    ---------------------------------------------------------------------

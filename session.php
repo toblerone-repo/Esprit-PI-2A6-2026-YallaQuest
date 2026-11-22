@@ -1,4 +1,5 @@
 <?php
+// Amine : session sécurisée et expiration après 30 minutes.
 /* PARTIE 5.5 (Amine) : configuration avant le démarrage et expiration après 30 minutes.
    Le routeur et les vues directes utilisent le même fichier, une seule fois par requête. */
 if (session_status() !== PHP_SESSION_ACTIVE) {

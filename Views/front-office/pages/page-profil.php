@@ -1,4 +1,5 @@
 <?php
+// Dorra : profil et avatar. Houssem : protection XSS/CSRF.
 require_once __DIR__ . '/../../../Controllers/AuthController.php';
 $csrfToken = AuthController::getCsrfToken();
 $cspNonce = $cspNonce ?? bin2hex(random_bytes(16));

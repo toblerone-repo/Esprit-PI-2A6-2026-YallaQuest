@@ -1,3 +1,4 @@
+// Amine : validation REGEX. Eya : envoi natif du formulaire vers register().
 /**
  * Vue - formulaires « Rejoindre la guilde » (inscription) et « Connexion ».
  * Les formats (e-mail, nom, pseudo, mot de passe) viennent de regex.js (YQRegex), à charger avant ce fichier.

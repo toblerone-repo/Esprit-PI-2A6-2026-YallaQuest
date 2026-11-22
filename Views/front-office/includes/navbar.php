@@ -1,4 +1,5 @@
 <?php
+// Darine : structure commune. Amine : gabarit du routeur. Houssem : sorties échappées.
 /* Barre de navigation commune à toutes les pages du front-office.
    À inclure juste après <body> d'une page de Views/front-office/pages/ :
        <?php include_once __DIR__ . '/../includes/navbar.php'; ?>

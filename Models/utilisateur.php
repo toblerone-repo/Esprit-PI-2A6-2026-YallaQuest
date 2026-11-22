@@ -1,4 +1,5 @@
 <?php
+// Darine : modèle et fromArray. Houssem/Amine/Dorra : compatibilité. Eya : pseudo.
 /* =====================================================================
    [DARINE · MVC UTILISATEUR] Modèle Utilisateur (table `utilisateur`)
    Même forme que UserModel du workshop (partie 3.1) :

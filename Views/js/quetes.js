@@ -1,3 +1,4 @@
+// Équipe : template quêtes. Houssem : échappement HTML des options dynamiques.
 function escapeHtml(text) {
     if (text === null || text === undefined) return '';
     var map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };

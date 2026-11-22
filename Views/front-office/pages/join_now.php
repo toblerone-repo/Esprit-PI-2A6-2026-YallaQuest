@@ -1,4 +1,5 @@
 <?php
+// Mohamed : template. Eya : inscription. Amine : REGEX. Houssem : CSRF/XSS.
 // [INSCRIPTION] Traitement du formulaire (même principe que login.php).
 // Toute la validation et l'accès à la base sont dans UtilisateurC::register().
 require_once __DIR__ . '/../../../Controllers/AuthController.php';

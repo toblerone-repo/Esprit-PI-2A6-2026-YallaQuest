@@ -1,4 +1,5 @@
 <?php
+// Amine : connexion via le routeur. Eya : confirmation d’inscription. Houssem : CSRF/XSS.
 require_once __DIR__ . '/../../../Controllers/AuthController.php';
 $csrfToken = AuthController::getCsrfToken();
 $cspNonce = $cspNonce ?? bin2hex(random_bytes(16));

@@ -1,3 +1,4 @@
+// Dorra : formulaire et AJAX. Amine : REGEX. Intégration : messages serveur en textContent.
 
 
 document.getElementById("formulaire-modification").addEventListener("submit", async function (event) {

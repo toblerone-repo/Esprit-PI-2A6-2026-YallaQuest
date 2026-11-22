@@ -1,4 +1,5 @@
 <?php
+// Darine : liste/modèle. Amine : suppression. Dorra : profil. Eya : inscription/blocage. Houssem : SQL/CSRF/XSS.
 /* =====================================================================
    [DARINE · MVC UTILISATEUR] Contrôleur Utilisateur
    Même forme que AuthController du workshop (parties 3.2 et 6.1) :
@@ -36,6 +37,7 @@ class UtilisateurC
 {
     private PDO $db;
 
+    // Darine : connexion MVC
     public function __construct()
     {
         $this->db = config::getConnexion();
@@ -53,6 +55,7 @@ class UtilisateurC
      * listuser.php puisse l'afficher avec la même boucle.
      * @return Utilisateur[]
      */
+    // Darine / Amine : liste des comptes
     public function listUtilisateurs(): array
     {
         $stmt = $this->db->query('SELECT * FROM utilisateur ORDER BY id_utilisateur ASC');
@@ -65,6 +68,7 @@ class UtilisateurC
      * Récupère un utilisateur par son id (null s'il n'existe pas).
      * Utilisation : $u = $utilisateurC->getUtilisateur((int) $_GET['id']);
      */
+    // Darine : récupération par ID
     public function getUtilisateur(int $id): ?Utilisateur
     {
         $stmt = $this->db->prepare('SELECT * FROM utilisateur WHERE id_utilisateur = :id LIMIT 1');
@@ -81,6 +85,7 @@ class UtilisateurC
      * Utilisation : $liste = $utilisateurC->rechercherParId(3);
      * @return Utilisateur[]
      */
+    // Darine : recherche par ID
     public function rechercherParId(int $id): array
     {
         $utilisateur = $this->getUtilisateur($id);
@@ -94,6 +99,7 @@ class UtilisateurC
     /**
      * Compte les utilisateurs d'un rôle ('user' ou 'admin').
      */
+    // Darine / Amine : comptage par rôle
     public function countByRole(string $role): int
     {
         $stmt = $this->db->prepare('SELECT COUNT(*) FROM utilisateur WHERE role = :role');
@@ -104,6 +110,7 @@ class UtilisateurC
     /**
      * Nombre total de comptes.
      */
+    // Darine / Amine : comptage total
     public function countAllUtilisateurs(): int
     {
         return (int) $this->db->query('SELECT COUNT(*) FROM utilisateur')->fetchColumn();
@@ -132,11 +139,13 @@ class UtilisateurC
      * sans conversion, '1' === 1 serait faux et la règle ne bloquerait rien.
      * Personne de connecté -> 0, qui ne correspond à aucun compte.
      */
+    // Darine : protection du compte connecté
     public static function estSoiMeme(int $id): bool
     {
         return (int) ($_SESSION['user_id'] ?? 0) === $id;
     }
 
+    // Darine : interdiction de supprimer son compte
     public function verifierSuppression(int $id): array
     {
         $errors = [];
@@ -148,6 +157,7 @@ class UtilisateurC
         return $errors;
     }
 
+    // Darine : interdiction de se rétrograder
     public function verifierChangementRole(int $id, string $nouveauRole): array
     {
         $errors = [];
@@ -160,6 +170,7 @@ class UtilisateurC
     }
 
     // Le modèle fournit le nouveau mot de passe en clair.
+    // Houssem : hachage avant la mise à jour SQL
     function updateUtilisateur(Utilisateur $utilisateur, int $id, string $ancienMotDePasse): bool
     {
         if ($id < 1 || strlen($utilisateur->getMp()) < 8) {
@@ -208,6 +219,7 @@ class UtilisateurC
     }
 
     // Renvoie l'utilisateur (sans le hash) si l'e-mail et le mot de passe sont corrects, sinon null.
+    // Houssem / Eya : vérification des identifiants et du statut
     function login(string $mail, string $mp): ?array
     {
         $db = config::getConnexion();
@@ -232,6 +244,7 @@ class UtilisateurC
         unset($utilisateur['mot_de_passe_hash']);
         return $utilisateur;
     }
+    // Amine : identifiant de session
     public static function getIdConnecte(): ?int
     {
         if (!empty($_SESSION['user_id'])) {
@@ -239,6 +252,7 @@ class UtilisateurC
         }
         return null;
     }
+    // Amine : suppression et clés étrangères
     function deleteUtilisateur($id)
     {
         try {
@@ -257,6 +271,7 @@ class UtilisateurC
             die('Une erreur est survenue lors du traitement des données.');
         }
     }
+    // Dorra : images disponibles
     function listerImagesProfil()
     {
         $sql = "SELECT id_image AS id, chemin FROM images";
@@ -272,6 +287,7 @@ class UtilisateurC
         };
     }
     // Dorra garde ses tableaux pour l'affichage du profil ; la liste garde ses objets.
+    // Intégration : tableaux de profil utilisés par Dorra
     public function getProfilUtilisateur(int $id): ?array
     {
         $db = config::getConnexion();
@@ -285,6 +301,7 @@ class UtilisateurC
     }
 
     // Le formulaire de Dorra transmet un hash : il ne doit pas être haché une seconde fois.
+    // Dorra / Houssem : profil avec hash déjà calculé, sans double hachage
     public function updateProfilUtilisateur(Utilisateur $utilisateur, int $id, string $ancienMotDePasse = ''): bool
     {
         if ($id < 1 || $id !== self::getIdConnecte()) {
@@ -315,6 +332,7 @@ class UtilisateurC
      * Recherche par nom, prénom ou e-mail, avec rôle et ID facultatifs.
      * Les filtres se cumulent et le résultat conserve la forme Utilisateur[].
      */
+    // Houssem : recherche nom/e-mail/rôle/ID
     public function rechercherUtilisateurs(string $recherche = '', string $role = '', ?int $id = null): array
     {
         if (!in_array($role, ['', 'admin', 'user'], true) || ($id !== null && $id < 1)) {
@@ -361,16 +379,19 @@ class UtilisateurC
     }
 
     // Eya : inscription et blocage/déblocage.
+    // Eya : état de connexion
     public static function isAuthenticated(): bool
     {
         return !empty($_SESSION['utilisateur']);
     }
     // Eya : inscription et blocage/déblocage.
+    // Eya : contrôle du rôle
     public static function hasRole(string $role): bool
     {
         return self::isAuthenticated() && ($_SESSION['utilisateur']['role'] ?? null) === $role;
     }
     // Eya : inscription et blocage/déblocage.
+    // Eya : unicité e-mail/pseudo
     private function existsByEmailOrUsername(string $email, string $pseudo): bool
     {
         $db = config::getConnexion();
@@ -387,6 +408,7 @@ class UtilisateurC
         }
     }
     // Eya : inscription et blocage/déblocage.
+    // Eya : insertion du compte avec rôle user
     private function insertUser(Utilisateur $utilisateur): bool
     {
         $db = config::getConnexion();
@@ -409,6 +431,7 @@ class UtilisateurC
         }
     }
     // Eya : inscription et blocage/déblocage.
+    // Eya : inscription, Houssem : vérification CSRF
     public function register(array $post): array
     {
         $errors = [];
@@ -465,16 +488,19 @@ class UtilisateurC
         return $errors;
     }
     // Eya : inscription et blocage/déblocage.
+    // Eya : blocage
     public function bloquerUtilisateur(int $id): array
     {
         return $this->changerStatut($id, 'bloque');
     }
     // Eya : inscription et blocage/déblocage.
+    // Eya : déblocage
     public function debloquerUtilisateur(int $id): array
     {
         return $this->changerStatut($id, 'actif');
     }
     // Eya : inscription et blocage/déblocage.
+    // Eya : lecture du statut
     private function findStatutById(int $id): ?string
     {
         $db = config::getConnexion();
@@ -493,6 +519,7 @@ class UtilisateurC
         return $ligne ? $ligne['statut'] : null;
     }
     // Eya : inscription et blocage/déblocage.
+    // Eya : changement de statut et protection de son compte
     private function changerStatut(int $id, string $statut): array
     {
         $errors = [];

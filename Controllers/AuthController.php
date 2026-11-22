@@ -1,4 +1,5 @@
 <?php
+// Amine : authentification. Houssem : CSRF. Intégration : gardes communes.
 declare(strict_types=1);
 
 /*
@@ -83,6 +84,7 @@ class AuthController
     // ==============================================================
     // LOGIN
     // ==============================================================
+    // Amine : recherche du compte
     private function findByEmail(string $email): ?Utilisateur
     {
         $stmt = $this->db->prepare('SELECT * FROM utilisateur WHERE mail = :mail LIMIT 1');
@@ -92,6 +94,7 @@ class AuthController
     }
 
     // Renvoie la liste des erreurs ; tableau vide = connexion réussie.
+    // Amine : connexion et session
     public function login(array $post): array
     {
         $errors = [];
@@ -144,6 +147,7 @@ class AuthController
     // ==============================================================
     // LOGOUT
     // ==============================================================
+    // Amine : déconnexion
     public function logout(): void
     {
         $_SESSION = [];
@@ -158,6 +162,7 @@ class AuthController
     // ==============================================================
     // USER SPACE (frontoffice)
     // ==============================================================
+    // Amine : récupération du compte
     public function findById(int $id): ?Utilisateur
     {
         $stmt = $this->db->prepare('SELECT * FROM utilisateur WHERE id_utilisateur = :id LIMIT 1');
@@ -166,6 +171,7 @@ class AuthController
         return $row ? Utilisateur::fromArray($row) : null;
     }
 
+    // Amine / Intégration : accès authentifié et compte encore actif
     public static function requireAuth(): void
     {
         self::getCsrfToken();
@@ -185,6 +191,7 @@ class AuthController
         $_SESSION['utilisateur']['role'] = $user->getRole();
         $_SESSION['utilisateur']['id_utilisateur'] = $user->getId();
     }
+    // Houssem : génération du token CSRF
     public static function getCsrfToken(): string
     {
         if (session_status() !== PHP_SESSION_ACTIVE) {
@@ -195,6 +202,7 @@ class AuthController
         }
         return $_SESSION['csrf_token'];
     }
+    // Houssem : comparaison sécurisée du token
     public static function verifyCsrfToken($token): bool
     {
         $expected = $_SESSION['csrf_token'] ?? null;
@@ -202,6 +210,7 @@ class AuthController
             && hash_equals($expected, $token);
     }
     // Chemin du routeur, pour conserver les liens quand une vue est ouverte directement.
+    // Intégration : chemin des vues vers le routeur
     public static function basePath(): string
     {
         $script = str_replace('\\', '/', (string) ($_SERVER['SCRIPT_NAME'] ?? '/index.php'));
@@ -209,11 +218,13 @@ class AuthController
         return rtrim($views === false ? dirname($script) : substr($script, 0, $views), '/.');
     }
 
+    // Intégration : rôle de la session
     public static function hasRole(string $role): bool
     {
         return self::isAuthenticated() && ($_SESSION['role'] ?? '') === $role;
     }
 
+    // Intégration : protection des pages back-office
     public static function requireRole(string $role): void
     {
         self::requireAuth();

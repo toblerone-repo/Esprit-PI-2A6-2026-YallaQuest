@@ -1,4 +1,5 @@
 <?php
+// Darine : structure commune. Amine : gabarit du routeur. Houssem : sorties échappées.
 /* Gabarit du front-office pour les vues affichées par le routeur (index.php?action=...).
    La vue prépare $title et $content (ob_start() puis ob_get_clean()), et éventuellement
    $styles (feuilles en plus, chemins relatifs à Views/front-office/pages/), puis fait :

@@ -1,4 +1,5 @@
 <?php
+// Darine : structure commune. Amine : gabarit du routeur. Houssem : sorties échappées.
 /* =====================================================================
    <head> + preloader communs à toutes les pages du back-office
    (Atelier Intégration Template, partie 2, étape 3 : partials/head.php).

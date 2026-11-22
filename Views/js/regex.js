@@ -1,3 +1,4 @@
+// Amine : motifs communs et validation REGEX. Eya : format du pseudo d’inscription.
 /**
  * Yalla Quest · expressions régulières communes à tous les formulaires (front-office et back-office).
  *

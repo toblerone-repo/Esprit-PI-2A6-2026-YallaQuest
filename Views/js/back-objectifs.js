@@ -1,3 +1,4 @@
+// Mohamed : objectifs admin et helper d’échappement HTML.
 /**
  * YallaQuest - Back-Office Objectifs (Administration)
  * Fichier unique regroupant toute la logique JavaScript du Back-Office

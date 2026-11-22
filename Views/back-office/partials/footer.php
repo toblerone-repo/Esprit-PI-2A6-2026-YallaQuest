@@ -1,4 +1,5 @@
 <?php
+// Darine : structure commune. Amine : gabarit du routeur. Houssem : sorties échappées.
 /* Pied de page commun à toutes les pages du back-office.
    À inclure juste avant </body> d'une page de Views/back-office/pages/ :
        <?php include_once __DIR__ . '/../partials/footer.php'; ?>
