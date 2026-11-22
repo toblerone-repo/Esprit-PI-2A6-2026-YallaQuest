@@ -44,7 +44,8 @@ class UtilisateurC
         } catch (PDOException $e) {
             die("Erreur: " . $e->getMessage());
         };
-        
+    }
+    
     // Renvoie l'utilisateur (sans le hash) si l'e-mail et le mot de passe sont corrects, sinon null.
     function login(string $mail, string $mp): ?array
     {
@@ -67,3 +68,5 @@ class UtilisateurC
         return $utilisateur;
     }
 };
+
+?>
