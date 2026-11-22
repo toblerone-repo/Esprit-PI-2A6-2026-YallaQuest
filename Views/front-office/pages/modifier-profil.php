@@ -6,8 +6,10 @@ if (session_status() === PHP_SESSION_NONE) {
 
 $id = $_SESSION['user_id'] ?? null;
 if ($id === null) {
-    exit('Connexion requise.');
+     exit('Connexion requise.');
 }
+
+//$id = 1; 
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     header('Content-type: application/json');
@@ -35,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 include_once __DIR__ . '/../../../Controllers/utilisateurC.php';
 $utilisateurC = new UtilisateurC();
-$ancienUtilisateur = $utilisateurC->chargerUtilisateur($id);
+$ancienUtilisateur = $utilisateurC->rechercherParId($id);
 $images = $utilisateurC->listerImagesProfil();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
