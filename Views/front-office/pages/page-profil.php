@@ -31,10 +31,11 @@ $utilisateur = $utilisateurC->chargerUtilisateur($id);
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="../../css/profil.css?v=<?= filemtime(__DIR__ . '/../../css/profil.css') ?>">
+    <link rel="stylesheet" href="../../css/profilUtilisateur.css?v=<?= filemtime(__DIR__ . '/../../css/profilUtilisateur.css') ?>">
 </head>
 
 <body class="page-profil">
+<?php include_once __DIR__ . '/../includes/navbar.php'; ?>
 
     <main class="container conteneur-profil py-5">
 
@@ -222,5 +223,6 @@ $utilisateur = $utilisateurC->chargerUtilisateur($id);
 
     </main>
 
+<?php include_once __DIR__ . '/../includes/footer.php'; ?>
 </body>
 </html>

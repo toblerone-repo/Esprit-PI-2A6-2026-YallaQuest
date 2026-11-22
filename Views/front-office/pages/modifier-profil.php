@@ -87,11 +87,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 };
 
 $pageTitle = 'Modifier mon profil · Yalla Quest';
-include_once __DIR__ . '/../includes/header-profil.php';
-
-
-
 ?>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?= htmlspecialchars($pageTitle) ?></title>
+    <link rel="stylesheet" href="../../css/profilUtilisateur.css">
+</head>
+<body class="page-modifier-profil">
+<?php include_once __DIR__ . '/../includes/navbar.php'; ?>
 
 <main class="auth">
     <div class="conteneur-modification-profil">
@@ -167,4 +173,6 @@ include_once __DIR__ . '/../includes/header-profil.php';
 
     <script src="../../js/profil.js"></script>
 </main>
-<?php include_once __DIR__ . '/../includes/footer-profil.php'; ?>
+<?php include_once __DIR__ . '/../includes/footer.php'; ?>
+</body>
+</html>

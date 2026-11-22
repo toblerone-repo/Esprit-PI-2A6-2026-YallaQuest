@@ -203,8 +203,9 @@ $categories = [
 </head>
 
 <body>
+    <?php include_once __DIR__ . '/../partials/sidebar.php'; ?>
+    <?php include_once __DIR__ . '/../partials/header.php'; ?>
     <div class="backoffice-layout">
-        <?php include_once __DIR__ . '/../partials/sidebar.php'; ?>
 
         <div class="main-content container">
 
@@ -400,6 +401,7 @@ $categories = [
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../../js/quetes.js"></script>
 
+<?php include_once __DIR__ . '/../partials/footer.php'; ?>
 </body>
 
 </html>
