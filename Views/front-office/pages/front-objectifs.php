@@ -1,13 +1,17 @@
 <?php
 require_once __DIR__ . '/../../../Controllers/AuthController.php';
 $csrfToken = AuthController::getCsrfToken();
-
+$cspNonce = $cspNonce ?? bin2hex(random_bytes(16));
+$currentPage = 'front-objectifs';
 if (in_array($_SERVER['REQUEST_METHOD'] ?? 'GET', ['POST', 'PUT', 'PATCH', 'DELETE'], true)
     && !AuthController::verifyCsrfToken($_POST['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? null)) {
     http_response_code(403);
-    header('Content-Type: text/plain; charset=utf-8');
     exit('Jeton de sécurité invalide. Rechargez la page.');
 }
+
+require_once __DIR__ . '/../../../Controllers/AuthController.php';
+$csrfToken = AuthController::getCsrfToken();
+
 
 if (isset($_GET['supprimer']) || isset($_GET['toggle']) || isset($_GET['toggle_etape'])) {
     http_response_code(405);
@@ -23,6 +27,7 @@ $xpDansNiveau = max(0, min(100, (float) ($xpDansNiveau ?? 0)));
 <!DOCTYPE html>
 <html lang="fr">
 <head>
+<meta name="csrf-token" content="<?= htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
   <?php
     require_once __DIR__ . '/../includes/head.php';
   ?>
@@ -93,7 +98,7 @@ $xpDansNiveau = max(0, min(100, (float) ($xpDansNiveau ?? 0)));
                 <p>Clique sur « Nouveau but » ci-dessus pour planifier ton premier objectif avec ses étapes !</p>
             </div>
         <?php else: ?>
-            <?php foreach ($listeObjectifs as $obj): 
+            <?php foreach ($listeObjectifs as $obj):
                 $id = (int) $obj['id'];
                 $cat = $obj['categorie'] ?? 'Activité physique';
                 $img = $imagesPiliers[$cat] ?? 'focus';
@@ -103,7 +108,7 @@ $xpDansNiveau = max(0, min(100, (float) ($xpDansNiveau ?? 0)));
                 $valideesE = 0;
                 foreach ($etapes as $e) { if ($e['est_validee']) $valideesE++; }
                 $pourcentage = ($totalE > 0) ? round(($valideesE / $totalE) * 100) : ($isAtteint ? 100 : 0);
-                
+
                 $dateDebStr = !empty($obj['date_debut']) ? date('d M', strtotime($obj['date_debut'])) : '';
                 $dateFinStr = !empty($obj['date_fin']) ? date('d M', strtotime($obj['date_fin'])) : '';
             ?>
@@ -117,7 +122,7 @@ $xpDansNiveau = max(0, min(100, (float) ($xpDansNiveau ?? 0)));
                         <span class="flag">+<?= (int) ($obj['xp_recompense'] ?? 50) ?> XP</span>
                     </p>
                     <h3 class="<?= htmlspecialchars((string) ($isAtteint ? 'done' : ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>"><?= htmlspecialchars($obj['titre'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></h3>
-                    
+
                     <!-- Note / Description -->
                     <div class="desc">
                         <p><?= htmlspecialchars($obj['note'] ?? $obj['description'] ?? 'Aucune note.', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></p>
@@ -128,23 +133,23 @@ $xpDansNiveau = max(0, min(100, (float) ($xpDansNiveau ?? 0)));
                     <div class="etapes-container">
                         <div class="etapes-header">
                             <span class="etapes-label">Étapes de progression</span>
-                            <span class="etapes-ratio"><?= (int) ($valideesE) ?> / <?= (int) ($totalE) ?> complétée<?= $totalE > 1 ? 's' : '' ?> (<?= max(0, min(100, (float) ($pourcentage))) ?>%)</span>
+                            <span class="etapes-ratio"><?= htmlspecialchars((string) ((int) ($valideesE)), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?> / <?= htmlspecialchars((string) ((int) ($totalE)), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?> complétée<?= $totalE > 1 ? 's' : '' ?> (<?= htmlspecialchars((string) (max(0, min(100, (float) ($pourcentage)))), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>%)</span>
                         </div>
-                        <div class="etapes-progress-bar" role="progressbar" aria-valuenow="<?= max(0, min(100, (float) ($pourcentage))) ?>" aria-valuemin="0" aria-valuemax="100">
-                            <div class="etapes-progress-fill" style="width: <?= max(0, min(100, (float) ($pourcentage))) ?>%;"></div>
+                        <div class="etapes-progress-bar" role="progressbar" aria-valuenow="<?= htmlspecialchars((string) (max(0, min(100, (float) ($pourcentage)))), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>" aria-valuemin="0" aria-valuemax="100">
+                            <div class="etapes-progress-fill" style="width: <?= htmlspecialchars((string) (max(0, min(100, (float) ($pourcentage)))), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>%;"></div>
                         </div>
                         <ul class="etapes-list">
-                            <?php foreach ($etapes as $etape): 
+                            <?php foreach ($etapes as $etape):
                                 $isEtapeValidee = (bool)$etape['est_validee'];
                                 $checkId = 'etape_' . (int) $etape['IdEO'];
                             ?>
                             <li class="etape-row <?= htmlspecialchars((string) ($isEtapeValidee ? 'validee' : ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
                                 <input class="etape-check" type="checkbox" id="<?= htmlspecialchars((string) ($checkId), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>"
                                        <?= htmlspecialchars((string) ($isEtapeValidee ? 'checked' : ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
-                                       onchange="toggleEtape(<?= (int) ($etape['IdEO']) ?>, this)">
+                                       onchange="toggleEtape(<?= htmlspecialchars((string) ((int) ($etape['IdEO'])), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>, this)">
                                 <label for="<?= htmlspecialchars((string) ($checkId), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>" class="etape-title"><?= htmlspecialchars($etape['titre'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></label>
                                 <?php if ($isEtapeValidee && !empty($etape['date_validation'])): ?>
-                                    <span class="etape-date">✓ <?= date('d M', strtotime($etape['date_validation'])) ?></span>
+                                    <span class="etape-date">✓ <?= htmlspecialchars((string) (date('d M', strtotime($etape['date_validation']))), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></span>
                                 <?php endif; ?>
                             </li>
                             <?php endforeach; ?>
@@ -155,8 +160,8 @@ $xpDansNiveau = max(0, min(100, (float) ($xpDansNiveau ?? 0)));
                     <!-- Pied de carte : Statut & Actions -->
                     <div class="pfoot">
                         <p class="times">
-                            <span>Début : <strong><?= date('d M à H:i', strtotime($obj['date_debut'])) ?></strong></span>
-                            <span>Fin : <strong><?= date('d M à H:i', strtotime($obj['date_fin'])) ?></strong></span>
+                            <span>Début : <strong><?= htmlspecialchars((string) (date('d M à H:i', strtotime($obj['date_debut']))), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></strong></span>
+                            <span>Fin : <strong><?= htmlspecialchars((string) (date('d M à H:i', strtotime($obj['date_fin']))), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></strong></span>
                         </p>
                         <span class="pill st-<?= htmlspecialchars((string) ($obj['statut']), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
                             <?= htmlspecialchars((string) ($isAtteint ? 'Accompli' : ($obj['statut'] === 'a_venir' ? 'À venir' : 'En cours')), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
@@ -164,13 +169,13 @@ $xpDansNiveau = max(0, min(100, (float) ($xpDansNiveau ?? 0)));
                         <div class="actions">
                             <?php if ($isAtteint): ?>
                                 <form method="post" action="front-objectifs.php" style="display:contents">
-                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>"><input type="hidden" name="toggle" value="<?= (int) $id ?>"><button class="btn sm" type="submit">Reprendre</button></form>
+                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>"><input type="hidden" name="toggle" value="<?= htmlspecialchars((string) ((int) $id), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>"><button class="btn sm" type="submit">Reprendre</button></form>
                             <?php else: ?>
                                 <form method="post" action="front-objectifs.php" style="display:contents">
-                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>"><input type="hidden" name="toggle" value="<?= (int) $id ?>"><button class="btn primary sm" type="submit">Accomplir</button></form>
+                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>"><input type="hidden" name="toggle" value="<?= htmlspecialchars((string) ((int) $id), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>"><button class="btn primary sm" type="submit">Accomplir</button></form>
                             <?php endif; ?>
                             <form method="post" action="front-objectifs.php" style="display:contents" onsubmit="return confirm('Voulez-vous vraiment supprimer cet objectif ?');">
-                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>"><input type="hidden" name="supprimer" value="<?= (int) $id ?>"><button class="btn danger sm icon" type="submit" title="Supprimer">
+                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>"><input type="hidden" name="supprimer" value="<?= htmlspecialchars((string) ((int) $id), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>"><button class="btn danger sm icon" type="submit" title="Supprimer">
                                 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" style="width:14px;height:14px;"><path d="M3 4.5h10M6.5 4.5V3h3v1.5M4.5 4.5l.6 8.5h5.8l.6-8.5"/></svg>
                             </button></form>
                         </div>
@@ -188,7 +193,7 @@ $xpDansNiveau = max(0, min(100, (float) ($xpDansNiveau ?? 0)));
     <form method="POST" action="front-objectifs.php" onsubmit="return validerFormulaireObjectif()">
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
         <input type="hidden" name="ajouter_objectif" value="1">
-        
+
         <div class="head">
             <h2 id="dlgButTitle">Nouveau but pour le futur</h2>
             <button class="btn icon" type="button" onclick="fermerModal()" aria-label="Fermer">✕</button>
@@ -224,11 +229,11 @@ $xpDansNiveau = max(0, min(100, (float) ($xpDansNiveau ?? 0)));
             <div class="field-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
                 <div class="field">
                     <label for="butDateDebut">Date & heure de début <span style="color:#d9534f">*</span></label>
-                    <input class="input" type="datetime-local" id="butDateDebut" name="date_debut" value="<?= date('Y-m-d\TH:i') ?>" required>
+                    <input class="input" type="datetime-local" id="butDateDebut" name="date_debut" value="<?= htmlspecialchars((string) (date('Y-m-d\TH:i')), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>" required>
                 </div>
                 <div class="field">
                     <label for="butDateFin">Date & heure de fin <span style="color:#d9534f">*</span></label>
-                    <input class="input" type="datetime-local" id="butDateFin" name="date_fin" value="<?= date('Y-m-d\TH:i', strtotime('+7 days')) ?>" required>
+                    <input class="input" type="datetime-local" id="butDateFin" name="date_fin" value="<?= htmlspecialchars((string) (date('Y-m-d\TH:i', strtotime('+7 days'))), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>" required>
                 </div>
             </div>
             <p class="field-error" id="butDateErr" style="color:#d9534f;font-size:13px;"></p>
@@ -237,7 +242,7 @@ $xpDansNiveau = max(0, min(100, (float) ($xpDansNiveau ?? 0)));
             <div class="field etapes-form-section" style="margin-top:16px;">
                 <label>Étapes obligatoires pour accomplir ce but <span style="color:#d9534f">*</span></label>
                 <p class="field-help" style="font-size:13px;color:#aaa;margin-bottom:8px;">Chaque but doit être découpé en au moins une étape concrète.</p>
-                
+
                 <div class="add-etape-row" style="display:flex;gap:8px;margin-bottom:8px;">
                     <input class="input" type="text" id="nouvelleEtapeInput" placeholder="Ex. Acheter un carnet de méditation..." style="flex:1;">
                     <button type="button" class="btn primary sm" onclick="ajouterChampEtape()">+ Ajouter</button>

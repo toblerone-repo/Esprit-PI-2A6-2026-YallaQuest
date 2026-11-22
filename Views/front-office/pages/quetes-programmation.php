@@ -1,13 +1,17 @@
 <?php
 require_once __DIR__ . '/../../../Controllers/AuthController.php';
 $csrfToken = AuthController::getCsrfToken();
-
+$cspNonce = $cspNonce ?? bin2hex(random_bytes(16));
+$currentPage = 'quetes-programmation';
 if (in_array($_SERVER['REQUEST_METHOD'] ?? 'GET', ['POST', 'PUT', 'PATCH', 'DELETE'], true)
     && !AuthController::verifyCsrfToken($_POST['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? null)) {
     http_response_code(403);
-    header('Content-Type: text/plain; charset=utf-8');
     exit('Jeton de sécurité invalide. Rechargez la page.');
 }
+
+require_once __DIR__ . '/../../../Controllers/AuthController.php';
+$csrfToken = AuthController::getCsrfToken();
+
 
 $currentPage = 'quetes-programmation';
 
@@ -184,6 +188,7 @@ $pas_de_prog = false;
 <html lang="fr">
 
 <head>
+<meta name="csrf-token" content="<?= htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
   <?php
     $pageTitle = 'Mes quêtes · Yalla Quest';
     require_once __DIR__ . '/../includes/head.php';
@@ -413,13 +418,13 @@ $pas_de_prog = false;
         $difficultesPourJs[] = htmlspecialchars((string) $difficulteJs, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
     }
     ?>
-    <script>
+    <script nonce="<?= htmlspecialchars($cspNonce ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
         const competences = <?php echo json_encode($competencesPourJs, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;
         const difficultes = <?php echo json_encode($difficultesPourJs, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;
     </script>
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="../../js/quetes.js"></script>
+    <script nonce="<?= htmlspecialchars($cspNonce ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>" src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script nonce="<?= htmlspecialchars($cspNonce ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>" src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.bundle.min.js"></script>
+    <script nonce="<?= htmlspecialchars($cspNonce ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>" src="../../js/quetes.js"></script>
 
 <?php include_once __DIR__ . '/../includes/footer.php'; ?>
 </body>

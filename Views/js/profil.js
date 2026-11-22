@@ -75,6 +75,16 @@ document.getElementById("formulaire-modification").addEventListener("submit", as
                 return;
             }
 
+            if (typeof resultat === 'string') {
+                let erreurServeur = form.querySelector('[data-erreur-serveur]');
+                if (!erreurServeur) {
+                    erreurServeur = document.createElement('p');
+                    erreurServeur.dataset.erreurServeur = 'true';
+                    erreurServeur.setAttribute('role', 'alert');
+                    form.prepend(erreurServeur);
+                }
+                erreurServeur.textContent = resultat;
+            }
             if (resultat === false) {
                 ancienMpInput.nextElementSibling.textContent = "L'ancien mot de passe est incorrect.";
                 ancienMpInput.classList.add("warning-border");
@@ -87,7 +97,7 @@ document.getElementById("formulaire-modification").addEventListener("submit", as
                 submitBtn.disabled = false;
                 submitBtn.textContent = "Enregistrer";
             }
-        }; 
+        };
 
 
     }
@@ -106,4 +116,4 @@ for (let i = 0; i < inputs.length; i++) {
             inputs[i].classList.remove("warning-border");
         }
     })
-}; 
+};

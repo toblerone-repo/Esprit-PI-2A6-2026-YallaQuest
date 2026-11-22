@@ -1,4 +1,14 @@
 <?php
+require_once __DIR__ . '/../../../Controllers/AuthController.php';
+$csrfToken = AuthController::getCsrfToken();
+$cspNonce = $cspNonce ?? bin2hex(random_bytes(16));
+$currentPage = 'login';
+if (in_array($_SERVER['REQUEST_METHOD'] ?? 'GET', ['POST', 'PUT', 'PATCH', 'DELETE'], true)
+    && !AuthController::verifyCsrfToken($_POST['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? null)) {
+    http_response_code(403);
+    exit('Jeton de sécurité invalide. Rechargez la page.');
+}
+
 /* PARTIE 5 : vue de connexion (index.php?action=login).
    Vue seulement : la vérification est faite par AuthController::login(), appelé par le routeur,
    qui fournit $errors (liste des erreurs) et $email (valeur à remettre dans le champ).
@@ -17,10 +27,11 @@ $email = $email ?? '';
 <!DOCTYPE html>
 <html lang="fr">
 <head>
+<meta name="csrf-token" content="<?= htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <base href="Views/front-office/pages/">
-    <title><?= htmlspecialchars($pageTitle, ENT_QUOTES, 'UTF-8') ?></title>
+    <title><?= htmlspecialchars($pageTitle, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></title>
     <link rel="stylesheet" href="../../css/front-objectifs-styles.css">
 </head>
 <body>
@@ -34,12 +45,13 @@ $email = $email ?? '';
                     <p class="about">« Chaque habitude est une quête. »</p>
                 </div>
 
-                <div id="loginError" class="alert" role="alert"<?= $erreur === '' ? ' hidden' : '' ?>><?= htmlspecialchars($erreur, ENT_QUOTES, 'UTF-8') ?></div>
+                <div id="loginError" class="alert" role="alert"<?= $erreur === '' ? ' hidden' : '' ?>><?= htmlspecialchars($erreur, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></div>
 
                 <form id="loginForm" method="post" action="../../../index.php?action=login" novalidate>
+    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
                     <div class="field">
                         <label for="email">E-mail</label>
-                        <input class="input" type="email" id="email" name="email" autocomplete="email" placeholder="yassine@esprit.tn" value="<?= htmlspecialchars($email, ENT_QUOTES, 'UTF-8') ?>">
+                        <input class="input" type="email" id="email" name="email" autocomplete="email" placeholder="yassine@esprit.tn" value="<?= htmlspecialchars($email, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
                     </div>
                     <div class="field">
                         <label for="mot_de_passe">Mot de passe</label>
@@ -53,8 +65,8 @@ $email = $email ?? '';
         </div>
     </main>
 
-<script src="../../js/regex.js"></script>
-<script src="../../js/ui.js"></script>
-<script src="../../js/validation.js"></script>
+<script nonce="<?= htmlspecialchars($cspNonce ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>" src="../../js/regex.js"></script>
+<script nonce="<?= htmlspecialchars($cspNonce ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>" src="../../js/ui.js"></script>
+<script nonce="<?= htmlspecialchars($cspNonce ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>" src="../../js/validation.js"></script>
 </body>
 </html>

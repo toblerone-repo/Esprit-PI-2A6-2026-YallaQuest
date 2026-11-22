@@ -251,7 +251,9 @@ class UtilisateurC
             if ($e->getCode() == 23000) {
                 return -1;
             }
-            die('Erreur: ' . $e->getMessage());
+            error_log('SQL utilisateur : ' . $e->getMessage());
+            http_response_code(500);
+            die('Une erreur est survenue lors du traitement des données.');
         }
     }
     function listerImagesProfil()
@@ -263,7 +265,9 @@ class UtilisateurC
             $list = $db->query($sql);
             return $list->fetchAll();
         } catch (PDOException $e) {
-            die("Erreur: " . $e->getMessage());
+            error_log('SQL utilisateur : ' . $e->getMessage());
+            http_response_code(500);
+            die('Une erreur est survenue lors du traitement des données.');
         };
     }
     // Dorra garde ses tableaux pour l'affichage du profil ; la liste garde ses objets.
@@ -301,7 +305,7 @@ class UtilisateurC
         return $query->execute([
             'id' => $id, 'nom' => $utilisateur->getNom(), 'prenom' => $utilisateur->getPrenom(),
             'mail' => $utilisateur->getEmail(), 'mp' => $utilisateur->getMp(),
-            'img_profil' => $utilisateur->getImgProfil(), 'ancien_hash' => $profil['mot_de_passe_hash'],
+            'img_profil' => $utilisateur->getImgProfil() !== '' ? $utilisateur->getImgProfil() : null, 'ancien_hash' => $profil['mot_de_passe_hash'],
         ]);
     }
 

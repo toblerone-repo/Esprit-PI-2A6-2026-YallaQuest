@@ -6,14 +6,28 @@ declare(strict_types=1);
    Chemins relatifs : fonctionne aussi dans un sous-dossier (ex. http://localhost/integration/).
    Back-office : Views/back-office/pages/liste_utilisateurs.php (barre latérale vers les autres pages). */
 
-require __DIR__ . '/session.php';                       // Partie 5.5 : seul session_start()
-require __DIR__ . '/Controllers/AuthController.php';    // Partie 5.1
+require_once __DIR__ . '/session.php';                       // Partie 5.5 : seul session_start()
+require_once __DIR__ . '/Controllers/AuthController.php';
+
+// En-têtes HTTP de sécurité de Houssem, adaptés aux ressources des six templates.
+$cspNonce = bin2hex(random_bytes(16));
+header('X-Frame-Options: DENY');
+header('X-Content-Type-Options: nosniff');
+header('Referrer-Policy: strict-origin-when-cross-origin');
+header("Content-Security-Policy: default-src 'self'; script-src 'self' 'nonce-$cspNonce' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://code.jquery.com; script-src-attr 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; font-src 'self' data: https://fonts.gstatic.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; img-src 'self' data: https:; object-src 'none'; base-uri 'self'; frame-ancestors 'none'");
+$csrfToken = AuthController::getCsrfToken();
+if (in_array($_SERVER['REQUEST_METHOD'] ?? 'GET', ['POST', 'PUT', 'PATCH', 'DELETE'], true)
+    && !AuthController::verifyCsrfToken($_POST['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? null)) {
+    http_response_code(403);
+    exit('Jeton de sécurité invalide. Rechargez la page.');
+}
+
 
 // Les vues appelées par ce routeur vérifient cette constante (accès direct interdit).
 define('YQ_ROUTEUR', true);
 
 $authController = new AuthController();
-$action = (string) ($_GET['action'] ?? 'accueil');
+$action = is_string($_GET['action'] ?? null) ? $_GET['action'] : 'accueil';
 
 switch ($action) {
     // ---------------- ACCUEIL ----------------
@@ -30,7 +44,7 @@ switch ($action) {
         $errors = [];
         $email = '';
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $email = trim((string) ($_POST['email'] ?? ''));
+            $email = is_string($_POST['email'] ?? null) ? trim($_POST['email']) : '';
             $errors = $authController->login($_POST);
             if (empty($errors)) {
                 // L'action admin arrive en Partie 6 : d'ici là, un admin tombe sur la page 404.
@@ -44,13 +58,16 @@ switch ($action) {
 
     // ---------------- LOGOUT ----------------
     case 'logout':
+        if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
+            http_response_code(405); header('Allow: POST'); exit('La déconnexion doit être envoyée par POST.');
+        }
         $authController->logout();
         header('Location: index.php?action=login');
         exit;
 
     // ---------------- USER SPACE (role: user - frontoffice) ----------------
     case 'dashboard':
-        AuthController::requireAuth();
+        AuthController::requireRole('user');
         $user = $authController->findById((int) $_SESSION['user_id']);
         if (!$user) {               // compte supprimé alors que la session est encore active
             $authController->logout();
@@ -59,6 +76,16 @@ switch ($action) {
         }
         require __DIR__ . '/Views/front-office/pages/user_space.php';
         break;
+
+    case 'admin':
+        AuthController::requireRole('admin');
+        header('Location: Views/back-office/pages/listuser.php');
+        exit;
+
+    case 'home':
+        $destination = AuthController::isAuthenticated() ? (($_SESSION['role'] ?? '') === 'admin' ? 'admin' : 'dashboard') : 'login';
+        header('Location: index.php?action=' . $destination);
+        exit;
 
     default:
         http_response_code(404);

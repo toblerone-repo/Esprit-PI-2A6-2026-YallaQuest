@@ -1,13 +1,18 @@
 <?php
 require_once __DIR__ . '/../../../Controllers/AuthController.php';
 $csrfToken = AuthController::getCsrfToken();
-
+$cspNonce = $cspNonce ?? bin2hex(random_bytes(16));
+$currentPage = 'totems';
 if (in_array($_SERVER['REQUEST_METHOD'] ?? 'GET', ['POST', 'PUT', 'PATCH', 'DELETE'], true)
     && !AuthController::verifyCsrfToken($_POST['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? null)) {
     http_response_code(403);
-    header('Content-Type: text/plain; charset=utf-8');
     exit('Jeton de sécurité invalide. Rechargez la page.');
 }
+AuthController::requireRole('admin');
+
+require_once __DIR__ . '/../../../Controllers/AuthController.php';
+$csrfToken = AuthController::getCsrfToken();
+
 
 $title = 'Totems | YallaQuest Admin';
 $currentPage = 'totems';
@@ -162,7 +167,7 @@ require_once __DIR__ . '/../partials/head.php';
 
 </div>
 
-<script src="../../js/regex.js"></script>
+<script nonce="<?= htmlspecialchars($cspNonce ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>" src="../../js/regex.js"></script>
 <?php include_once __DIR__ . '/../partials/footer.php'; ?>
 </body>
 </html>

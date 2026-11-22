@@ -1,3 +1,15 @@
+function escapeHtml(text) {
+    if (text === null || text === undefined) return '';
+    var map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+    var str = text.toString();
+    var out = '';
+    for (var i = 0; i < str.length; i++) {
+        var c = str.charAt(i);
+        out += map[c] !== undefined ? map[c] : c;
+    }
+    return out;
+}
+
 let nbInputChamps = 1;
 
 
@@ -46,9 +58,9 @@ document.getElementById("ajouter-quete")?.addEventListener("click", function () 
     let html = "";
     competences.forEach((competence, index) => {
         const checked = index === 0 ? 'checked' : '';
-        html += `<input type='radio' class='competence-radio' name='competence-${nbInputChamps}' id='competence-${nbInputChamps}-${competence.id}' value='${competence.id}' ${checked}>`
+        html += `<input type='radio' class='competence-radio' name='competence-${nbInputChamps}' id='competence-${nbInputChamps}-${escapeHtml(competence.id)}' value='${escapeHtml(competence.id)}' ${checked}>`
             +
-            `<label class='competence-pill' for='competence-${nbInputChamps}-${competence.id}'><i class='fa-solid fa-check'></i> ${competence.nom}</label>`;
+            `<label class='competence-pill' for='competence-${nbInputChamps}-${escapeHtml(competence.id)}'><i class='fa-solid fa-check'></i> ${escapeHtml(competence.nom)}</label>`;
     });
 
     queteCompetenceOptions.innerHTML =
@@ -62,9 +74,9 @@ document.getElementById("ajouter-quete")?.addEventListener("click", function () 
     queteDifficulteOptions.classList.add("form-group");
     difficultes.forEach((difficulte, index) => {
         const checked = index === 0 ? 'checked' : '';
-        html += `<input type='radio' class='difficulte-radio' name='difficulte-${nbInputChamps}' id='difficulte-${nbInputChamps}-${difficulte}' value='${difficulte}' ${checked}>`
+        html += `<input type='radio' class='difficulte-radio' name='difficulte-${nbInputChamps}' id='difficulte-${nbInputChamps}-${escapeHtml(difficulte)}' value='${escapeHtml(difficulte)}' ${checked}>`
             +
-            `<label class='difficulte-pill' for='difficulte-${nbInputChamps}-${difficulte}'><i class='fa-solid fa-check'></i> ${difficulte}</label>`;
+            `<label class='difficulte-pill' for='difficulte-${nbInputChamps}-${escapeHtml(difficulte)}'><i class='fa-solid fa-check'></i> ${escapeHtml(difficulte)}</label>`;
     });
 
     queteDifficulteOptions.innerHTML =
@@ -149,33 +161,33 @@ $("#ouvrir-formulaire-vide").click(function () {
 
 /* document.getElementById("quest-ajout").addEventListener("submit", function (event) {
     event.preventDefault();
-    $("#add_quete_btn").prop("disabled", true).text("Enregistrement..."); 
-    let submitValidee = true; 
+    $("#add_quete_btn").prop("disabled", true).text("Enregistrement...");
+    let submitValidee = true;
 
     const titreChamp = $("#quest-ajout input[name='title']");
-    const titre = titreChamp.val(); 
+    const titre = titreChamp.val();
     const xpChamp = $("#quest-ajout input[name='xp']");
-    const xp = xpChamp.val(); 
+    const xp = xpChamp.val();
 
     if (titre.length === 0 ) {
-        $(titreChamp).next().text("Le champ de titre est obligatoire."); 
-        submitValidee = false; 
+        $(titreChamp).next().text("Le champ de titre est obligatoire.");
+        submitValidee = false;
     } else if (titre.length >60) {
-        $(titreChamp).next().text("Le titre doit être au maximum 60 caractères."); 
-        submitValidee = false; 
-    }; 
+        $(titreChamp).next().text("Le titre doit être au maximum 60 caractères.");
+        submitValidee = false;
+    };
 
     if (xp<=0) {
-        $(xpChamp).next().text("La valeur d'xp doit être strictement supérieure à 0."); 
-        submitValidee = false; 
-    }; 
+        $(xpChamp).next().text("La valeur d'xp doit être strictement supérieure à 0.");
+        submitValidee = false;
+    };
 
     if (submitValidee) {
-        this.submit(); 
+        this.submit();
     }else {
-        $("#add_quete_btn").prop("disabled", false).text("Enregistrer"); 
-    }; 
-        
+        $("#add_quete_btn").prop("disabled", false).text("Enregistrer");
+    };
 
-}); 
+
+});
  */

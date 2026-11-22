@@ -19,6 +19,6 @@
       <a href="mailto:toblerone@gmail.com">toblerone@gmail.com</a>
     </address>
 
-    <p class="yq-front-footer-copy">&copy; <?= date('Y') ?> YallaQuest · Réalisé par Toblerone</p>
+    <p class="yq-front-footer-copy">&copy; <?= htmlspecialchars((string) (date('Y')), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?> YallaQuest · Réalisé par Toblerone</p>
   </div>
 </footer>

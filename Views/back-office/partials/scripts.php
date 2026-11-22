@@ -1,2 +1,2 @@
 <!-- Custom Javascript -->
-<script src="../../js/back-objectifs.js"></script>
+<script nonce="<?= htmlspecialchars($cspNonce ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>" src="../../js/back-objectifs.js"></script>

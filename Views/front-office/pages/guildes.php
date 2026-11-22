@@ -1,17 +1,22 @@
 <?php
 require_once __DIR__ . '/../../../Controllers/AuthController.php';
 $csrfToken = AuthController::getCsrfToken();
-
+$cspNonce = $cspNonce ?? bin2hex(random_bytes(16));
+$currentPage = 'guildes';
 if (in_array($_SERVER['REQUEST_METHOD'] ?? 'GET', ['POST', 'PUT', 'PATCH', 'DELETE'], true)
     && !AuthController::verifyCsrfToken($_POST['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? null)) {
     http_response_code(403);
-    header('Content-Type: text/plain; charset=utf-8');
     exit('Jeton de sécurité invalide. Rechargez la page.');
 }
+
+require_once __DIR__ . '/../../../Controllers/AuthController.php';
+$csrfToken = AuthController::getCsrfToken();
+
 ?>
 <!DOCTYPE html>
 <html lang="fr" data-yq-page="guildes">
 <head>
+<meta name="csrf-token" content="<?= htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
   <?php
     $pageTitle = 'Guildes · Yalla Quest';
     $currentPage = 'guildes';
@@ -19,7 +24,7 @@ if (in_array($_SERVER['REQUEST_METHOD'] ?? 'GET', ['POST', 'PUT', 'PATCH', 'DELE
   ?>
 <!-- Effets (scroll & souris) : styles dans Views/css/guilde.css, scripts dans Views/js/effects/. Pour les désactiver,
      retirer le script fx-boot ci-dessous et le bloc « Effets » en bas de page. -->
-<script>/* masque #canvas le temps que les effets démarrent (jamais plus de 2,5 s, jamais en mouvement réduit) */
+<script nonce="<?= htmlspecialchars($cspNonce ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">/* masque #canvas le temps que les effets démarrent (jamais plus de 2,5 s, jamais en mouvement réduit) */
 (function (r) { if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   r.classList.add('fx-boot'); setTimeout(function () { r.classList.remove('fx-boot'); }, 2500); })(document.documentElement);</script>
 </head>
@@ -515,16 +520,16 @@ if (in_array($_SERVER['REQUEST_METHOD'] ?? 'GET', ['POST', 'PUT', 'PATCH', 'DELE
   </main>
 </div>
 <!-- Effets : bibliothèques locales (Views/lib/), avec un CDN de secours si un fichier manque -->
-<script src="../../lib/gsap/gsap.min.js"></script>
-<script>window.gsap || document.write('<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"><\/script>');</script>
-<script src="../../lib/gsap/ScrollTrigger.min.js"></script>
-<script>window.ScrollTrigger || document.write('<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"><\/script>');</script>
-<script src="../../lib/lenis/lenis.min.js"></script>
-<script>window.Lenis || document.write('<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"><\/script>');</script>
-<script src="../../lib/splittype/split-type.min.js"></script>
-<script>window.SplitType || document.write('<script src="https://cdn.jsdelivr.net/npm/split-type@0.3.4/umd/index.min.js"><\/script>');</script>
-<script type="importmap">{"imports":{"three":"../../lib/three/three.module.min.js"}}</script>
-<script type="module" src="../../js/effects/main.js" onerror="document.documentElement.classList.remove('fx-boot')"></script>
+<script nonce="<?= htmlspecialchars($cspNonce ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>" src="../../lib/gsap/gsap.min.js"></script>
+<script nonce="<?= htmlspecialchars($cspNonce ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">window.gsap || document.write('<script nonce="<?= htmlspecialchars($cspNonce ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>" src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"><\/script>');</script>
+<script nonce="<?= htmlspecialchars($cspNonce ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>" src="../../lib/gsap/ScrollTrigger.min.js"></script>
+<script nonce="<?= htmlspecialchars($cspNonce ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">window.ScrollTrigger || document.write('<script nonce="<?= htmlspecialchars($cspNonce ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>" src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"><\/script>');</script>
+<script nonce="<?= htmlspecialchars($cspNonce ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>" src="../../lib/lenis/lenis.min.js"></script>
+<script nonce="<?= htmlspecialchars($cspNonce ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">window.Lenis || document.write('<script nonce="<?= htmlspecialchars($cspNonce ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>" src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"><\/script>');</script>
+<script nonce="<?= htmlspecialchars($cspNonce ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>" src="../../lib/splittype/split-type.min.js"></script>
+<script nonce="<?= htmlspecialchars($cspNonce ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">window.SplitType || document.write('<script nonce="<?= htmlspecialchars($cspNonce ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>" src="https://cdn.jsdelivr.net/npm/split-type@0.3.4/umd/index.min.js"><\/script>');</script>
+<script nonce="<?= htmlspecialchars($cspNonce ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>" type="importmap">{"imports":{"three":"../../lib/three/three.module.min.js"}}</script>
+<script nonce="<?= htmlspecialchars($cspNonce ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>" type="module" src="../../js/effects/main.js" onerror="document.documentElement.classList.remove('fx-boot')"></script>
 <?php include_once __DIR__ . '/../includes/footer.php'; ?>
 </body>
 </html>

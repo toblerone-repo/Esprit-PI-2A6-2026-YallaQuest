@@ -1,13 +1,18 @@
 <?php
 require_once __DIR__ . '/../../../Controllers/AuthController.php';
 $csrfToken = AuthController::getCsrfToken();
-
+$cspNonce = $cspNonce ?? bin2hex(random_bytes(16));
+$currentPage = 'publications';
 if (in_array($_SERVER['REQUEST_METHOD'] ?? 'GET', ['POST', 'PUT', 'PATCH', 'DELETE'], true)
     && !AuthController::verifyCsrfToken($_POST['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? null)) {
     http_response_code(403);
-    header('Content-Type: text/plain; charset=utf-8');
     exit('Jeton de sécurité invalide. Rechargez la page.');
 }
+AuthController::requireRole('admin');
+
+require_once __DIR__ . '/../../../Controllers/AuthController.php';
+$csrfToken = AuthController::getCsrfToken();
+
 
 (function () {
     // Les mêmes choix sont utilisés par le front-office et l'administration.
@@ -169,9 +174,9 @@ if (in_array($_SERVER['REQUEST_METHOD'] ?? 'GET', ['POST', 'PUT', 'PATCH', 'DELE
   <a href="publications.php?action=ajouter" class="button">Nouvelle publication +</a>
 </div>
 <div class="stat-grid">
-  <article class="stat-card"><p>Total</p><strong><?= count($allPublications) ?></strong></article>
+  <article class="stat-card"><p>Total</p><strong><?= htmlspecialchars((string) (count($allPublications)), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></strong></article>
   <?php foreach ($publicationStatuses as $key => $label) { ?>
-    <article class="stat-card"><p><?= htmlspecialchars($label, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></p><strong><?= (int) ($counts[$key]) ?></strong></article>
+    <article class="stat-card"><p><?= htmlspecialchars($label, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></p><strong><?= htmlspecialchars((string) ((int) ($counts[$key])), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></strong></article>
   <?php } ?>
 </div>
 <section class="panel">
@@ -190,17 +195,17 @@ if (in_array($_SERVER['REQUEST_METHOD'] ?? 'GET', ['POST', 'PUT', 'PATCH', 'DELE
   </form>
   <div class="table-scroll">
     <table>
-      <caption><?= count($publications) ?> publication<?php if (count($publications) > 1) { ?>s<?php } ?> affichée<?php if (count($publications) > 1) { ?>s<?php } ?></caption>
+      <caption><?= htmlspecialchars((string) (count($publications)), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?> publication<?php if (count($publications) > 1) { ?>s<?php } ?> affichée<?php if (count($publications) > 1) { ?>s<?php } ?></caption>
       <thead><tr><th scope="col">Publication</th><th scope="col">Auteur</th><th scope="col">Catégorie</th><th scope="col">Statut</th><th scope="col">Signalements</th><th scope="col">Actions</th></tr></thead>
       <tbody>
         <?php foreach ($publications as $publication) { ?>
           <tr>
-            <td><a href="publications.php?action=voir&amp;id=<?= (int) $publication['id'] ?>"><?= htmlspecialchars($publication['title'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></a><small><?= htmlspecialchars($publication['type'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></small></td>
+            <td><a href="publications.php?action=voir&amp;id=<?= htmlspecialchars((string) ((int) $publication['id']), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>"><?= htmlspecialchars($publication['title'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></a><small><?= htmlspecialchars($publication['type'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></small></td>
             <td><?= htmlspecialchars($publication['author'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></td>
             <td><?php if (isset($categories[$publication['category']])) { echo htmlspecialchars($categories[$publication['category']], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); } else { echo htmlspecialchars($publication['category'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); } ?></td>
             <td><span class="badge status-<?= htmlspecialchars($publication['status'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>"><?php if (isset($publicationStatuses[$publication['status']])) { echo htmlspecialchars($publicationStatuses[$publication['status']], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); } else { echo htmlspecialchars($publication['status'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); } ?></span></td>
-            <td><?= (int) $publication['report_count'] ?></td>
-            <td class="table-actions"><a href="publications.php?action=voir&amp;id=<?= (int) $publication['id'] ?>">Consulter</a><a href="publications.php?action=modifier&amp;id=<?= (int) $publication['id'] ?>">Modifier</a><a href="publications.php?action=supprimer&amp;id=<?= (int) $publication['id'] ?>" class="danger-link">Supprimer</a></td>
+            <td><?= htmlspecialchars((string) ((int) $publication['report_count']), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></td>
+            <td class="table-actions"><a href="publications.php?action=voir&amp;id=<?= htmlspecialchars((string) ((int) $publication['id']), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">Consulter</a><a href="publications.php?action=modifier&amp;id=<?= htmlspecialchars((string) ((int) $publication['id']), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">Modifier</a><a href="publications.php?action=supprimer&amp;id=<?= htmlspecialchars((string) ((int) $publication['id']), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>" class="danger-link">Supprimer</a></td>
           </tr>
         <?php } ?>
         <?php if (empty($publications)) { ?><tr><td colspan="6" class="empty-state">Aucune publication à afficher.</td></tr><?php } ?>
@@ -212,8 +217,8 @@ if (in_array($_SERVER['REQUEST_METHOD'] ?? 'GET', ['POST', 'PUT', 'PATCH', 'DELE
 <?php } elseif ($page == 'voir') { ?>
 <a href="publications.php" class="back-link">← Publications</a>
 <div class="page-heading">
-  <div><p class="eyebrow">Publication #<?= (int) $publication['id'] ?></p><h1>Détail de la publication<span>.</span></h1></div>
-  <div class="actions"><a href="publications.php?action=modifier&amp;id=<?= (int) $publication['id'] ?>" class="button">Modifier</a><a href="publications.php?action=supprimer&amp;id=<?= (int) $publication['id'] ?>" class="button-secondary">Supprimer</a></div>
+  <div><p class="eyebrow">Publication #<?= htmlspecialchars((string) ((int) $publication['id']), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></p><h1>Détail de la publication<span>.</span></h1></div>
+  <div class="actions"><a href="publications.php?action=modifier&amp;id=<?= htmlspecialchars((string) ((int) $publication['id']), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>" class="button">Modifier</a><a href="publications.php?action=supprimer&amp;id=<?= htmlspecialchars((string) ((int) $publication['id']), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>" class="button-secondary">Supprimer</a></div>
 </div>
 <div class="detail-grid">
   <article class="panel story-panel">
@@ -228,16 +233,16 @@ if (in_array($_SERVER['REQUEST_METHOD'] ?? 'GET', ['POST', 'PUT', 'PATCH', 'DELE
     <section class="panel">
       <h2>Informations</h2>
       <dl class="metadata">
-        <div><dt>Créée le</dt><dd><?= date('d/m/Y à H:i', strtotime($publication['created_at'])) ?></dd></div>
-        <div><dt>Dernière modification</dt><dd><?= date('d/m/Y à H:i', strtotime($publication['updated_at'])) ?></dd></div>
-        <div><dt>Signalements reçus</dt><dd><?= count($relatedReports) ?></dd></div>
+        <div><dt>Créée le</dt><dd><?= htmlspecialchars((string) (date('d/m/Y à H:i', strtotime($publication['created_at']))), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></dd></div>
+        <div><dt>Dernière modification</dt><dd><?= htmlspecialchars((string) (date('d/m/Y à H:i', strtotime($publication['updated_at']))), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></dd></div>
+        <div><dt>Signalements reçus</dt><dd><?= htmlspecialchars((string) (count($relatedReports)), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></dd></div>
       </dl>
-      <?php if ($publication['status'] === 'published') { ?><a href="../../front-office/pages/communaute.php#community-publication-<?= (int) $publication['id'] ?>" class="button-secondary">Voir sur le site ↗</a><?php } ?>
+      <?php if ($publication['status'] === 'published') { ?><a href="../../front-office/pages/communaute.php#community-publication-<?= htmlspecialchars((string) ((int) $publication['id']), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>" class="button-secondary">Voir sur le site ↗</a><?php } ?>
     </section>
     <section class="panel">
       <h2>Signalements liés</h2>
       <?php foreach ($relatedReports as $report) { ?>
-        <a href="signalements.php?action=voir&amp;id=<?= (int) $report['id'] ?>" class="report-link"><span class="badge status-<?= htmlspecialchars($report['status'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>"><?php if (isset($reportStatuses[$report['status']])) { echo htmlspecialchars($reportStatuses[$report['status']], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); } else { echo htmlspecialchars($report['status'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); } ?></span><p><?php if (isset($reportReasons[$report['reason']])) { echo htmlspecialchars($reportReasons[$report['reason']], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); } else { echo htmlspecialchars($report['reason'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); } ?></p></a>
+        <a href="signalements.php?action=voir&amp;id=<?= htmlspecialchars((string) ((int) $report['id']), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>" class="report-link"><span class="badge status-<?= htmlspecialchars($report['status'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>"><?php if (isset($reportStatuses[$report['status']])) { echo htmlspecialchars($reportStatuses[$report['status']], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); } else { echo htmlspecialchars($report['status'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); } ?></span><p><?php if (isset($reportReasons[$report['reason']])) { echo htmlspecialchars($reportReasons[$report['reason']], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); } else { echo htmlspecialchars($report['reason'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); } ?></p></a>
       <?php } ?>
       <?php if (empty($relatedReports)) { ?><p class="muted">Aucun signalement pour ce récit.</p><?php } ?>
     </section>
@@ -247,7 +252,7 @@ if (in_array($_SERVER['REQUEST_METHOD'] ?? 'GET', ['POST', 'PUT', 'PATCH', 'DELE
 <?php } elseif ($page == 'ajouter' || $page == 'modifier') { ?>
 <a href="publications.php" class="back-link">← Publications</a>
 <div class="page-heading"><div><h1><?= htmlspecialchars($title, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?><span>.</span></h1><p>Un récit clair, une voix et un univers.</p></div></div>
-<form id="community-admin-publication-form" action="publications.php?action=<?= htmlspecialchars((string) ($isEdit ? 'modifier' : 'ajouter'), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?><?php if ($isEdit) { ?>&amp;id=<?= (int) $publication['id'] ?><?php } ?>" method="post" class="detail-grid" novalidate>
+<form id="community-admin-publication-form" action="publications.php?action=<?= htmlspecialchars((string) ($isEdit ? 'modifier' : 'ajouter'), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?><?php if ($isEdit) { ?>&amp;id=<?= htmlspecialchars((string) ((int) $publication['id']), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?><?php } ?>" method="post" class="detail-grid" novalidate>
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
   <section class="panel form-panel" aria-label="Contenu de la publication">
     <div><label for="community-admin-title">Titre</label><input id="community-admin-title" name="title" value="<?= htmlspecialchars($data['title'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>" placeholder="Le titre de l’histoire"></div>
@@ -283,14 +288,14 @@ if (in_array($_SERVER['REQUEST_METHOD'] ?? 'GET', ['POST', 'PUT', 'PATCH', 'DELE
 </form>
 
 <?php } elseif ($page == 'supprimer') { ?>
-<a href="publications.php?action=voir&amp;id=<?= (int) $publication['id'] ?>" class="back-link">← Retour à la publication</a>
+<a href="publications.php?action=voir&amp;id=<?= htmlspecialchars((string) ((int) $publication['id']), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>" class="back-link">← Retour à la publication</a>
 <section class="panel delete-panel">
   <h1>Supprimer cette publication ?</h1>
   <p>Elle sera supprimée définitivement du site. Les signalements reçus resteront consultables dans l’historique, avec une copie du contenu signalé.</p>
   <div class="complement"><strong><?= htmlspecialchars($publication['title'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></strong><p class="muted"><?= htmlspecialchars($publication['author'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?> · <?php if (isset($categories[$publication['category']])) { echo htmlspecialchars($categories[$publication['category']], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); } else { echo htmlspecialchars($publication['category'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); } ?></p></div>
-  <form action="publications.php?action=supprimer&amp;id=<?= (int) $publication['id'] ?>" method="post" novalidate>
+  <form action="publications.php?action=supprimer&amp;id=<?= htmlspecialchars((string) ((int) $publication['id']), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>" method="post" novalidate>
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
-    <div class="actions"><button type="submit" class="button-danger">Confirmer la suppression</button><a href="publications.php?action=voir&amp;id=<?= (int) $publication['id'] ?>" class="button-secondary">Annuler</a></div>
+    <div class="actions"><button type="submit" class="button-danger">Confirmer la suppression</button><a href="publications.php?action=voir&amp;id=<?= htmlspecialchars((string) ((int) $publication['id']), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>" class="button-secondary">Annuler</a></div>
   </form>
   <p class="muted">Pour retirer temporairement le récit, choisir le statut « Masquée » dans le formulaire de modification.</p>
 </section>
@@ -298,32 +303,32 @@ if (in_array($_SERVER['REQUEST_METHOD'] ?? 'GET', ['POST', 'PUT', 'PATCH', 'DELE
 <?php } elseif ($page == 'tableau-de-bord') { ?>
 <div class="page-heading"><div><p class="eyebrow">Vue d’ensemble du camp</p><h1>Tableau de bord<span>.</span></h1><p>Les publications et signalements de la communauté.</p></div><a href="publications.php?action=ajouter" class="button">Nouvelle publication +</a></div>
 <div class="stat-grid">
-  <article class="stat-card"><p>Publications</p><strong><?= count($publications) ?></strong></article>
-  <article class="stat-card"><p>Publiées</p><strong><?= (int) ($publicationCounts['published']) ?></strong></article>
-  <article class="stat-card"><p>Brouillons</p><strong><?= (int) ($publicationCounts['draft']) ?></strong></article>
-  <article class="stat-card"><p>Signalements ouverts</p><strong><?= count($openReports) ?></strong></article>
+  <article class="stat-card"><p>Publications</p><strong><?= htmlspecialchars((string) (count($publications)), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></strong></article>
+  <article class="stat-card"><p>Publiées</p><strong><?= htmlspecialchars((string) ((int) ($publicationCounts['published'])), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></strong></article>
+  <article class="stat-card"><p>Brouillons</p><strong><?= htmlspecialchars((string) ((int) ($publicationCounts['draft'])), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></strong></article>
+  <article class="stat-card"><p>Signalements ouverts</p><strong><?= htmlspecialchars((string) (count($openReports)), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></strong></article>
 </div>
 <div class="dashboard-grid">
   <section class="panel">
     <div class="panel-heading"><h2>Dernières publications</h2><a href="publications.php">Tout consulter →</a></div>
-    <?php foreach ($recentPublications as $publication) { ?><a href="publications.php?action=voir&amp;id=<?= (int) $publication['id'] ?>" class="recent-item"><div><strong><?= htmlspecialchars($publication['title'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></strong><small><?= htmlspecialchars($publication['author'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></small></div><span class="badge status-<?= htmlspecialchars($publication['status'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>"><?php if (isset($publicationStatuses[$publication['status']])) { echo htmlspecialchars($publicationStatuses[$publication['status']], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); } else { echo htmlspecialchars($publication['status'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); } ?></span></a><?php } ?>
+    <?php foreach ($recentPublications as $publication) { ?><a href="publications.php?action=voir&amp;id=<?= htmlspecialchars((string) ((int) $publication['id']), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>" class="recent-item"><div><strong><?= htmlspecialchars($publication['title'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></strong><small><?= htmlspecialchars($publication['author'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></small></div><span class="badge status-<?= htmlspecialchars($publication['status'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>"><?php if (isset($publicationStatuses[$publication['status']])) { echo htmlspecialchars($publicationStatuses[$publication['status']], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); } else { echo htmlspecialchars($publication['status'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); } ?></span></a><?php } ?>
     <?php if (empty($recentPublications)) { ?><p class="empty-state">Aucune publication pour le moment.</p><?php } ?>
   </section>
   <section class="panel">
     <div class="panel-heading"><h2>Signalements à examiner</h2><a href="signalements.php">Tout consulter →</a></div>
-    <?php foreach ($recentReports as $report) { ?><a href="signalements.php?action=voir&amp;id=<?= (int) $report['id'] ?>" class="recent-item"><div><strong><?= htmlspecialchars($report['publication_title'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></strong><small><?php if (isset($reportReasons[$report['reason']])) { echo htmlspecialchars($reportReasons[$report['reason']], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); } else { echo htmlspecialchars($report['reason'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); } ?></small></div><span class="badge status-<?= htmlspecialchars($report['status'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>"><?php if (isset($reportStatuses[$report['status']])) { echo htmlspecialchars($reportStatuses[$report['status']], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); } else { echo htmlspecialchars($report['status'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); } ?></span></a><?php } ?>
+    <?php foreach ($recentReports as $report) { ?><a href="signalements.php?action=voir&amp;id=<?= htmlspecialchars((string) ((int) $report['id']), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>" class="recent-item"><div><strong><?= htmlspecialchars($report['publication_title'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></strong><small><?php if (isset($reportReasons[$report['reason']])) { echo htmlspecialchars($reportReasons[$report['reason']], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); } else { echo htmlspecialchars($report['reason'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); } ?></small></div><span class="badge status-<?= htmlspecialchars($report['status'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>"><?php if (isset($reportStatuses[$report['status']])) { echo htmlspecialchars($reportStatuses[$report['status']], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); } else { echo htmlspecialchars($report['status'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); } ?></span></a><?php } ?>
     <?php if (empty($recentReports)) { ?><p class="empty-state">Aucun signalement à traiter.</p><?php } ?>
   </section>
 </div>
 <section class="panel">
   <h2>Publications visibles par catégorie</h2>
-  <div class="category-grid"><?php foreach ($categoryCounts as $key => $count) { ?><div><p><?= htmlspecialchars($categories[$key], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></p><strong><?= (int) ($count) ?></strong></div><?php } ?></div>
+  <div class="category-grid"><?php foreach ($categoryCounts as $key => $count) { ?><div><p><?= htmlspecialchars($categories[$key], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></p><strong><?= htmlspecialchars((string) ((int) ($count)), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></strong></div><?php } ?></div>
 </section>
 <?php } ?>
   <?php } ?>
 </div>
-<script src="../../js/regex.js" defer></script>
-<script src="../../js/communaute-validation.js" defer></script>
+<script nonce="<?= htmlspecialchars($cspNonce ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>" src="../../js/regex.js" defer></script>
+<script nonce="<?= htmlspecialchars($cspNonce ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>" src="../../js/communaute-validation.js" defer></script>
 <?php if ($standalone) { ?>
 <?php include_once __DIR__ . '/../partials/footer.php'; ?>
 </body>

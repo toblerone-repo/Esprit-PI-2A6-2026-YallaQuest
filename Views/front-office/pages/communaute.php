@@ -1,13 +1,17 @@
 <?php
 require_once __DIR__ . '/../../../Controllers/AuthController.php';
 $csrfToken = AuthController::getCsrfToken();
-
+$cspNonce = $cspNonce ?? bin2hex(random_bytes(16));
+$currentPage = 'communaute';
 if (in_array($_SERVER['REQUEST_METHOD'] ?? 'GET', ['POST', 'PUT', 'PATCH', 'DELETE'], true)
     && !AuthController::verifyCsrfToken($_POST['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? null)) {
     http_response_code(403);
-    header('Content-Type: text/plain; charset=utf-8');
     exit('Jeton de sécurité invalide. Rechargez la page.');
 }
+
+require_once __DIR__ . '/../../../Controllers/AuthController.php';
+$csrfToken = AuthController::getCsrfToken();
+
 
 (function () {
     $categories = [
@@ -124,6 +128,7 @@ if (in_array($_SERVER['REQUEST_METHOD'] ?? 'GET', ['POST', 'PUT', 'PATCH', 'DELE
 <!doctype html>
 <html lang="fr">
 <head>
+<meta name="csrf-token" content="<?= htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
   <?php
     $currentPage = 'communaute';
     require_once __DIR__ . '/../includes/head.php';
@@ -146,7 +151,7 @@ if (in_array($_SERVER['REQUEST_METHOD'] ?? 'GET', ['POST', 'PUT', 'PATCH', 'DELE
   <main class="page-shell">
     <section class="community-intro">
       <div class="hero-heading">
-       
+
         <h1 class="hero-title">Le feu de camp<span>.</span></h1>
         <p class="hero-caption">La communauté YallaQuest · Chaque habitude est une quête</p>
       </div>
@@ -177,7 +182,7 @@ if (in_array($_SERVER['REQUEST_METHOD'] ?? 'GET', ['POST', 'PUT', 'PATCH', 'DELE
           <p class="eyebrow">Les voix du camp</p>
           <h2 class="section-title">On a tous quelque chose à partager.</h2>
         </div>
-        <span class="publication-count"><?= (int) ($publicationCount) ?> publication<?php if ($publicationCount > 1) { ?>s<?php } ?></span>
+        <span class="publication-count"><?= htmlspecialchars((string) ((int) ($publicationCount)), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?> publication<?php if ($publicationCount > 1) { ?>s<?php } ?></span>
       </div>
       <div class="discussion-tools">
         <nav aria-label="Filtrer les publications" class="category-filters">
@@ -203,7 +208,7 @@ if (in_array($_SERVER['REQUEST_METHOD'] ?? 'GET', ['POST', 'PUT', 'PATCH', 'DELE
             <p role="status" class="feedback <?php if ($flash['type'] == 'error') { ?>feedback-error<?php } ?>"><?= htmlspecialchars($flash['message'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></p>
           <?php } ?>
           <?php foreach ($displayPublications as $publication) { $isPreview = $publication['id'] === 'preview'; ?>
-            <article id="<?php if ($isPreview) { ?>community-preview<?php } else { ?>community-publication-<?= (int) $publication['id'] ?><?php } ?>" class="publication-card">
+            <article id="<?php if ($isPreview) { ?>community-preview<?php } else { ?>community-publication-<?= htmlspecialchars((string) ((int) $publication['id']), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?><?php } ?>" class="publication-card">
               <?php if ($isPreview) { ?><p class="preview-label">Aperçu de ta publication</p><?php } ?>
               <div class="publication-body">
                 <div class="publication-header">
@@ -236,19 +241,19 @@ if (in_array($_SERVER['REQUEST_METHOD'] ?? 'GET', ['POST', 'PUT', 'PATCH', 'DELE
               <?php if (!$isPreview) { ?>
                 <details class="publication-report" <?php if ($reportFormId == $publication['id']) { ?>open<?php } ?>>
                   <summary>Signaler ce contenu</summary>
-                  <form id="community-report-form-<?= (int) $publication['id'] ?>" action="communaute.php#community-discussions" method="post" class="community-report-form" novalidate>
+                  <form id="community-report-form-<?= htmlspecialchars((string) ((int) $publication['id']), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>" action="communaute.php#community-discussions" method="post" class="community-report-form" novalidate>
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
                     <input type="hidden" name="action" value="report">
-                    <input type="hidden" name="publication_id" value="<?= (int) $publication['id'] ?>">
-                    <label for="community-reason-<?= (int) $publication['id'] ?>">Quel est le problème ?</label>
-                    <select id="community-reason-<?= (int) $publication['id'] ?>" name="reason">
+                    <input type="hidden" name="publication_id" value="<?= htmlspecialchars((string) ((int) $publication['id']), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
+                    <label for="community-reason-<?= htmlspecialchars((string) ((int) $publication['id']), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">Quel est le problème ?</label>
+                    <select id="community-reason-<?= htmlspecialchars((string) ((int) $publication['id']), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>" name="reason">
                       <option value="">Choisir un motif</option>
                       <?php foreach ($reportReasons as $key => $label) { ?>
                         <option value="<?= htmlspecialchars($key, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>" <?php if ($reportFormId == $publication['id'] && $reportFormReason == $key) { ?>selected<?php } ?>><?= htmlspecialchars($label, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></option>
                       <?php } ?>
                     </select>
-                    <label for="community-details-<?= (int) $publication['id'] ?>">Précisions (facultatif)</label>
-                    <textarea id="community-details-<?= (int) $publication['id'] ?>" name="details" rows="3"
+                    <label for="community-details-<?= htmlspecialchars((string) ((int) $publication['id']), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">Précisions (facultatif)</label>
+                    <textarea id="community-details-<?= htmlspecialchars((string) ((int) $publication['id']), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>" name="details" rows="3"
                               placeholder="Explique ce qui pose problème…"><?php if ($reportFormId == $publication['id']) { echo htmlspecialchars($reportFormDetails, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); } ?></textarea>
                     <p class="report-help">Ton signalement est transmis à l’équipe de modération.</p>
                     <button type="submit" class="primary-button">Envoyer le signalement →</button>
@@ -331,7 +336,7 @@ if (in_array($_SERVER['REQUEST_METHOD'] ?? 'GET', ['POST', 'PUT', 'PATCH', 'DELE
   </main>
   <?php } ?>
 </div>
-<script src="../../js/communaute-validation.js" defer></script>
+<script nonce="<?= htmlspecialchars($cspNonce ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>" src="../../js/communaute-validation.js" defer></script>
 <?php if ($standalone) { ?>
 <?php include_once __DIR__ . '/../includes/footer.php'; ?>
 </body>

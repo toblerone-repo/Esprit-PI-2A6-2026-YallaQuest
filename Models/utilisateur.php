@@ -173,9 +173,9 @@ class Utilisateur
         $this->niveau = $niveau;
     }
 
-    public function setDerniereProlongationAt(string $derniereProlongationAt): void
+    public function setDerniereProlongationAt(string|DateTimeImmutable $derniereProlongationAt): void
     {
-        $this->derniereProlongationAt = $derniereProlongationAt;
+        $this->derniereProlongationAt = $derniereProlongationAt instanceof DateTimeImmutable ? $derniereProlongationAt->format('Y-m-d H:i:s') : $derniereProlongationAt;
     }
 
     public function setIdTotem(int $idTotem): void
@@ -183,9 +183,9 @@ class Utilisateur
         $this->idTotem = $idTotem;
     }
 
-    public function setDateObtentionTotem(string $dateObtentionTotem): void
+    public function setDateObtentionTotem(string|DateTimeImmutable $dateObtentionTotem): void
     {
-        $this->dateObtentionTotem = $dateObtentionTotem;
+        $this->dateObtentionTotem = $dateObtentionTotem instanceof DateTimeImmutable ? $dateObtentionTotem->format('Y-m-d') : $dateObtentionTotem;
     }
 
     // ------------------------------------------------------------

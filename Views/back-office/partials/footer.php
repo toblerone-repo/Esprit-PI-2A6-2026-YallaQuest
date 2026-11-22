@@ -7,6 +7,6 @@
 ?>
 <link rel="stylesheet" href="../../css/bo-footer.css">
 <footer class="bo-footer">
-    <p>&copy; <?= date('Y') ?> YallaQuest · Espace administration</p>
+    <p>&copy; <?= htmlspecialchars((string) (date('Y')), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?> YallaQuest · Espace administration</p>
     <p>Réalisé par Toblerone</p>
 </footer>

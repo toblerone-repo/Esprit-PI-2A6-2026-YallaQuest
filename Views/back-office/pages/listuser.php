@@ -1,4 +1,15 @@
 <?php
+require_once __DIR__ . '/../../../Controllers/AuthController.php';
+$csrfToken = AuthController::getCsrfToken();
+$cspNonce = $cspNonce ?? bin2hex(random_bytes(16));
+$currentPage = 'utilisateurs';
+if (in_array($_SERVER['REQUEST_METHOD'] ?? 'GET', ['POST', 'PUT', 'PATCH', 'DELETE'], true)
+    && !AuthController::verifyCsrfToken($_POST['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? null)) {
+    http_response_code(403);
+    exit('Jeton de sécurité invalide. Rechargez la page.');
+}
+AuthController::requireRole('admin');
+
 /* =====================================================================
    [DARINE · LISTE UTILISATEURS] Back-office : liste des aventuriers
    ---------------------------------------------------------------------
@@ -29,7 +40,7 @@
    ===================================================================== */
 
 if (session_status() !== PHP_SESSION_ACTIVE) {
-    session_start();
+    require_once __DIR__ . '/../../../session.php';
 }
 require_once __DIR__ . '/../../../Controllers/utilisateurC.php';
 $utilisateurC = new UtilisateurC();
@@ -74,8 +85,8 @@ require_once __DIR__ . '/../partials/head.php';
             <h1>Aventuriers</h1>
             <p class="about">Consulter les comptes, les rôles (user / admin) et les statuts.</p>
             <p class="sub">
-                <strong><?= $totalUsers ?> aventurier<?= $totalUsers > 1 ? 's' : '' ?></strong>
-                · <?= $totalAdmins ?> administrateur<?= $totalAdmins > 1 ? 's' : '' ?>
+                <strong><?= htmlspecialchars((string) ($totalUsers), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?> aventurier<?= $totalUsers > 1 ? 's' : '' ?></strong>
+                · <?= htmlspecialchars((string) ($totalAdmins), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?> administrateur<?= $totalAdmins > 1 ? 's' : '' ?>
             </p>
         </div>
         <div class="actions">
@@ -87,15 +98,15 @@ require_once __DIR__ . '/../partials/head.php';
     <section class="kpis" aria-label="Chiffres clés">
         <div class="kpi">
             <p class="kpi-label"><span class="dot" aria-hidden="true"></span>Comptes</p>
-            <p class="kpi-value"><?= $totalUsers ?></p>
+            <p class="kpi-value"><?= htmlspecialchars((string) ($totalUsers), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></p>
         </div>
         <div class="kpi">
             <p class="kpi-label"><span class="dot dot-lilas" aria-hidden="true"></span>Utilisateurs</p>
-            <p class="kpi-value"><?= $totalRegular ?></p>
+            <p class="kpi-value"><?= htmlspecialchars((string) ($totalRegular), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></p>
         </div>
         <div class="kpi">
             <p class="kpi-label"><span class="dot dot-or" aria-hidden="true"></span>Administrateurs</p>
-            <p class="kpi-value"><?= $totalAdmins ?></p>
+            <p class="kpi-value"><?= htmlspecialchars((string) ($totalAdmins), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></p>
         </div>
     </section>
 
@@ -130,7 +141,7 @@ require_once __DIR__ . '/../partials/head.php';
         <p class="search-error"><?= htmlspecialchars($error, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></p>
     <?php endif; ?>
     <p class="search-results" role="status">
-        <?= count($liste) ?> résultat<?= count($liste) > 1 ? 's' : '' ?> sur <?= $totalUsers ?> aventuriers
+        <?= htmlspecialchars((string) (count($liste)), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?> résultat<?= count($liste) > 1 ? 's' : '' ?> sur <?= htmlspecialchars((string) ($totalUsers), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?> aventuriers
     </p>
 
     <!-- [DARINE · LISTE] Tableau des utilisateurs -->
@@ -170,8 +181,8 @@ require_once __DIR__ . '/../partials/head.php';
                         </td>
                         <td class="hide-md"><?= htmlspecialchars($u->getEmail(), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></td>
                         <td>
-                            Niveau <?= $u->getNiveau() ?>
-                            <span class="desc"><?= $u->getXp() ?> XP</span>
+                            Niveau <?= htmlspecialchars((string) ($u->getNiveau()), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
+                            <span class="desc"><?= htmlspecialchars((string) ($u->getXp()), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?> XP</span>
                         </td>
                         <td>
                             <span class="pill <?= $u->getRole() === 'admin' ? 'role-admin' : 'role-user' ?>"><?= $u->getRole() === 'admin' ? 'Admin' : 'User' ?></span>

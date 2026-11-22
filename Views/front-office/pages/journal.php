@@ -1,17 +1,22 @@
 <?php
 require_once __DIR__ . '/../../../Controllers/AuthController.php';
 $csrfToken = AuthController::getCsrfToken();
-
+$cspNonce = $cspNonce ?? bin2hex(random_bytes(16));
+$currentPage = 'journal';
 if (in_array($_SERVER['REQUEST_METHOD'] ?? 'GET', ['POST', 'PUT', 'PATCH', 'DELETE'], true)
     && !AuthController::verifyCsrfToken($_POST['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? null)) {
     http_response_code(403);
-    header('Content-Type: text/plain; charset=utf-8');
     exit('Jeton de sécurité invalide. Rechargez la page.');
 }
+
+require_once __DIR__ . '/../../../Controllers/AuthController.php';
+$csrfToken = AuthController::getCsrfToken();
+
 ?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
+<meta name="csrf-token" content="<?= htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
   <?php
     $pageTitle = 'Mon journal - YallaQuest';
     $currentPage = 'journal';
@@ -25,14 +30,14 @@ if (in_array($_SERVER['REQUEST_METHOD'] ?? 'GET', ['POST', 'PUT', 'PATCH', 'DELE
 
 <main class="journal-page">
 
-  
+
   <section class="journal-intro">
     <p class="journal-sous-titre">Journal d'activité</p>
     <h1>Mon journal</h1>
     <p>Termine tes quêtes étape par étape : chaque activité réalisée fait avancer ta progression.</p>
   </section>
 
-  
+
   <section class="journal-resume">
     <div class="journal-case">
       <p class="journal-libelle">Quêtes en cours</p>
@@ -66,7 +71,7 @@ if (in_array($_SERVER['REQUEST_METHOD'] ?? 'GET', ['POST', 'PUT', 'PATCH', 'DELE
 
         <div class="journal-progression">
           <p>3/6 activités terminées <strong>50 %</strong></p>
-          
+
           <div class="journal-barre"><div class="journal-remplissage" style="width: 50%"></div></div>
         </div>
 

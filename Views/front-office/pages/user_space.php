@@ -1,4 +1,14 @@
 <?php
+require_once __DIR__ . '/../../../Controllers/AuthController.php';
+$csrfToken = AuthController::getCsrfToken();
+$cspNonce = $cspNonce ?? bin2hex(random_bytes(16));
+$currentPage = 'user_space';
+if (in_array($_SERVER['REQUEST_METHOD'] ?? 'GET', ['POST', 'PUT', 'PATCH', 'DELETE'], true)
+    && !AuthController::verifyCsrfToken($_POST['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? null)) {
+    http_response_code(403);
+    exit('Jeton de sécurité invalide. Rechargez la page.');
+}
+
 /* PARTIE 5.3 : espace utilisateur (index.php?action=dashboard).
    Vue seulement : reçoit $user (Utilisateur) du routeur et n'affiche que du HTML.
    Style propre à la page : Views/css/user-space.css. */
@@ -9,7 +19,7 @@ if (!defined('YQ_ROUTEUR')) {
     exit();
 }
 
-$e = fn($valeur): string => htmlspecialchars((string) $valeur, ENT_QUOTES, 'UTF-8');
+$e = fn($valeur): string => htmlspecialchars((string) $valeur, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 $roleLibelle = $user->getRole() === 'admin' ? 'Administrateur' : 'Utilisateur';
 
 ob_start();
@@ -45,10 +55,13 @@ ob_start();
             </tbody>
         </table>
 
-        <a class="bouton-modifier-profil user-space-logout" href="../../../index.php?action=logout">
+        <form method="post" action="../../../index.php?action=logout">
+<input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
+<button type="submit" class="bouton-modifier-profil user-space-logout">
             <i class="bi bi-box-arrow-right"></i>
             Se déconnecter
-        </a>
+        </button>
+</form>
     </section>
 
 </main>

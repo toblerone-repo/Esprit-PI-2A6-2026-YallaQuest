@@ -1,4 +1,15 @@
 <?php
+require_once __DIR__ . '/../../../Controllers/AuthController.php';
+$csrfToken = AuthController::getCsrfToken();
+$cspNonce = $cspNonce ?? bin2hex(random_bytes(16));
+$currentPage = 'utilisateurs';
+if (in_array($_SERVER['REQUEST_METHOD'] ?? 'GET', ['POST', 'PUT', 'PATCH', 'DELETE'], true)
+    && !AuthController::verifyCsrfToken($_POST['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? null)) {
+    http_response_code(403);
+    exit('Jeton de sécurité invalide. Rechargez la page.');
+}
+AuthController::requireRole('admin');
+
 /* =====================================================================
    [DARINE · LISTE UTILISATEURS] Back-office : liste des aventuriers
    ---------------------------------------------------------------------
@@ -28,7 +39,7 @@
 
 // [DARINE · RÈGLE ADMIN] Session nécessaire pour savoir quel admin est connecté.
 if (session_status() === PHP_SESSION_NONE) {
-    session_start();
+    require_once __DIR__ . '/../../../session.php';
 }
 
 require_once __DIR__ . '/../../../Controllers/utilisateurC.php';
@@ -50,10 +61,11 @@ $pageTitle = 'Aventuriers · Administration · Yalla Quest';
 <!DOCTYPE html>
 <html lang="fr">
 <head>
+<meta name="csrf-token" content="<?= htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Liste des aventuriers de Yalla Quest (administration).">
-    <title><?= $pageTitle ?></title>
+    <title><?= htmlspecialchars((string) ($pageTitle), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display&display=swap">
     <link rel="stylesheet" href="../../css/utilisateurs-admin.css">
 </head>
@@ -70,8 +82,8 @@ $pageTitle = 'Aventuriers · Administration · Yalla Quest';
             <h1>Aventuriers</h1>
             <p class="about">Consulter les comptes, les rôles (user / admin) et les statuts.</p>
             <p class="sub">
-                <strong><?= $totalUsers ?> aventurier<?= $totalUsers > 1 ? 's' : '' ?></strong>
-                · <?= $totalAdmins ?> administrateur<?= $totalAdmins > 1 ? 's' : '' ?>
+                <strong><?= htmlspecialchars((string) ($totalUsers), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?> aventurier<?= $totalUsers > 1 ? 's' : '' ?></strong>
+                · <?= htmlspecialchars((string) ($totalAdmins), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?> administrateur<?= $totalAdmins > 1 ? 's' : '' ?>
             </p>
         </div>
         <div class="actions">
@@ -82,7 +94,7 @@ $pageTitle = 'Aventuriers · Administration · Yalla Quest';
     <!-- [SUPPRESSION] Résultat de la dernière suppression -->
     <?php if ($flash): ?>
         <p class="notice notice-<?= $flash['type'] === 'succes' ? 'succes' : 'erreur' ?>" role="<?= $flash['type'] === 'succes' ? 'status' : 'alert' ?>">
-            <?= htmlspecialchars($flash['texte'], ENT_QUOTES, 'UTF-8') ?>
+            <?= htmlspecialchars($flash['texte'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
         </p>
     <?php endif; ?>
 
@@ -90,15 +102,15 @@ $pageTitle = 'Aventuriers · Administration · Yalla Quest';
     <section class="kpis" aria-label="Chiffres clés">
         <div class="kpi">
             <p class="kpi-label"><span class="dot" aria-hidden="true"></span>Comptes</p>
-            <p class="kpi-value"><?= $totalUsers ?></p>
+            <p class="kpi-value"><?= htmlspecialchars((string) ($totalUsers), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></p>
         </div>
         <div class="kpi">
             <p class="kpi-label"><span class="dot dot-lilas" aria-hidden="true"></span>Utilisateurs</p>
-            <p class="kpi-value"><?= $totalRegular ?></p>
+            <p class="kpi-value"><?= htmlspecialchars((string) ($totalRegular), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></p>
         </div>
         <div class="kpi">
             <p class="kpi-label"><span class="dot dot-or" aria-hidden="true"></span>Administrateurs</p>
-            <p class="kpi-value"><?= $totalAdmins ?></p>
+            <p class="kpi-value"><?= htmlspecialchars((string) ($totalAdmins), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></p>
         </div>
     </section>
 
@@ -135,18 +147,18 @@ $pageTitle = 'Aventuriers · Administration · Yalla Quest';
                     <tr<?= $soiMeme ? ' class="is-me"' : '' ?>>
                         <td>
                             <span class="gcell">
-                                <span class="avatar" aria-hidden="true"><?= htmlspecialchars($initiales, ENT_QUOTES, 'UTF-8') ?></span>
+                                <span class="avatar" aria-hidden="true"><?= htmlspecialchars($initiales, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></span>
                                 <span>
-                                    <strong><?= htmlspecialchars($nomComplet, ENT_QUOTES, 'UTF-8') ?></strong>
+                                    <strong><?= htmlspecialchars($nomComplet, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></strong>
                                     <?php if ($soiMeme): ?><span class="you">(vous)</span><?php endif; ?>
-                                    <span class="desc"><?= htmlspecialchars($u->getEmail(), ENT_QUOTES, 'UTF-8') ?></span>
+                                    <span class="desc"><?= htmlspecialchars($u->getEmail(), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></span>
                                 </span>
                             </span>
                         </td>
-                        <td class="hide-md"><?= htmlspecialchars($u->getEmail(), ENT_QUOTES, 'UTF-8') ?></td>
+                        <td class="hide-md"><?= htmlspecialchars($u->getEmail(), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></td>
                         <td>
-                            Niveau <?= $u->getNiveau() ?>
-                            <span class="desc"><?= $u->getXp() ?> XP</span>
+                            Niveau <?= htmlspecialchars((string) ($u->getNiveau()), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
+                            <span class="desc"><?= htmlspecialchars((string) ($u->getXp()), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?> XP</span>
                         </td>
                         <td>
                             <span class="pill <?= $estAdmin ? 'role-admin' : 'role-user' ?>"><?= $estAdmin ? 'Admin' : 'User' ?></span>
@@ -171,8 +183,9 @@ $pageTitle = 'Aventuriers · Administration · Yalla Quest';
                                 <!-- [SUPPRESSION] Envoie l'id à supprimer_utilisateur.php, après confirmation. -->
                                 <form class="form-supprimer" method="post" action="supprimer_utilisateur.php"
                                       onsubmit="return confirm('Supprimer définitivement ce compte ? Cette action est irréversible.');">
-                                    <input type="hidden" name="id" value="<?= (int) $u->getId() ?>">
-                                    <button type="submit" class="btn danger sm" aria-label="Supprimer <?= htmlspecialchars($nomComplet, ENT_QUOTES, 'UTF-8') ?>">Supprimer</button>
+    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
+                                    <input type="hidden" name="id" value="<?= htmlspecialchars((string) ((int) $u->getId()), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
+                                    <button type="submit" class="btn danger sm" aria-label="Supprimer <?= htmlspecialchars($nomComplet, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">Supprimer</button>
                                 </form>
                             <?php endif; ?>
                             </span>
