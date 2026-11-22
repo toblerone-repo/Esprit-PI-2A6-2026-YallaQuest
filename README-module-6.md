@@ -50,7 +50,7 @@ Les formulaires possèdent les contrôles JavaScript, mais aucun enregistrement,
 
 Les grands titres utilisent Playfair Display, incluse localement avec sa licence SIL Open Font License.
 
-La navbar du front-office est dans includes/navbar.php et est incluse par communaute.php. Son style est dans css/communaute-navbar.css, avec des classes propres au module. Les six rubriques sont Quêtes, Journal d'activité, Compétences et totems, Guildes, Communauté et Profils. Seul le lien Communauté pointe vers communaute.php ; les autres href sont vides.
+La navbar du front-office est dans includes/navbar.php et est incluse, juste après `<body>`, par toutes les pages du front-office sauf join_now.php et login.php (pages de compte, sans navbar ni pied de page). Elle charge elle-même son style, css/communaute-navbar.css, avec des classes propres au module. Les sept rubriques sont Quêtes, Journal d'activité, Compétences et totems, Objectifs, Guildes, Communauté et Profils ; chacune pointe vers sa page, et la rubrique de la page ouverte est marquée active.
 
 Les styles ciblent le module .yq-community. L’ouverture directe utilise body.yq-community-page pour le fond sombre et l’absence de marge blanche. Le back-office possède 32 px de padding latéral, réduits à 16 px sur mobile.
 

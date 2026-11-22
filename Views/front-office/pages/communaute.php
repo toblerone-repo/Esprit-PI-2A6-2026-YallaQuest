@@ -1,4 +1,14 @@
 <?php
+require_once __DIR__ . '/../../../Controllers/AuthController.php';
+$csrfToken = AuthController::getCsrfToken();
+
+if (in_array($_SERVER['REQUEST_METHOD'] ?? 'GET', ['POST', 'PUT', 'PATCH', 'DELETE'], true)
+    && !AuthController::verifyCsrfToken($_POST['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? null)) {
+    http_response_code(403);
+    header('Content-Type: text/plain; charset=utf-8');
+    exit('Jeton de sécurité invalide. Rechargez la page.');
+}
+
 (function () {
     $categories = [
         'all' => 'Tout le camp',
@@ -88,8 +98,8 @@
     ];
     $pageTitle = 'Communauté — YallaQuest';
     $unavailable = false;
-    $selectedCategory = $_GET['categorie'] ?? 'all';
-    $search = $_GET['recherche'] ?? '';
+    $selectedCategory = (is_string($_GET['categorie'] ?? null) ? $_GET['categorie'] : 'all');
+    $search = (is_string($_GET['recherche'] ?? null) ? $_GET['recherche'] : '');
     $filteredPublications = [];
     foreach ($publicationsDemo as $publication) {
         $text = $publication['title'] . ' ' . $publication['content'] . ' ' . $publication['author'];
@@ -114,19 +124,19 @@
 <!doctype html>
 <html lang="fr">
 <head>
+    <meta name="csrf-token" content="<?= htmlspecialchars($csrfToken ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title><?= htmlspecialchars($pageTitle) ?></title>
+  <title><?= htmlspecialchars($pageTitle, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></title>
 <?php } ?>
 <link rel="stylesheet" href="../../css/communaute-base.css">
-<link rel="stylesheet" href="../../css/communaute-navbar.css">
 <link rel="stylesheet" href="../../css/communaute.css">
 <?php if ($standalone) { ?>
 </head>
 <body class="yq-community-page">
 <?php } ?>
 <div class="yq-community yq-community-front">
-  <?php require __DIR__ . '/../includes/navbar.php'; ?>
+  <?php include_once __DIR__ . '/../includes/navbar.php'; ?>
   <?php if ($unavailable) { ?>
   <main class="page-shell page-section">
     <h1 class="section-title">La communauté est momentanément indisponible.</h1>
@@ -168,20 +178,20 @@
           <p class="eyebrow">Les voix du camp</p>
           <h2 class="section-title">On a tous quelque chose à partager.</h2>
         </div>
-        <span class="publication-count"><?= $publicationCount ?> publication<?php if ($publicationCount > 1) { ?>s<?php } ?></span>
+        <span class="publication-count"><?= (int) ($publicationCount) ?> publication<?php if ($publicationCount > 1) { ?>s<?php } ?></span>
       </div>
       <div class="discussion-tools">
         <nav aria-label="Filtrer les publications" class="category-filters">
           <?php foreach ($categories as $key => $label) { ?>
-            <a href="communaute.php?categorie=<?= $key ?>&amp;recherche=<?= htmlspecialchars(urlencode($search)) ?>#community-discussions"
-               class="filter-chip" <?php if ($selectedCategory == $key) { ?>aria-current="true"<?php } ?>><?= htmlspecialchars($label) ?></a>
+            <a href="communaute.php?categorie=<?= htmlspecialchars((string) ($key), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>&amp;recherche=<?= htmlspecialchars(urlencode($search), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>#community-discussions"
+               class="filter-chip" <?php if ($selectedCategory == $key) { ?>aria-current="true"<?php } ?>><?= htmlspecialchars($label, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></a>
           <?php } ?>
         </nav>
         <form action="communaute.php#community-discussions" method="get" class="search-form" novalidate>
-          <input type="hidden" name="categorie" value="<?= htmlspecialchars($selectedCategory) ?>">
+          <input type="hidden" name="categorie" value="<?= htmlspecialchars($selectedCategory, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
           <label for="search-publications" class="visually-hidden">Rechercher une publication</label>
           <input id="search-publications" type="search" name="recherche"
-                 value="<?= htmlspecialchars($search) ?>" placeholder="Un mot-clé…">
+                 value="<?= htmlspecialchars($search, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>" placeholder="Un mot-clé…">
           <button type="submit">Rechercher</button>
         </form>
         <?php if ($search !== '' || $selectedCategory !== 'all') { ?>
@@ -191,7 +201,7 @@
       <div class="discussion-layout">
         <div class="publication-list">
           <?php if ($flash) { ?>
-            <p role="status" class="feedback <?php if ($flash['type'] == 'error') { ?>feedback-error<?php } ?>"><?= htmlspecialchars($flash['message']) ?></p>
+            <p role="status" class="feedback <?php if ($flash['type'] == 'error') { ?>feedback-error<?php } ?>"><?= htmlspecialchars($flash['message'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></p>
           <?php } ?>
           <?php foreach ($displayPublications as $publication) { $isPreview = $publication['id'] === 'preview'; ?>
             <article id="<?php if ($isPreview) { ?>community-preview<?php } else { ?>community-publication-<?= (int) $publication['id'] ?><?php } ?>" class="publication-card">
@@ -199,28 +209,28 @@
               <div class="publication-body">
                 <div class="publication-header">
                   <div class="publication-author">
-                    <span class="publication-avatar"><?= htmlspecialchars($publication['initials']) ?></span>
+                    <span class="publication-avatar"><?= htmlspecialchars($publication['initials'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></span>
                     <div>
-                      <p class="author-name"><?= htmlspecialchars($publication['author']) ?></p>
+                      <p class="author-name"><?= htmlspecialchars($publication['author'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></p>
                       <p class="author-context"><?php if ($isPreview) { ?>Aperçu de ta publication<?php } else { ?>Autour du feu de camp<?php } ?></p>
                     </div>
                   </div>
-                  <span class="publication-category category--<?= htmlspecialchars($publication['category']) ?>"><?php if (isset($categories[$publication['category']])) { echo htmlspecialchars($categories[$publication['category']]); } else { echo htmlspecialchars($publication['category']); } ?></span>
+                  <span class="publication-category category--<?= htmlspecialchars($publication['category'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>"><?php if (isset($categories[$publication['category']])) { echo htmlspecialchars($categories[$publication['category']], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); } else { echo htmlspecialchars($publication['category'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); } ?></span>
                 </div>
                 <div class="publication-story <?php if ($publication['image']) { ?>has-image<?php } ?>">
                   <div>
-                    <p class="publication-type"><?= htmlspecialchars($publication['type']) ?></p>
-                    <h3 class="publication-title"><?= htmlspecialchars($publication['title']) ?></h3>
-                    <p class="publication-text"><?= htmlspecialchars($publication['content']) ?></p>
+                    <p class="publication-type"><?= htmlspecialchars($publication['type'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></p>
+                    <h3 class="publication-title"><?= htmlspecialchars($publication['title'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></h3>
+                    <p class="publication-text"><?= htmlspecialchars($publication['content'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></p>
                   </div>
                   <?php if ($publication['image'] && isset($publicationImages[$publication['image']])) { ?>
-                    <img src="../../img/communaute-<?= htmlspecialchars($publication['image']) ?>.webp" alt="" loading="lazy" class="publication-image">
+                    <img src="../../img/communaute-<?= htmlspecialchars($publication['image'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>.webp" alt="" loading="lazy" class="publication-image">
                   <?php } ?>
                 </div>
                 <?php if ($publication['more'] !== '') { ?>
                   <details class="publication-more">
                     <summary>Lire la suite →</summary>
-                    <p class="publication-text"><?= htmlspecialchars($publication['more']) ?></p>
+                    <p class="publication-text"><?= htmlspecialchars($publication['more'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></p>
                   </details>
                 <?php } ?>
               </div>
@@ -228,18 +238,19 @@
                 <details class="publication-report" <?php if ($reportFormId == $publication['id']) { ?>open<?php } ?>>
                   <summary>Signaler ce contenu</summary>
                   <form id="community-report-form-<?= (int) $publication['id'] ?>" action="communaute.php#community-discussions" method="post" class="community-report-form" novalidate>
+                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
                     <input type="hidden" name="action" value="report">
                     <input type="hidden" name="publication_id" value="<?= (int) $publication['id'] ?>">
                     <label for="community-reason-<?= (int) $publication['id'] ?>">Quel est le problème ?</label>
                     <select id="community-reason-<?= (int) $publication['id'] ?>" name="reason">
                       <option value="">Choisir un motif</option>
                       <?php foreach ($reportReasons as $key => $label) { ?>
-                        <option value="<?= htmlspecialchars($key) ?>" <?php if ($reportFormId == $publication['id'] && $reportFormReason == $key) { ?>selected<?php } ?>><?= htmlspecialchars($label) ?></option>
+                        <option value="<?= htmlspecialchars($key, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>" <?php if ($reportFormId == $publication['id'] && $reportFormReason == $key) { ?>selected<?php } ?>><?= htmlspecialchars($label, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></option>
                       <?php } ?>
                     </select>
                     <label for="community-details-<?= (int) $publication['id'] ?>">Précisions (facultatif)</label>
                     <textarea id="community-details-<?= (int) $publication['id'] ?>" name="details" rows="3"
-                              placeholder="Explique ce qui pose problème…"><?php if ($reportFormId == $publication['id']) { echo htmlspecialchars($reportFormDetails); } ?></textarea>
+                              placeholder="Explique ce qui pose problème…"><?php if ($reportFormId == $publication['id']) { echo htmlspecialchars($reportFormDetails, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); } ?></textarea>
                     <p class="report-help">Ton signalement est transmis à l’équipe de modération.</p>
                     <button type="submit" class="primary-button">Envoyer le signalement →</button>
                   </form>
@@ -283,12 +294,13 @@
           <span class="primary-button">Écrire ma publication +</span>
         </summary>
         <form id="community-publication-form" action="communaute.php#community-preview" method="post" class="publish-form" novalidate>
+                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
           <input type="hidden" name="action" value="preview">
           <div>
             <label for="community-category">Ton univers</label>
             <select id="community-category" name="category">
               <?php foreach ($categories as $key => $label) { if ($key !== 'all') { ?>
-                <option value="<?= htmlspecialchars($key) ?>" <?php if ($formValues['category'] == $key) { ?>selected<?php } ?>><?= htmlspecialchars($label) ?></option>
+                <option value="<?= htmlspecialchars($key, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>" <?php if ($formValues['category'] == $key) { ?>selected<?php } ?>><?= htmlspecialchars($label, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></option>
               <?php } } ?>
             </select>
           </div>
@@ -296,19 +308,19 @@
             <label for="community-type">Tu partages…</label>
             <select id="community-type" name="type">
               <?php foreach ($publicationTypes as $type) { ?>
-                <option <?php if ($formValues['type'] == $type) { ?>selected<?php } ?>><?= htmlspecialchars($type) ?></option>
+                <option <?php if ($formValues['type'] == $type) { ?>selected<?php } ?>><?= htmlspecialchars($type, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></option>
               <?php } ?>
             </select>
           </div>
           <div class="form-field-wide">
             <label for="community-title">Le titre de ton histoire</label>
             <input id="community-title" name="title"
-                   value="<?= htmlspecialchars($formValues['title']) ?>" placeholder="Aujourd’hui, j’ai fait mon premier pas…">
+                   value="<?= htmlspecialchars($formValues['title'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>" placeholder="Aujourd’hui, j’ai fait mon premier pas…">
           </div>
           <div class="form-field-wide">
             <label for="community-content">Raconte-nous</label>
             <textarea id="community-content" name="content" rows="5"
-                      placeholder="Qu’est-ce qui t’a fait du bien ?"><?= htmlspecialchars($formValues['content']) ?></textarea>
+                      placeholder="Qu’est-ce qui t’a fait du bien ?"><?= htmlspecialchars($formValues['content'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></textarea>
           </div>
           <div class="form-actions form-field-wide">
             <p>Les mots simples font souvent les plus belles histoires.</p>
@@ -322,6 +334,7 @@
 </div>
 <script src="../../js/communaute-validation.js" defer></script>
 <?php if ($standalone) { ?>
+<?php include_once __DIR__ . '/../includes/footer.php'; ?>
 </body>
 </html>
 <?php } ?>

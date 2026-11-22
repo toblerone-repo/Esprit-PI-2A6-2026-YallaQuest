@@ -1,0 +1,1003 @@
+/* Yalla Quest · feuille de style unique (front-office, back-office, effets Guildes).
+   Réunit, dans cet ordre : yq.css (commun), style.css (connexion / inscription), admin.css (back-office)
+   et effects.css (effets de scroll et de souris des pages Guildes). Déclarations inchangées.
+
+   La page Guildes (Views/front-office/pages/guildes.php) porte data-yq-page="guildes" sur <html> : les règles
+   communes ci-dessous ne s'y appliquent pas ; ses propres styles sont dans la dernière partie du fichier. Leurs sélecteurs
+   sont donc préfixés par :where(html:not([data-yq-page="guildes"])) — :where() ne compte pas dans la
+   spécificité, donc sur toutes les autres pages la cascade est exactement celle des anciens fichiers.
+   Pour écrire une nouvelle règle commune : ajouter le même préfixe (ou la placer dans la partie effets
+   si elle doit aussi s'appliquer à la page Guildes).
+   Les chemins url(../lib/fonts/…) restent valables : ce fichier est dans le même dossier que les anciens. */
+
+/* ==================== ancien yq.css (règles communes) ==================== */
+
+/* Yalla Quest · feuille commune (Front-Office, Back-Office, portail).
+   CSS simple, sans framework. Charte : fond noir, lilas pour les actions, cartes ivoire au texte noir,
+   Playfair Display (titres en capitales), Inter (texte), Barlow Condensed (titres de cartes).
+   Toutes les couleurs passent par les variables ci-dessous. */
+
+/* ---------- polices locales ---------- */
+@font-face { font-family: "Playfair Display"; font-weight: 400; font-display: swap; src: url(../lib/fonts/PlayfairDisplay-400.woff2) format("woff2"); }
+@font-face { font-family: "Playfair Display"; font-weight: 400; font-style: italic; font-display: swap; src: url(../lib/fonts/PlayfairDisplay-400-italic.woff2) format("woff2"); }
+@font-face { font-family: "Inter"; font-weight: 400; font-display: swap; src: url(../lib/fonts/Inter-400.woff2) format("woff2"); }
+@font-face { font-family: "Inter"; font-weight: 400; font-style: italic; font-display: swap; src: url(../lib/fonts/Inter-400-italic.woff2) format("woff2"); }
+@font-face { font-family: "Inter"; font-weight: 500; font-display: swap; src: url(../lib/fonts/Inter-500.woff2) format("woff2"); }
+@font-face { font-family: "Inter"; font-weight: 600; font-display: swap; src: url(../lib/fonts/Inter-600.woff2) format("woff2"); }
+@font-face { font-family: "Barlow Condensed"; font-weight: 600; font-display: swap; src: url(../lib/fonts/BarlowCondensed-600.woff2) format("woff2"); }
+
+/* ---------- variables ---------- */
+:root:where(:not([data-yq-page="guildes"])) {
+  --ground: #000000;
+  --surface: #111111;
+  --raised: #1b1b1b;
+  --active: #262626;
+  --border: #232323;
+  --rule: #1f1f1f;
+  --control: #3d3d3d;
+  --text: #ffffff;
+  --text-soft: #d4d4d4;
+  --muted: #a8a8a8;
+  --accent: #ebc1f2;          /* Lilas Yalla Quest : logo, actions */
+  --accent-hover: #f3d7f7;
+  --accent-soft: #241a27;
+  --accent-track: #3a2a3e;
+  --ivory: #f6f4f8;
+  --card: #dcdcdc;
+  --ivory-rule: #dcd8df;
+  --ivory-well: #ebe8ee;
+  --ivory-muted: #3d3d3d;
+  --night: #15131f;
+  --gold: #d7a64b;
+  --sage: #7bae8c;
+  --danger-ink: #8a1c1c;
+  --danger-bg: #2c1515;
+  --danger-line: #6b2a2a;
+
+  --display: "Playfair Display", Georgia, serif;
+  --font: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --cond: "Barlow Condensed", "Arial Narrow", sans-serif;
+  --fs-body: 15px; --fs-small: 13px;
+
+  --sidebar-width: 240px;
+  --radius-card: 16px;
+  --radius-control: 12px;
+  --gap: 24px;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ---------- base ---------- */
+:where(html:not([data-yq-page="guildes"])), :where(html:not([data-yq-page="guildes"])) *, :where(html:not([data-yq-page="guildes"]))::before, :where(html:not([data-yq-page="guildes"])) *::before, :where(html:not([data-yq-page="guildes"]))::after, :where(html:not([data-yq-page="guildes"])) *::after { box-sizing: border-box; }
+html:where(:not([data-yq-page="guildes"])) { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+:where(html:not([data-yq-page="guildes"])) body { margin: 0; background: var(--ground); color: var(--text); font: 400 var(--fs-body)/1.5 var(--font); -webkit-font-smoothing: antialiased; }
+:where(html:not([data-yq-page="guildes"])) h1, :where(html:not([data-yq-page="guildes"])) h2, :where(html:not([data-yq-page="guildes"])) h3, :where(html:not([data-yq-page="guildes"])) h4, :where(html:not([data-yq-page="guildes"])) p, :where(html:not([data-yq-page="guildes"])) figure, :where(html:not([data-yq-page="guildes"])) ul, :where(html:not([data-yq-page="guildes"])) ol, :where(html:not([data-yq-page="guildes"])) dl, :where(html:not([data-yq-page="guildes"])) dd { margin: 0; }
+:where(html:not([data-yq-page="guildes"])) ul[class], :where(html:not([data-yq-page="guildes"])) ol[class] { padding: 0; list-style: none; }
+:where(html:not([data-yq-page="guildes"])) img, :where(html:not([data-yq-page="guildes"])) svg, :where(html:not([data-yq-page="guildes"])) canvas { display: block; max-width: 100%; }
+:where(html:not([data-yq-page="guildes"])) button, :where(html:not([data-yq-page="guildes"])) input, :where(html:not([data-yq-page="guildes"])) select, :where(html:not([data-yq-page="guildes"])) textarea { font: inherit; color: inherit; }
+:where(html:not([data-yq-page="guildes"])) a { color: inherit; }
+:where(html:not([data-yq-page="guildes"])) :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+:where(html:not([data-yq-page="guildes"])) ::selection { background: var(--accent); color: #000; }
+:where(html:not([data-yq-page="guildes"])) [hidden] { display: none !important; }
+:where(html:not([data-yq-page="guildes"])) .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+:where(html:not([data-yq-page="guildes"])) .muted { color: var(--muted); }
+:where(html:not([data-yq-page="guildes"])) .num { font-variant-numeric: tabular-nums; }
+:where(html:not([data-yq-page="guildes"])) svg.i { width: 16px; height: 16px; flex: none; }
+
+/* ---------- coque : menu latéral + contenu ---------- */
+:where(html:not([data-yq-page="guildes"])) .app { display: flex; flex-direction: column; min-height: 100svh; width: 100%; }
+:where(html:not([data-yq-page="guildes"])) .sidebar { position: sticky; top: 0; height: 100svh; display: flex; flex-direction: column; gap: 4px; padding: 20px 14px; overflow: auto; background: var(--ground); border-right: 1px solid var(--rule); }
+:where(html:not([data-yq-page="guildes"])) .brand { display: flex; align-items: center; gap: 8px; padding: 0 8px 24px; }
+:where(html:not([data-yq-page="guildes"])) .brand img { width: 30px; height: 30px; border-radius: 8px; object-fit: cover; }
+:where(html:not([data-yq-page="guildes"])) .brand strong { font-size: 17px; font-weight: 600; letter-spacing: 0.01em; white-space: nowrap; }
+:where(html:not([data-yq-page="guildes"])) .brand .tag { font-size: 10px; font-weight: 600; letter-spacing: 0.14em; color: var(--muted); margin-top: 3px; }
+:where(html:not([data-yq-page="guildes"])) .brand .close-menu { display: none; margin-left: auto; }
+:where(html:not([data-yq-page="guildes"])) .sidebar .group-label { margin: 24px 10px 8px; color: var(--muted); font-size: 11px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; }
+:where(html:not([data-yq-page="guildes"])) .nav-item { display: flex; align-items: center; gap: 10px; height: 38px; padding: 0 10px; border-radius: 10px; color: var(--text-soft); font-size: 14px; text-decoration: none; border: 0; background: none; width: 100%; text-align: left; cursor: pointer; transition: background-color 150ms ease, color 150ms ease; }
+:where(html:not([data-yq-page="guildes"])) .nav-item:hover { background: var(--raised); color: #fff; }
+:where(html:not([data-yq-page="guildes"])) .nav-item[aria-current="page"] { background: #fff; color: #000; font-weight: 500; }
+:where(html:not([data-yq-page="guildes"])) .nav-item .count { margin-left: auto; min-width: 20px; height: 20px; padding: 0 6px; border-radius: 999px; background: var(--accent); color: #000; font-size: 12px; font-weight: 600; display: inline-grid; place-items: center; font-variant-numeric: tabular-nums; }
+:where(html:not([data-yq-page="guildes"])) .sidebar .bottom { margin-top: auto; display: grid; gap: 4px; }
+:where(html:not([data-yq-page="guildes"])) .user-row { display: flex; align-items: center; gap: 10px; padding: 14px 8px 2px; margin-top: 8px; border-top: 1px solid var(--rule); min-width: 0; }
+:where(html:not([data-yq-page="guildes"])) .user-row strong { display: block; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+:where(html:not([data-yq-page="guildes"])) .user-row span.meta { display: block; font-size: 12px; color: var(--muted); }
+:where(html:not([data-yq-page="guildes"])) .avatar { width: 32px; height: 32px; flex: none; border-radius: 50%; display: inline-grid; place-items: center; font-size: 12px; font-weight: 600; background: var(--accent); color: #000; }
+:where(html:not([data-yq-page="guildes"])) .avatar.sm { width: 30px; height: 30px; font-size: 11px; }
+:where(html:not([data-yq-page="guildes"])) .mobilebar { display: none; }
+:where(html:not([data-yq-page="guildes"])) .canvas { min-width: 0; width: 100%; max-width: 1240px; margin: 0 auto; padding: 40px 32px 64px; flex: 1; }
+
+/* bouton en haut à gauche qui masque / affiche le menu latéral (écran large) */
+:where(html:not([data-yq-page="guildes"])) .sidebar-toggle { position: fixed; top: 14px; left: 14px; z-index: 12; width: 36px; height: 36px; display: inline-grid; place-items: center; padding: 0; border: 0; border-radius: 10px; background: transparent; color: var(--text-soft); cursor: pointer; transition: background-color 150ms ease, color 150ms ease; }
+:where(html:not([data-yq-page="guildes"])) .sidebar-toggle:hover { background: var(--raised); color: #fff; }
+:where(html:not([data-yq-page="guildes"])) .sidebar-toggle svg { width: 18px; height: 18px; }
+@media (min-width: 861px) {
+  :where(html:not([data-yq-page="guildes"])) .app { transition: grid-template-columns 300ms var(--ease-out); }
+  :where(html:not([data-yq-page="guildes"])) .sidebar { width: var(--sidebar-width); padding-top: 64px; transition: transform 300ms var(--ease-out); }
+  :where(html:not([data-yq-page="guildes"])) .canvas { transition: padding-top 300ms var(--ease-out); }
+  :where(html:not([data-yq-page="guildes"])) .app.sidebar-hidden { grid-template-columns: 0px minmax(0, 1fr); }
+  :where(html:not([data-yq-page="guildes"])) .app.sidebar-hidden .sidebar { transform: translateX(-100%); visibility: hidden; transition: transform 300ms var(--ease-out), visibility 0s linear 300ms; }
+  :where(html:not([data-yq-page="guildes"])) .app.sidebar-hidden .canvas { padding-top: 72px; }
+  :where(html:not([data-yq-page="guildes"])) .app.sidebar-instant, :where(html:not([data-yq-page="guildes"])) .app.sidebar-instant .sidebar, :where(html:not([data-yq-page="guildes"])) .app.sidebar-instant .canvas { transition: none; }
+}
+
+/* ---------- en-tête de page ---------- */
+:where(html:not([data-yq-page="guildes"])) .title-row { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; margin-bottom: 32px; }
+:where(html:not([data-yq-page="guildes"])) .kicker { font-size: 11px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+:where(html:not([data-yq-page="guildes"])) .title-row h1 { font-family: var(--display); font-weight: 400; text-transform: uppercase; font-size: 56px; line-height: 1; letter-spacing: -0.01em; }
+:where(html:not([data-yq-page="guildes"])) .title-row .about { margin-top: 10px; font-style: italic; color: var(--muted); font-size: 17px; max-width: 60ch; }
+:where(html:not([data-yq-page="guildes"])) .title-row .sub { margin-top: 14px; font-size: 16px; color: var(--text-soft); max-width: 64ch; }
+:where(html:not([data-yq-page="guildes"])) .title-row .sub strong { color: #fff; font-weight: 600; }
+:where(html:not([data-yq-page="guildes"])) .title-row .actions { display: flex; gap: 8px; flex: none; flex-wrap: wrap; }
+:where(html:not([data-yq-page="guildes"])) h2.section { font-family: var(--display); font-weight: 400; font-size: 26px; line-height: 1.15; margin: 0 0 12px; }
+
+/* ---------- boutons ---------- */
+:where(html:not([data-yq-page="guildes"])) .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 40px; padding: 0 18px; border-radius: 999px; border: 1px solid var(--control); background: transparent; color: #fff; font-size: 14px; font-weight: 500; text-decoration: none; white-space: nowrap; cursor: pointer; transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease, transform 100ms ease; }
+:where(html:not([data-yq-page="guildes"])) .btn:hover { border-color: #fff; }
+:where(html:not([data-yq-page="guildes"])) .btn:active { transform: scale(.98); }
+:where(html:not([data-yq-page="guildes"])) .btn.primary { background: var(--accent); border-color: var(--accent); color: #000; height: 44px; padding: 0 22px; font-weight: 600; }
+:where(html:not([data-yq-page="guildes"])) .btn.primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
+:where(html:not([data-yq-page="guildes"])) .btn.ghost { border-color: transparent; }
+:where(html:not([data-yq-page="guildes"])) .btn.danger { color: var(--gold); border-color: #4a3a1c; }
+:where(html:not([data-yq-page="guildes"])) .btn.danger:hover { border-color: var(--gold); }
+:where(html:not([data-yq-page="guildes"])) .btn.sm { height: 34px; padding: 0 14px; font-size: 13px; }
+:where(html:not([data-yq-page="guildes"])) .btn.block { width: 100%; }
+:where(html:not([data-yq-page="guildes"])) .btn.icon { width: 40px; padding: 0; }
+:where(html:not([data-yq-page="guildes"])) .btn svg { width: 16px; height: 16px; }
+:where(html:not([data-yq-page="guildes"])) .btn.primary.destructive { background: var(--gold); border-color: var(--gold); }
+/* boutons posés sur une carte ivoire */
+:where(html:not([data-yq-page="guildes"])) .on-ivory .btn { color: #000; border-color: #000; }
+:where(html:not([data-yq-page="guildes"])) .on-ivory .btn:hover { background: var(--ivory-well); border-color: #000; }
+:where(html:not([data-yq-page="guildes"])) .on-ivory .btn.primary { border-color: var(--accent); background: var(--accent); }
+:where(html:not([data-yq-page="guildes"])) .on-ivory .btn.primary:hover { background: var(--accent-hover); }
+:where(html:not([data-yq-page="guildes"])) .on-ivory .btn.danger { color: var(--danger-ink); border-color: #c9a3a3; }
+:where(html:not([data-yq-page="guildes"])) .on-ivory .btn.danger:hover { background: #f3e6e6; border-color: var(--danger-ink); }
+
+/* ---------- panneaux, KPI, jauges ---------- */
+:where(html:not([data-yq-page="guildes"])) .panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-card); padding: 24px; min-width: 0; }
+:where(html:not([data-yq-page="guildes"])) .kpis { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-card); }
+:where(html:not([data-yq-page="guildes"])) .kpi { padding: 16px 20px; min-width: 0; }
+:where(html:not([data-yq-page="guildes"])) .kpi + .kpi { border-left: 1px solid var(--border); }
+:where(html:not([data-yq-page="guildes"])) .kpi-label { color: var(--muted); font-size: 13px; display: flex; align-items: center; gap: 6px; }
+:where(html:not([data-yq-page="guildes"])) .kpi-label .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); }
+:where(html:not([data-yq-page="guildes"])) .kpi-value { margin-top: 6px; font-size: 28px; line-height: 1.15; font-weight: 500; letter-spacing: -0.01em; font-variant-numeric: tabular-nums; }
+:where(html:not([data-yq-page="guildes"])) .capbar { height: 6px; border-radius: 999px; background: var(--raised); overflow: hidden; }
+:where(html:not([data-yq-page="guildes"])) .capbar i { display: block; height: 100%; background: var(--accent); border-radius: inherit; transition: width 600ms var(--ease-out); }
+
+/* ---------- pastilles ---------- */
+:where(html:not([data-yq-page="guildes"])) .pill { display: inline-flex; align-items: center; gap: 6px; height: 24px; padding: 0 10px; border-radius: 999px; font-size: 12px; font-weight: 600; background: var(--raised); color: #e6e6e6; white-space: nowrap; border: 0; }
+:where(html:not([data-yq-page="guildes"])) .pill svg { width: 12px; height: 12px; }
+:where(html:not([data-yq-page="guildes"])) .pill.lilac { background: var(--accent); color: #000; }
+:where(html:not([data-yq-page="guildes"])) .pill.gold { background: var(--gold); color: #000; }
+:where(html:not([data-yq-page="guildes"])) .pill.sage { background: var(--sage); color: #000; }
+:where(html:not([data-yq-page="guildes"])) button.pill { cursor: pointer; transition: filter 150ms ease, transform 100ms ease; }
+:where(html:not([data-yq-page="guildes"])) button.pill:hover { filter: brightness(1.12); }
+:where(html:not([data-yq-page="guildes"])) button.pill:active { transform: scale(.96); }
+
+/* ---------- onglets ---------- */
+:where(html:not([data-yq-page="guildes"])) .tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 24px; }
+:where(html:not([data-yq-page="guildes"])) .tabs [role="tab"] { height: 36px; padding: 0 14px; border-radius: 999px; display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--border); background: transparent; color: var(--text-soft); font-size: 14px; cursor: pointer; transition: border-color 150ms ease, color 150ms ease, background-color 150ms ease; }
+:where(html:not([data-yq-page="guildes"])) .tabs [role="tab"]:hover { border-color: var(--control); color: #fff; }
+:where(html:not([data-yq-page="guildes"])) .tabs [role="tab"][aria-selected="true"] { background: #fff; color: #000; border-color: #fff; font-weight: 500; }
+:where(html:not([data-yq-page="guildes"])) .tabs [role="tab"] .n { opacity: .6; font-variant-numeric: tabular-nums; }
+
+/* ---------- champs ---------- */
+:where(html:not([data-yq-page="guildes"])) .field { display: grid; gap: 6px; min-width: 0; align-content: start; }
+:where(html:not([data-yq-page="guildes"])) .field label { font-size: 13px; font-weight: 500; color: #e6e6e6; }
+:where(html:not([data-yq-page="guildes"])) .input { width: 100%; height: 44px; padding: 0 14px; border-radius: var(--radius-control); border: 1px solid var(--control); background: #0a0a0a; color: #fff; }
+:where(html:not([data-yq-page="guildes"])) .input:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 0 3px var(--accent-track); }
+:where(html:not([data-yq-page="guildes"])) .input::placeholder { color: #7a7a7a; }
+:where(html:not([data-yq-page="guildes"])) textarea.input { height: 92px; padding: 12px 14px; resize: vertical; }
+:where(html:not([data-yq-page="guildes"])) select.input { appearance: auto; }
+:where(html:not([data-yq-page="guildes"])) input[type="datetime-local"].input { color-scheme: dark; }
+:where(html:not([data-yq-page="guildes"])) .input[aria-invalid="true"] { border-color: var(--gold); }
+:where(html:not([data-yq-page="guildes"])) .hint { font-size: 12px; color: var(--muted); }
+:where(html:not([data-yq-page="guildes"])) .field-error { font-size: 12px; color: var(--gold); }
+:where(html:not([data-yq-page="guildes"])) .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+:where(html:not([data-yq-page="guildes"])) .form-grid .full { grid-column: 1 / -1; }
+:where(html:not([data-yq-page="guildes"])) .alert { padding: 12px 14px; border-radius: var(--radius-control); background: var(--danger-bg); border: 1px solid var(--danger-line); color: #f1c9c9; font-size: 14px; }
+:where(html:not([data-yq-page="guildes"])) .alert ul { margin: 6px 0 0; padding-left: 18px; }
+:where(html:not([data-yq-page="guildes"])) .alert strong { color: #fff; }
+
+/* ---------- tableaux ---------- */
+:where(html:not([data-yq-page="guildes"])) .sheet { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-card); padding: 8px 20px; }
+:where(html:not([data-yq-page="guildes"])) .table-wrap { overflow-x: auto; }
+:where(html:not([data-yq-page="guildes"])) table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+:where(html:not([data-yq-page="guildes"])) th { text-align: left; font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); padding: 14px 12px 12px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+:where(html:not([data-yq-page="guildes"])) td { padding: 16px 12px; border-bottom: 1px solid var(--rule); vertical-align: middle; }
+:where(html:not([data-yq-page="guildes"])) tbody tr:last-child td { border-bottom: 0; }
+:where(html:not([data-yq-page="guildes"])) th.n, :where(html:not([data-yq-page="guildes"])) td.n { text-align: right; }
+:where(html:not([data-yq-page="guildes"])) td .desc { display: block; margin-top: 2px; font-size: 13px; color: var(--muted); max-width: 52ch; }
+:where(html:not([data-yq-page="guildes"])) td strong { font-weight: 600; }
+:where(html:not([data-yq-page="guildes"])) .gcell { display: flex; align-items: center; gap: 14px; }
+:where(html:not([data-yq-page="guildes"])) .gcell img { width: 44px; height: 44px; border-radius: 12px; object-fit: cover; flex: none; }
+:where(html:not([data-yq-page="guildes"])) .row-actions { display: flex; gap: 6px; justify-content: flex-end; white-space: nowrap; }
+:where(html:not([data-yq-page="guildes"])) .empty { color: var(--muted); padding: 24px 0; text-align: center; }
+
+/* ---------- filtres ---------- */
+:where(html:not([data-yq-page="guildes"])) .filters { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+:where(html:not([data-yq-page="guildes"])) .filters .search { flex: 1 1 280px; max-width: 440px; }
+:where(html:not([data-yq-page="guildes"])) .filters select.input { width: auto; min-width: 170px; }
+:where(html:not([data-yq-page="guildes"])) .filters .stamp { margin-left: auto; color: var(--muted); font-size: 13px; }
+:where(html:not([data-yq-page="guildes"])) .input[type="search"]::-webkit-search-cancel-button { filter: invert(1); opacity: .6; }
+
+/* ---------- carte ivoire (comme les quêtes de Guildes) ---------- */
+:where(html:not([data-yq-page="guildes"])) .ivory { background: var(--ivory); color: #000; border-radius: var(--radius-card); }
+
+/* ---------- fenêtre de dialogue et toast ---------- */
+:where(html:not([data-yq-page="guildes"])) dialog { border: 1px solid var(--border); padding: 0; border-radius: 20px; width: min(520px, calc(100vw - 32px)); max-height: calc(100svh - 32px); background: var(--surface); color: #fff; font-family: var(--font); box-shadow: 0 24px 64px rgba(0, 0, 0, .6); }
+:where(html:not([data-yq-page="guildes"])) dialog::backdrop { background: rgba(0, 0, 0, .7); }
+:where(html:not([data-yq-page="guildes"])) dialog form { padding: 28px; display: grid; gap: 18px; }
+:where(html:not([data-yq-page="guildes"])) dialog h2 { font-family: var(--display); font-weight: 400; font-size: 30px; text-transform: uppercase; line-height: 1.05; }
+:where(html:not([data-yq-page="guildes"])) dialog .lead { color: var(--muted); font-size: 14px; }
+:where(html:not([data-yq-page="guildes"])) dialog .lead strong { color: #fff; }
+:where(html:not([data-yq-page="guildes"])) dialog .foot { display: flex; justify-content: flex-end; gap: 8px; margin-top: 6px; flex-wrap: wrap; }
+:where(html:not([data-yq-page="guildes"])) .toast { position: fixed; left: 50%; bottom: 24px; z-index: 30; transform: translate(-50%, 16px); opacity: 0; pointer-events: none; padding: 12px 18px; border-radius: 999px; background: var(--accent); color: #000; font-weight: 600; transition: opacity 200ms ease, transform 200ms ease; max-width: calc(100vw - 32px); text-align: center; }
+:where(html:not([data-yq-page="guildes"])) .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+/* ---------- pied de page ---------- */
+:where(html:not([data-yq-page="guildes"])) .pagefoot { display: flex; align-items: center; gap: 10px; margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--rule); color: var(--muted); font-size: 13px; }
+:where(html:not([data-yq-page="guildes"])) .pagefoot img { width: 22px; height: 22px; border-radius: 6px; object-fit: cover; }
+
+/* ---------- téléphone ---------- */
+@media (max-width: 860px) {
+  :where(html:not([data-yq-page="guildes"])) .app { grid-template-columns: minmax(0, 1fr); align-content: start; }
+  :where(html:not([data-yq-page="guildes"])) .sidebar { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 20; background: var(--surface); transform: translateX(-100%); transition: transform 200ms var(--ease-out); }
+  :where(html:not([data-yq-page="guildes"])) .sidebar.open { transform: none; }
+  :where(html:not([data-yq-page="guildes"])) .brand .close-menu { display: inline-flex; }
+  :where(html:not([data-yq-page="guildes"])) .sidebar-toggle { display: none; }
+  :where(html:not([data-yq-page="guildes"])) .mobilebar { display: flex; align-items: center; gap: 8px; position: sticky; top: 0; z-index: 10; height: 56px; padding: 0 12px 0 6px; background: #000; border-bottom: 1px solid var(--rule); }
+  :where(html:not([data-yq-page="guildes"])) .mobilebar .btn { height: 40px; width: 40px; padding: 0; border: 0; }
+  :where(html:not([data-yq-page="guildes"])) .mobilebar img { width: 26px; height: 26px; border-radius: 7px; object-fit: cover; }
+  :where(html:not([data-yq-page="guildes"])) .mobile-title { flex: 1; font-weight: 600; }
+  :where(html:not([data-yq-page="guildes"])) .canvas { padding: 24px 16px 40px; }
+  :where(html:not([data-yq-page="guildes"])) .title-row { flex-direction: column; align-items: stretch; gap: 20px; margin-bottom: 24px; }
+  :where(html:not([data-yq-page="guildes"])) .title-row h1 { font-size: 38px; }
+  :where(html:not([data-yq-page="guildes"])) .title-row .about { font-size: 15px; }
+  :where(html:not([data-yq-page="guildes"])) .title-row .actions .btn { flex: 1; }
+  :where(html:not([data-yq-page="guildes"])) .kpis { grid-auto-flow: row; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  :where(html:not([data-yq-page="guildes"])) .kpi + .kpi { border-left: 0; }
+  :where(html:not([data-yq-page="guildes"])) .kpi:nth-child(n + 3) { border-top: 1px solid var(--border); }
+  :where(html:not([data-yq-page="guildes"])) .kpi:nth-child(2n) { border-left: 1px solid var(--border); }
+  :where(html:not([data-yq-page="guildes"])) .tabs { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 2px; scrollbar-width: none; }
+  :where(html:not([data-yq-page="guildes"])) .tabs [role="tab"] { flex: none; }
+  :where(html:not([data-yq-page="guildes"])) .form-grid { grid-template-columns: minmax(0, 1fr); }
+  :where(html:not([data-yq-page="guildes"])) .filters .search { max-width: none; flex-basis: 100%; }
+  :where(html:not([data-yq-page="guildes"])) .filters select.input { flex: 1; }
+  :where(html:not([data-yq-page="guildes"])) .sheet { padding: 4px 16px; }
+  :where(html:not([data-yq-page="guildes"])) table.respond thead { display: none; }
+  :where(html:not([data-yq-page="guildes"])) table.respond, :where(html:not([data-yq-page="guildes"])) table.respond tbody, :where(html:not([data-yq-page="guildes"])) table.respond tr { display: block; width: 100%; }
+  :where(html:not([data-yq-page="guildes"])) table.respond tr { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px 12px; padding: 16px 0; border-bottom: 1px solid var(--rule); }
+  :where(html:not([data-yq-page="guildes"])) table.respond tbody tr:last-child { border-bottom: 0; }
+  :where(html:not([data-yq-page="guildes"])) table.respond td { display: block; padding: 0; border: 0; min-width: 0; text-align: left; }
+  :where(html:not([data-yq-page="guildes"])) table.respond td.hide-sm { display: none; }
+  :where(html:not([data-yq-page="guildes"])) table.respond td.end { grid-column: 1 / -1; }
+  :where(html:not([data-yq-page="guildes"])) table.respond .row-actions { justify-content: flex-start; flex-wrap: wrap; }
+  :where(html:not([data-yq-page="guildes"])) dialog form { padding: 22px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  :where(html:not([data-yq-page="guildes"])), :where(html:not([data-yq-page="guildes"])) *, :where(html:not([data-yq-page="guildes"]))::before, :where(html:not([data-yq-page="guildes"])) *::before, :where(html:not([data-yq-page="guildes"]))::after, :where(html:not([data-yq-page="guildes"])) *::after { transition-duration: 0.01ms !important; animation: none !important; }
+}
+
+
+/* ---------- Barre de navigation supérieure (remplace la sidebar latérale) ---------- */
+:where(html:not([data-yq-page="guildes"])) .top-nav-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 32px;
+  background: var(--ground);
+  border-bottom: 1px solid var(--rule);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  gap: 16px;
+}
+:where(html:not([data-yq-page="guildes"])) .top-nav-bar .brand-block {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+:where(html:not([data-yq-page="guildes"])) .top-nav-bar .cat-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--border);
+}
+:where(html:not([data-yq-page="guildes"])) .top-nav-bar .kicker-small {
+  display: block;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  line-height: 1.2;
+}
+:where(html:not([data-yq-page="guildes"])) .top-nav-bar .brand-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+:where(html:not([data-yq-page="guildes"])) .top-nav-bar .brand-title strong {
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+}
+:where(html:not([data-yq-page="guildes"])) .top-nav-bar .badge-tag {
+  font-size: 11px;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(229, 208, 255, 0.15);
+  color: var(--lilac);
+  border: 1px solid rgba(229, 208, 255, 0.25);
+}
+:where(html:not([data-yq-page="guildes"])) .top-nav-bar .nav-pills {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+:where(html:not([data-yq-page="guildes"])) .top-nav-bar .nav-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 16px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-soft);
+  text-decoration: none;
+  background: transparent;
+  border: 1px solid var(--border);
+  transition: all 150ms ease;
+}
+:where(html:not([data-yq-page="guildes"])) .top-nav-bar .nav-pill:hover {
+  background: var(--raised);
+  color: #fff;
+}
+:where(html:not([data-yq-page="guildes"])) .top-nav-bar .nav-pill.active {
+  background: #fff;
+  color: #000;
+  border-color: #fff;
+  font-weight: 600;
+}
+@media (max-width: 640px) {
+  :where(html:not([data-yq-page="guildes"])) .top-nav-bar { padding: 12px 16px; }
+  :where(html:not([data-yq-page="guildes"])) .top-nav-bar .kicker-small { display: none; }
+}
+
+/* ==================== ancien style.css (règles communes) ==================== */
+
+/* Yalla Quest · Front-Office : pages de connexion et d'inscription. S'ajoute à yq.css. */
+
+/* ---------- connexion et inscription ---------- */
+:where(html:not([data-yq-page="guildes"])) .auth { min-height: 100svh; display: grid; place-items: center; padding: 40px 20px; }
+:where(html:not([data-yq-page="guildes"])) .auth-card { width: min(460px, 100%); display: grid; gap: 18px; padding: 32px; }
+:where(html:not([data-yq-page="guildes"])) .auth-brand { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 17px; }
+:where(html:not([data-yq-page="guildes"])) .auth-brand img { width: 40px; height: 40px; border-radius: 10px; object-fit: cover; }
+:where(html:not([data-yq-page="guildes"])) .auth h1 { font-family: var(--display); font-weight: 400; text-transform: uppercase; font-size: 44px; line-height: 1; letter-spacing: -0.01em; }
+:where(html:not([data-yq-page="guildes"])) .auth .about { font-style: italic; color: var(--muted); font-size: 16px; }
+:where(html:not([data-yq-page="guildes"])) .auth form { display: grid; gap: 16px; }
+:where(html:not([data-yq-page="guildes"])) .auth .switch { padding-top: 16px; border-top: 1px solid var(--rule); color: var(--muted); font-size: 14px; }
+:where(html:not([data-yq-page="guildes"])) .auth .switch a { color: var(--accent); font-weight: 600; text-underline-offset: 3px; }
+:where(html:not([data-yq-page="guildes"])) .auth .foot-note { margin-top: 20px; color: var(--muted); font-size: 13px; text-align: center; }
+
+/* ---------- téléphone ---------- */
+@media (max-width: 860px) {
+  :where(html:not([data-yq-page="guildes"])) .auth h1 { font-size: 38px; }
+  :where(html:not([data-yq-page="guildes"])) .auth-card { padding: 22px; }
+}
+
+/* ==================== ancien admin.css (règles communes) ==================== */
+
+/* Yalla Quest · Back-Office (administration). S'ajoute à shared/css/yq.css.
+   Outil de travail : pas d'effets de mouvement ici. */
+
+:where(html:not([data-yq-page="guildes"])) .admin-table td.id { min-width: 220px; }
+:where(html:not([data-yq-page="guildes"])) .admin-table .gcell .avatar { width: 40px; height: 40px; font-size: 13px; }
+
+/* pastilles cliquables (rôle, statut, état) : la pastille dit l'état, le libellé accessible dit l'action */
+:where(html:not([data-yq-page="guildes"])) .pill.role-admin { background: var(--accent); color: #000; }
+:where(html:not([data-yq-page="guildes"])) .pill.role-joueur { background: var(--raised); color: #e6e6e6; }
+:where(html:not([data-yq-page="guildes"])) .pill.st-actif { background: var(--sage); color: #000; }
+:where(html:not([data-yq-page="guildes"])) .pill.st-suspendu { background: var(--gold); color: #000; }
+
+:where(html:not([data-yq-page="guildes"])) tr.flash td { animation: admin-flash 1.6s ease-out; }
+@keyframes admin-flash { from { background: var(--accent-soft); } to { background: transparent; } }
+
+@media (min-width: 861px) and (max-width: 1280px) { :where(html:not([data-yq-page="guildes"])) .admin-table .hide-md { display: none; } }
+@media (max-width: 860px) {
+  :where(html:not([data-yq-page="guildes"])) .admin-table.respond td.second { grid-column: 1; font-size: 13px; color: var(--muted); }
+  :where(html:not([data-yq-page="guildes"])) .admin-table.respond td.c-side { grid-column: 2; grid-row: 1; justify-self: end; align-self: center; }
+  :where(html:not([data-yq-page="guildes"])) .admin-table.respond td.c-side + td.c-side { grid-row: 2; }
+}
+
+/* back-office : un titre de section après un bloc (chiffres clés, tableau) prend de l'air */
+:where(html:not([data-yq-page="guildes"])) .kpis + h2.section, :where(html:not([data-yq-page="guildes"])) .sheet + h2.section { margin-top: 32px; }
+
+/* ==================== indicateur de chargement (Views/front-office/includes/spinner.php, sans préfixe : toutes les pages) ==================== */
+
+/* masqué par défaut : Views/js/spinner.js l'affiche en posant yq-loading sur <html> (donc jamais sans JavaScript) */
+.yq-loader { position: fixed; inset: 0; z-index: 100; display: none; place-content: center; justify-items: center; gap: 20px; background: var(--ground, #000); opacity: 1; transition: opacity 400ms ease, visibility 0s linear 400ms; animation: yq-loader-failsafe 0s linear 8s forwards; }
+html.yq-loading .yq-loader, .yq-loader.done { display: grid; }
+.yq-loader.done { opacity: 0; visibility: hidden; pointer-events: none; }
+.yq-loader[hidden] { display: none !important; }
+@keyframes yq-loader-failsafe { to { opacity: 0; visibility: hidden; pointer-events: none; } }
+.yq-loader-ink { position: relative; width: 84px; height: 84px; filter: url(#yq-goo); }
+.yq-loader-ink i { position: absolute; left: 50%; top: 50%; width: 26px; height: 26px; margin: -13px 0 0 -13px; border-radius: 50%; background: var(--accent, #ebc1f2); }
+.yq-loader-ink i:nth-child(1) { width: 36px; height: 36px; margin: -18px 0 0 -18px; animation: yq-loader-pulse 1.4s ease-in-out infinite; }
+.yq-loader-ink i:nth-child(2) { animation: yq-loader-orbit 1.4s cubic-bezier(.5, 0, .5, 1) infinite; }
+.yq-loader-ink i:nth-child(3) { width: 18px; height: 18px; margin: -9px 0 0 -9px; animation: yq-loader-orbit 1.4s cubic-bezier(.5, 0, .5, 1) -0.7s infinite; }
+@keyframes yq-loader-orbit { from { transform: rotate(0deg) translateX(24px); } to { transform: rotate(360deg) translateX(24px); } }
+@keyframes yq-loader-pulse { 50% { transform: scale(.78); } }
+.yq-loader-label { margin: 0; color: var(--muted, #a8a8a8); font-size: 12px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; }
+.yq-loader-defs { position: absolute; }
+@media (prefers-reduced-motion: reduce) {
+  .yq-loader-ink i { animation: none !important; }
+  .yq-loader-ink i:nth-child(2) { transform: translateX(22px); }
+  .yq-loader-ink i:nth-child(3) { transform: translateX(-20px); }
+  .yq-loader { transition-duration: 150ms, 0s; transition-delay: 0s, 150ms; }
+}
+
+/* ==================== ancien effects.css (effets Guildes, sans préfixe) ==================== */
+
+/* Yalla Quest · Guildes — effets de scroll et de souris.
+   Chargé par Views/front-office/pages/guildes.php (lien dans le <head>, scripts en bas de page).
+   Ne change ni la mise en page ni les couleurs : tout passe par les variables du template
+   (--accent, --night, --ground, --ivory, --text, --muted) et presque tout est sous html.fx,
+   la classe que Views/js/effects/main.js pose quand les effets ont démarré. */
+
+/* ---------- démarrage : #canvas reste masqué le temps que main.js prépare les entrées ---------- */
+/* filet de sécurité : visible après 2,5 s même si aucun script ne tourne */
+html.fx-boot #canvas { opacity: 0; animation: fx-failsafe 0s linear 2.5s forwards; }
+@keyframes fx-failsafe { to { opacity: 1; } }
+
+/* ---------- Lenis (styles recommandés par la bibliothèque) ---------- */
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+/* fenêtre ouverte : le défilement de la page est bloqué ; la largeur de la barre de défilement est compensée */
+html.fx-locked { overflow: hidden; }
+html.fx-locked body { padding-right: var(--fx-scrollbar, 0px); }
+
+/* ---------- encre : un seul canvas WebGL, fixe, derrière le contenu, jamais cliquable ---------- */
+.fx-ink { position: fixed; inset: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; display: block; max-width: none; }
+/* zone « reveal » : la copie 2D de l'encre au-dessus de l'image de la carte (même case de grille que .art) */
+html.fx .proposal { position: relative; }
+.fx-art-ink { position: absolute; grid-area: 1 / 1 / 2 / 2; inset: 0; width: 100%; height: 100%; pointer-events: none; display: block; max-width: none; }
+html.fx .proposal .art, html.fx .proposal .fx-art-ink {
+  transform: translate3d(var(--fx-px, 0px), var(--fx-py, 0px), 0) scale(var(--fx-ps, 1));
+}
+
+/* ---------- emblème 3D : l'<img> garde sa place (pas de décalage) et reste dans le DOM ---------- */
+html.fx .emblem.fx-emblem-live { opacity: 0; }
+
+/* ---------- transition de route : vague d'encre sur #canvas (la barre de navigation ne bouge pas) ---------- */
+.fx-wipe { position: fixed; z-index: 9; pointer-events: none; overflow: hidden; display: none; }
+.fx-wipe.on { display: block; }
+.fx-wipe i { position: absolute; inset: 0; display: block; will-change: clip-path; }
+.fx-wipe .a { background: var(--accent); }
+.fx-wipe .g { background: var(--ground); }
+/* le toast reste au-dessus de la vague */
+html.fx .toast { z-index: 15; scale: var(--fx-sx, 1) var(--fx-sy, 1); transform-origin: 50% 100%; }
+
+/* ---------- titre découpé (SplitType) : les lettres montent depuis le bas de leur mot ---------- */
+.fx-split .word { clip-path: inset(-0.35em -0.2em -0.14em -0.2em); }
+.fx-split .char { will-change: transform, opacity; }
+
+/* ---------- onglets : pastille d'encre qui coule d'un onglet à l'autre ---------- */
+html.fx .tabs.fx-tabs { position: relative; isolation: isolate; }
+.fx-tab-blob { position: absolute; left: 0; top: 0; z-index: -1; border-radius: 999px; background: var(--text); pointer-events: none; transform-origin: 50% 50%; }
+html.fx .tabs.fx-tabs a[aria-selected="true"] { background: transparent; }
+html.fx .tabs.fx-tabs a.fx-tab-pending[aria-selected="true"] { color: var(--muted); }
+html.fx .tabs.fx-tabs a.fx-tab-leaving { color: var(--ground); }
+
+/* ---------- vote : tache d'encre dans le bouton pressé ---------- */
+html.fx .choice button { position: relative; overflow: hidden; isolation: isolate; }
+.fx-splash { position: absolute; left: 0; top: 0; width: 12px; height: 12px; margin: -6px 0 0 -6px; border-radius: 50%; background: var(--night); z-index: -1; pointer-events: none; }
+html.fx .choice button.fx-inking { background: transparent; color: var(--ground); }
+html.fx .choice button.fx-inking.fx-inked { color: var(--text); }
+/* GSAP anime la barre de vote : la transition CSS du template doublerait l'animation */
+html.fx .votebar i { transition: none; }
+
+/* ---------- attraction magnétique (propriété translate : ne gêne pas le transform :active du template) ---------- */
+html.fx .btn.primary, html.fx .chip { translate: var(--fx-mx, 0px) var(--fx-my, 0px); }
+
+/* ---------- mouvement réduit : aucun de ces effets ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .fx-ink, .fx-art-ink, .fx-wipe, .fx-tab-blob, .fx-splash { display: none !important; }
+  html.fx .emblem.fx-emblem-live { opacity: 1; }
+  html.fx .tabs.fx-tabs a[aria-selected="true"] { background: var(--text); }
+  html.fx .btn.primary, html.fx .chip { translate: none; }
+}
+
+/* ==================== page Guildes (ancien <style> du template, seulement sur data-yq-page="guildes") ==================== */
+
+ de la page ; data-yq-page="guildes"
+     sur <html> écarte les règles communes, seule la partie effets s'applique ici. -->
+<link rel="stylesheet" href="../../css/guilde.css">
+<style>
+/* tasteskill / app.css
+   A neutral foundation for app screens (dashboards, admin, settings, inboxes), set to the defaults
+   measured in the study of real product screens (references/app-screens.md). Copy it into the project,
+   replace the token values with the ones on the app sheet (draw.mjs --app), and build on top.
+   Delete what you do not use. It has no brand of its own: neutral grounds, one quiet line, one accent. */
+
+/* ---------- tokens (replace with the dealt style) ---------- */
+:root:where([data-yq-page="guildes"]) {
+  /* names match the app sheet printed by draw.mjs --app */
+  --ground: #f9fafb;          /* the app chrome and page */
+  --surface: #ffffff;         /* panels and the work sheet */
+  --raised: #f4f5f6;          /* a filled inner well, hover rows */
+  --active: #eeeeee;          /* the active nav pill */
+  --border: #e8e8e8;          /* panel edges: about 1.2:1 on white */
+  --rule: #f1f2f3;            /* row rules inside tables */
+  --control: #d1d5db;         /* inputs and outlined buttons: one step stronger */
+  --text: #111111;
+  --muted: #5f6368;           /* secondary text, labels (4.5:1 or more on its ground) */
+  --faint: #6b6b6b;           /* meta and placeholders: the lightest grey that holds 4.5:1 on white */
+  --accent: #1f6f5c;          /* one hue: data, focus, the selected thing */
+  --primary: #1d1f20;         /* the primary button is near-black unless the style says otherwise */
+  --primary-ink: #ffffff;
+  --positive: #247b50; --negative: #c4242a; --warning: #92400e;  /* references/app-screens.md §9.5; a green accent is also --positive */
+  --pill-positive-bg: #dcfae5; --pill-positive-ink: #04250e;
+  --pill-negative-bg: #ffedea; --pill-negative-ink: #831c1e;
+  --pill-warning-bg: #fffbeb; --pill-warning-ink: #92400e;
+  --pill-neutral-bg: #eeeeee; --pill-neutral-ink: #3d3d3d;
+  --chart-1: var(--accent); --chart-2: #8fb8ad; --chart-3: #b08a2e; --chart-muted: #cfd3d6;
+  --chart-mark: var(--text);  /* a marked period in Charts.diverging: the second tone */
+  --chart-span: 0.06;         /* opacity of a shaded span (a selling window, an outage) */
+  --grid: var(--rule);        /* chart gridlines (charts.js) */
+  --axis-ink: var(--muted);   /* chart tick labels (charts.js) */
+  --ink: var(--text);
+
+  --font: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --fs-title: 24px; --fs-section: 16px; --fs-kpi: 28px; --fs-body: 14px; --fs-small: 12px;
+
+  --sidebar-width: 232px;
+  --pad: 24px;                /* canvas padding */
+  --gap: 16px;                /* one gutter, horizontal and vertical */
+  --card-pad: 20px;
+  --radius-card: 8px;         /* radius is bimodal: tight 4–8 (controls 6) or soft 16–24 (controls full); never 11–12 */
+  --radius-control: 6px;
+  --control-height: 32px;     /* every control in the title and filter rows */
+  --row-height: 48px;         /* single-line table row */
+  --nav-row: 32px;            /* sidebar item height, on a 34px pitch */
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --t-press: 120ms; --t-hover: 150ms; --t-ui: 200ms;
+}
+/* dark: one true-neutral ground, elevation by lightness; two greys that read apart (not #aaa beside #969696) */
+:root:where([data-yq-page="guildes"])[data-theme="dark"] {
+  --ground: #000000; --surface: #111111; --raised: #222222; --active: #222222;
+  --border: #1a1a1a; --rule: #161616; --control: #444444;
+  --text: #ffffff; --muted: #b4b4b4; --faint: #949494;
+  --primary: #ffffff; --primary-ink: #000000;
+  --positive: #3fc07a; --negative: #e5566f; --warning: #e5a93b;  /* a green or yellow-green accent is also --positive */
+  --pill-positive-bg: #172a1d; --pill-positive-ink: #3fc07a;
+  --pill-negative-bg: #2c1a20; --pill-negative-ink: #e5566f;
+  --pill-warning-bg: #2b2414; --pill-warning-ink: #e5a93b;
+  --pill-neutral-bg: #222222; --pill-neutral-ink: #ffffff;
+  --chart-muted: #4a4a4a; --grid: #2b2b2b;
+  --chart-span: 0.12;
+}
+
+/* ---------- reset ---------- */
+:where(html[data-yq-page="guildes"]), :where(html[data-yq-page="guildes"]) *, :where(html[data-yq-page="guildes"])::before, :where(html[data-yq-page="guildes"]) *::before, :where(html[data-yq-page="guildes"])::after, :where(html[data-yq-page="guildes"]) *::after { box-sizing: border-box; }
+html:where([data-yq-page="guildes"]) { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+:where(html[data-yq-page="guildes"]) body { margin: 0; background: var(--ground); color: var(--text); font: var(--fs-body)/20px var(--font); -webkit-font-smoothing: antialiased; }
+:where(html[data-yq-page="guildes"]) h1, :where(html[data-yq-page="guildes"]) h2, :where(html[data-yq-page="guildes"]) h3, :where(html[data-yq-page="guildes"]) h4, :where(html[data-yq-page="guildes"]) p, :where(html[data-yq-page="guildes"]) figure, :where(html[data-yq-page="guildes"]) ul, :where(html[data-yq-page="guildes"]) ol, :where(html[data-yq-page="guildes"]) dl, :where(html[data-yq-page="guildes"]) dd { margin: 0; }
+:where(html[data-yq-page="guildes"]) ul[class], :where(html[data-yq-page="guildes"]) ol[class] { padding: 0; list-style: none; }
+:where(html[data-yq-page="guildes"]) img, :where(html[data-yq-page="guildes"]) svg, :where(html[data-yq-page="guildes"]) video, :where(html[data-yq-page="guildes"]) canvas { display: block; max-width: 100%; }
+:where(html[data-yq-page="guildes"]) button, :where(html[data-yq-page="guildes"]) input, :where(html[data-yq-page="guildes"]) select, :where(html[data-yq-page="guildes"]) textarea { font: inherit; color: inherit; }
+:where(html[data-yq-page="guildes"]) a { color: inherit; text-decoration: none; }
+:where(html[data-yq-page="guildes"]) :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+:where(html[data-yq-page="guildes"]) .num, :where(html[data-yq-page="guildes"]) table, :where(html[data-yq-page="guildes"]) .kpi-value { font-variant-numeric: tabular-nums; }
+
+/* ---------- shell: navigation + canvas ---------- */
+:where(html[data-yq-page="guildes"]) .app { min-height: 100svh; }
+:where(html[data-yq-page="guildes"]) .nav-item { display: flex; align-items: center; gap: 10px; height: var(--nav-row); padding: 0 8px; border-radius: 8px; color: var(--muted); transition: background-color var(--t-hover) ease, color var(--t-hover) ease; }
+:where(html[data-yq-page="guildes"]) .nav-item svg { width: 16px; height: 16px; flex: none; stroke-width: 1.5; }
+:where(html[data-yq-page="guildes"]) .nav-item:hover { background: var(--raised); color: var(--text); }
+:where(html[data-yq-page="guildes"]) .nav-item[aria-current="page"] { background: var(--active); color: var(--text); }
+:where(html[data-yq-page="guildes"]) .canvas { min-width: 0; padding: var(--pad); }
+
+/* ---------- title block and filters ---------- */
+:where(html[data-yq-page="guildes"]) .title-row { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 20px; }
+:where(html[data-yq-page="guildes"]) .title-row h1 { font-size: var(--fs-title); line-height: 1.2; font-weight: 600; letter-spacing: -0.01em; }
+:where(html[data-yq-page="guildes"]) .title-row .sub { margin-top: 4px; color: var(--muted); }
+:where(html[data-yq-page="guildes"]) .filters { display: flex; align-items: center; gap: 8px; margin-bottom: var(--gap); flex-wrap: wrap; }
+:where(html[data-yq-page="guildes"]) .filters .spacer { flex: 1; }
+:where(html[data-yq-page="guildes"]) .stamp { color: var(--faint); font-size: var(--fs-small); }
+
+/* ---------- panels and grid ---------- */
+:where(html[data-yq-page="guildes"]) .grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: var(--gap); }
+:where(html[data-yq-page="guildes"]) .panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-card); padding: var(--card-pad); min-width: 0; }
+:where(html[data-yq-page="guildes"]) .panel > header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
+:where(html[data-yq-page="guildes"]) .panel h2 { font-size: var(--fs-section); line-height: 1.3; font-weight: 600; }
+:where(html[data-yq-page="guildes"]) .panel .meta { color: var(--faint); font-size: var(--fs-small); }
+/* paired cards in one row: a card stretches to its neighbour only when it has content to fill. Otherwise it keeps
+   its own height (add .top to the row), and only an action or a total may be pinned to a stretched card's bottom */
+:where(html[data-yq-page="guildes"]) .grid.top { align-items: start; }
+
+/* a chart's heading row: its title (and legend or period) with a fixed 8px to the svg */
+:where(html[data-yq-page="guildes"]) .chart-head { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 4px 12px; margin-bottom: 8px; }
+:where(html[data-yq-page="guildes"]) .chart-head h3 { font-size: var(--fs-body); line-height: 20px; font-weight: 500; }
+:where(html[data-yq-page="guildes"]) .chart { position: relative; min-width: 0; }
+
+/* a link at a card's foot or header ("Show all 7", "Sell-out history"): ink, a 12px chevron, an underline on hover,
+   and no inline padding, so its text sits on the card's content edge */
+:where(html[data-yq-page="guildes"]) .card-link { display: inline-flex; align-items: center; gap: 2px; padding: 0; border: 0; background: none; color: var(--text); font-weight: 500; cursor: pointer; text-underline-offset: 3px; }
+:where(html[data-yq-page="guildes"]) .card-link::after { content: ""; width: 12px; height: 12px; flex: none; background: currentColor; -webkit-mask: var(--chevron) center / 12px no-repeat; mask: var(--chevron) center / 12px no-repeat; }
+:where(html[data-yq-page="guildes"]) .card-link:hover { text-decoration: underline; }
+:root:where([data-yq-page="guildes"]) { --chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M4.5 2.5 8 6l-3.5 3.5' fill='none' stroke='black' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); }
+
+/* list rows: a rule between rows and none above the first. A rule on a rounded box curls up at both ends, so a row
+   that carries a rule has square corners */
+:where(html[data-yq-page="guildes"]) .rows { display: grid; }
+:where(html[data-yq-page="guildes"]) .row { display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 10px 0; }
+:where(html[data-yq-page="guildes"]) .row + .row { border-top: 1px solid var(--rule); border-radius: 0; }
+
+/* KPIs as one divided strip: a label above a number, no icons, no tiles */
+:where(html[data-yq-page="guildes"]) .kpis { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-card); }
+:where(html[data-yq-page="guildes"]) .kpi { padding: 16px var(--card-pad); }
+:where(html[data-yq-page="guildes"]) .kpi + .kpi { border-left: 1px solid var(--border); }
+:where(html[data-yq-page="guildes"]) .kpi-label { color: var(--muted); }
+:where(html[data-yq-page="guildes"]) .kpi-value { margin-top: 6px; font-size: var(--fs-kpi); line-height: 1.15; font-weight: 500; letter-spacing: -0.01em; }
+:where(html[data-yq-page="guildes"]) .kpi-value small { font-size: 0.55em; color: var(--muted); font-weight: 400; margin-left: 2px; }
+:where(html[data-yq-page="guildes"]) .delta { margin-top: 4px; font-size: var(--fs-small); color: var(--muted); }
+:where(html[data-yq-page="guildes"]) .delta .up { color: var(--positive); } :where(html[data-yq-page="guildes"]) .delta .down { color: var(--negative); }
+/* KPIs as the chart's tabs: the selected one carries a 2px rule and an ink label; the others keep a grey label and
+   their value in ink at a lighter weight (a grey value reads as disabled). When the tabs are the per-entity
+   breakdown the brief asks for (takings by shop), add .entities: nothing changes but the rule */
+:where(html[data-yq-page="guildes"]) .kpis[role="tablist"] .kpi { position: relative; cursor: pointer; }
+:where(html[data-yq-page="guildes"]) .kpis[role="tablist"] .kpi[aria-selected="true"]::after { content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: var(--text); }
+:where(html[data-yq-page="guildes"]) .kpis[role="tablist"]:not(.entities) .kpi[aria-selected="true"] .kpi-label { color: var(--text); }
+:where(html[data-yq-page="guildes"]) .kpis[role="tablist"]:not(.entities) .kpi[aria-selected="false"] .kpi-value { color: var(--text); font-weight: 400; }
+
+/* ---------- tables ---------- */
+:where(html[data-yq-page="guildes"]) .table-wrap { overflow-x: auto; }
+:where(html[data-yq-page="guildes"]) table { width: 100%; border-collapse: collapse; }
+:where(html[data-yq-page="guildes"]) th { height: 36px; padding: 0 12px; text-align: left; font-weight: 400; font-size: var(--fs-small); color: var(--muted); border-bottom: 1px solid var(--border); white-space: nowrap; }
+/* cells share one baseline, so a figure never sits 2px below the name beside it; the row height comes from padding */
+:where(html[data-yq-page="guildes"]) td { padding: calc((var(--row-height) - 20px) / 2) 12px; border-bottom: 1px solid var(--rule); vertical-align: baseline; }
+:where(html[data-yq-page="guildes"]) tbody tr:last-child td { border-bottom: 0; }
+/* no hover that changes the fill; a row that drives a detail pane takes the nav pill's fill when selected */
+:where(html[data-yq-page="guildes"]) tbody tr[aria-selected="true"] td { background: var(--active); }
+:where(html[data-yq-page="guildes"]) th.n, :where(html[data-yq-page="guildes"]) td.n { text-align: right; }
+:where(html[data-yq-page="guildes"]) td .sub { display: block; font-size: var(--fs-small); color: var(--muted); }
+:where(html[data-yq-page="guildes"]) .truncate { max-width: 28ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* status pill: a pale tint with dark ink of the same hue, one per row */
+:where(html[data-yq-page="guildes"]) .pill { display: inline-flex; align-items: center; gap: 6px; height: 22px; padding: 0 8px; border-radius: 999px; font-size: var(--fs-small); font-weight: 500; background: var(--pill-neutral-bg); color: var(--pill-neutral-ink); white-space: nowrap; }
+:where(html[data-yq-page="guildes"]) .pill.pos { background: var(--pill-positive-bg); color: var(--pill-positive-ink); }
+:where(html[data-yq-page="guildes"]) .pill.neg { background: var(--pill-negative-bg); color: var(--pill-negative-ink); }
+:where(html[data-yq-page="guildes"]) .pill.warn { background: var(--pill-warning-bg); color: var(--pill-warning-ink); }
+
+/* ---------- controls ---------- */
+:where(html[data-yq-page="guildes"]) .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: var(--control-height); padding: 0 12px; border-radius: var(--radius-control); border: 1px solid var(--control); background: var(--surface); font-weight: 500; cursor: pointer; transition: background-color var(--t-hover) ease, transform var(--t-press) var(--ease-out); }
+:where(html[data-yq-page="guildes"]) .btn:hover { background: var(--raised); }
+:where(html[data-yq-page="guildes"]) .btn:active { transform: translateY(1px); }
+:where(html[data-yq-page="guildes"]) .btn.primary { background: var(--primary); color: var(--primary-ink); border-color: transparent; }
+:where(html[data-yq-page="guildes"]) .btn.ghost { border-color: transparent; background: transparent; }
+:where(html[data-yq-page="guildes"]) .field { display: grid; gap: 8px; }
+:where(html[data-yq-page="guildes"]) .field label { font-weight: 500; }
+:where(html[data-yq-page="guildes"]) .field .hint { color: var(--muted); font-size: var(--fs-small); }
+:where(html[data-yq-page="guildes"]) .input, :where(html[data-yq-page="guildes"]) select.input { height: 38px; padding: 0 12px; border: 1px solid var(--control); border-radius: var(--radius-control); background: var(--surface); }
+:where(html[data-yq-page="guildes"]) .input::placeholder { color: var(--faint); }
+:where(html[data-yq-page="guildes"]) .tabs { display: flex; gap: 24px; border-bottom: 1px solid var(--border); margin-bottom: var(--gap); }
+:where(html[data-yq-page="guildes"]) .tabs a { position: relative; padding: 10px 0; color: var(--muted); transition: color var(--t-hover) ease; }
+:where(html[data-yq-page="guildes"]) .tabs a[aria-selected="true"] { color: var(--text); }
+:where(html[data-yq-page="guildes"]) .tabs a[aria-selected="true"]::after { content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: var(--text); }
+/* as wide as its options; full width only on a narrow phone */
+:where(html[data-yq-page="guildes"]) .segmented { display: inline-flex; width: max-content; max-width: 100%; padding: 2px; border-radius: 8px; background: var(--raised); }
+:where(html[data-yq-page="guildes"]) .segmented button { height: 28px; padding: 0 10px; border: 0; border-radius: 6px; background: transparent; color: var(--muted); cursor: pointer; }
+:where(html[data-yq-page="guildes"]) .segmented button[aria-pressed="true"] { background: var(--surface); color: var(--text); }
+:where(html[data-yq-page="guildes"]) .switch { appearance: none; width: 32px; height: 20px; border-radius: 999px; background: var(--control); position: relative; cursor: pointer; transition: background-color var(--t-ui) ease; }
+:where(html[data-yq-page="guildes"]) .switch::after { content: ""; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%; background: #fff; transition: transform var(--t-ui) var(--ease-out); }
+:where(html[data-yq-page="guildes"]) .switch:checked { background: var(--text); } :where(html[data-yq-page="guildes"]) .switch:checked::after { transform: translateX(12px); }
+
+/* empty and loading states keep the frame; a loading value is a flat grey bar at its real size, with no shimmer */
+:where(html[data-yq-page="guildes"]) .empty { display: grid; place-items: center; min-height: 96px; padding: 16px; border: 1px dashed var(--control); border-radius: var(--radius-control); color: var(--muted); text-align: center; }
+:where(html[data-yq-page="guildes"]) .skeleton { background: var(--raised); border-radius: 4px; }
+
+/* ---------- phone: the navigation folds away and the canvas takes the width ---------- */
+@media (max-width: 860px) {
+  :where(html[data-yq-page="guildes"]) .canvas { padding: 16px; }
+  :where(html[data-yq-page="guildes"]) .grid > * { grid-column: 1 / -1 !important; }
+  :where(html[data-yq-page="guildes"]) .kpis { grid-auto-flow: row; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  :where(html[data-yq-page="guildes"]) .kpi + .kpi { border-left: 0; }
+  :where(html[data-yq-page="guildes"]) .kpi:nth-child(n + 3) { border-top: 1px solid var(--border); }
+  :where(html[data-yq-page="guildes"]) .kpi:nth-child(2n) { border-left: 1px solid var(--border); }
+  /* an odd count leaves no half-empty row: the last cell takes the full width */
+  :where(html[data-yq-page="guildes"]) .kpi:last-child:nth-child(odd) { grid-column: 1 / -1; }
+  /* KPI tabs in a 2-up grid: the selected cell takes a fill, never an underline floating mid-grid */
+  :where(html[data-yq-page="guildes"]) .kpis[role="tablist"] .kpi[aria-selected="true"] { background: var(--active); }
+  :where(html[data-yq-page="guildes"]) .kpis[role="tablist"] .kpi[aria-selected="true"]::after { content: none; }
+  :where(html[data-yq-page="guildes"]) .title-row { flex-wrap: wrap; align-items: flex-start; }
+}
+@media (max-width: 480px) {
+  :where(html[data-yq-page="guildes"]) .segmented { display: flex; width: 100%; }
+  :where(html[data-yq-page="guildes"]) .segmented button { flex: 1; }
+}
+@media (prefers-reduced-motion: reduce) { :where(html[data-yq-page="guildes"]), :where(html[data-yq-page="guildes"]) *, :where(html[data-yq-page="guildes"])::before, :where(html[data-yq-page="guildes"]) *::before, :where(html[data-yq-page="guildes"])::after, :where(html[data-yq-page="guildes"]) *::after { transition-duration: 0.01ms !important; animation: none !important; } }
+
+/* an empty message spans the block it stands in, never one squeezed column */
+:where(html[data-yq-page="guildes"]) .rows .empty, :where(html[data-yq-page="guildes"]) .grid > .empty, :where(html[data-yq-page="guildes"]) li > .empty { grid-column: 1 / -1; width: 100%; }
+
+/* Yalla Quest · Guildes — follows the deck's charte graphique (slides 24–26):
+   Noir #000 ground, Lilas #EBC1F2 for actions, Ivoire #F6F4F8 / Gris carte #DCDCDC quest cards with black text,
+   Gris secondaire #A8A8A8, Or doux #D7A64B, Sauge #7BAE8C. Playfair Display · Inter · Barlow Condensed. */
+
+:root:where([data-yq-page="guildes"]) {
+  --ground: #000000;
+  --surface: #111111;
+  --raised: #1b1b1b;
+  --active: #262626;
+  --border: #232323;
+  --rule: #1f1f1f;
+  --control: #3d3d3d;
+  --text: #ffffff;
+  --muted: #a8a8a8;
+  --faint: #a8a8a8;
+  --accent: #ebc1f2;          /* Lilas Yalla Quest: logo, primary buttons, counts */
+  --accent-soft: #241a27;
+  --accent-track: #3a2a3e;
+  --accent-ink: #ebc1f2;
+  --primary: #ebc1f2;
+  --primary-ink: #000000;
+  --night: #15131f;
+  --ivory: #f6f4f8;
+  --card: #dcdcdc;
+  --gold: #d7a64b;
+  --sage: #7bae8c;
+  --negative: #d7a64b;
+  --pill-neutral-bg: #262626; --pill-neutral-ink: #e6e6e6;
+
+  --display: "Playfair Display", Georgia, serif;
+  --font: "Inter", system-ui, sans-serif;
+  --cond: "Barlow Condensed", "Arial Narrow", sans-serif;
+  --fs-body: 15px; --fs-small: 13px;
+  --sidebar-width: 240px;
+  --radius-card: 16px;
+  --gap: 24px;
+  --card-pad: 24px;
+}
+
+:where(html[data-yq-page="guildes"]) body { font-family: var(--font); background: var(--ground); color: var(--text); font-size: var(--fs-body); line-height: 1.5; -webkit-font-smoothing: antialiased; }
+:where(html[data-yq-page="guildes"]) h1, :where(html[data-yq-page="guildes"]) h2, :where(html[data-yq-page="guildes"]) h3, :where(html[data-yq-page="guildes"]) p { margin: 0; }
+:where(html[data-yq-page="guildes"]) :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+:where(html[data-yq-page="guildes"]) ::selection { background: var(--accent); color: #000; }
+:where(html[data-yq-page="guildes"]) .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+:where(html[data-yq-page="guildes"]) .muted { color: var(--muted); }
+
+/* ---------- navigation des guildes : un bandeau dans le corps de la page, sous le titre ---------- */
+:where(html[data-yq-page="guildes"]) .guildnav { display: flex; align-items: center; gap: 12px 24px; margin: -8px 0 28px; padding: 10px 12px 10px 18px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-card); }
+:where(html[data-yq-page="guildes"]) .brand { display: flex; align-items: center; gap: 10px; flex: none; }
+:where(html[data-yq-page="guildes"]) .brand img { width: 30px; height: 30px; border-radius: 8px; display: block; }
+:where(html[data-yq-page="guildes"]) .brand strong { font-size: 19px; font-weight: 600; letter-spacing: 0.01em; white-space: nowrap; }
+:where(html[data-yq-page="guildes"]) .brand .tag { font-size: 10px; font-weight: 600; letter-spacing: 0.14em; color: var(--muted); align-self: center; margin-top: 3px; }
+:where(html[data-yq-page="guildes"]) .navlinks { position: relative; display: flex; align-items: center; gap: 4px; flex: 1; min-width: 0; }
+:where(html[data-yq-page="guildes"]) .nav-item { color: #d4d4d4; font-size: 14px; height: 38px; border-radius: 10px; padding: 0 10px; text-decoration: none; white-space: nowrap; flex: none; }
+:where(html[data-yq-page="guildes"]) .nav-item:hover { background: var(--raised); color: #fff; }
+:where(html[data-yq-page="guildes"]) .nav-item svg { stroke-width: 1.5; }
+:where(html[data-yq-page="guildes"]) .nav-item[aria-current="page"] { background: #fff; color: #000; font-weight: 500; }
+:where(html[data-yq-page="guildes"]) .nav-item[aria-current="page"] svg { color: #000; }
+:where(html[data-yq-page="guildes"]) .nav-item .count { min-width: 20px; height: 20px; padding: 0 6px; border-radius: 999px; background: var(--accent); color: #000; font-size: 12px; font-weight: 600; display: inline-grid; place-items: center; font-variant-numeric: tabular-nums; }
+:where(html[data-yq-page="guildes"]) .nav-item .gdot { width: 20px; height: 20px; flex: none; border-radius: 6px; object-fit: cover; display: block; }
+:where(html[data-yq-page="guildes"]) .nav-item.add { background: none; border: 0; font: inherit; font-size: 14px; cursor: pointer; color: var(--muted); }
+:where(html[data-yq-page="guildes"]) .nav-item.add:hover { color: #fff; }
+:where(html[data-yq-page="guildes"]) .my-guilds { display: flex; gap: 4px; }
+:where(html[data-yq-page="guildes"]) .guildnav .group-label { flex: none; margin: 0 4px 0 14px; color: var(--muted); font-size: 11px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; white-space: nowrap; }
+:where(html[data-yq-page="guildes"]) .user-row { display: flex; align-items: center; gap: 10px; flex: none; padding-left: 16px; border-left: 1px solid var(--rule); }
+:where(html[data-yq-page="guildes"]) .user-row strong { display: block; font-weight: 500; }
+:where(html[data-yq-page="guildes"]) .user-row div span { display: block; font-size: 12px; color: var(--muted); }
+/* écran moyen : la marque et l'utilisateur sur une ligne, les liens dessous (défilement horizontal si besoin) */
+@media (max-width: 1200px) {
+  :where(html[data-yq-page="guildes"]) .guildnav { flex-wrap: wrap; }
+  :where(html[data-yq-page="guildes"]) .navlinks { order: 3; flex: 1 0 100%; overflow-x: auto; scrollbar-width: none; padding: 4px; margin: -4px; }
+  :where(html[data-yq-page="guildes"]) .navlinks::-webkit-scrollbar { display: none; }
+  :where(html[data-yq-page="guildes"]) .user-row { flex: 1 1 0; min-width: 0; justify-content: flex-end; padding-left: 0; border-left: 0; }
+  :where(html[data-yq-page="guildes"]) .user-row div { min-width: 0; }
+  :where(html[data-yq-page="guildes"]) .user-row strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+}
+@media (max-width: 860px) {
+  :where(html[data-yq-page="guildes"]) .guildnav { margin: -4px 0 24px; padding: 10px 12px; column-gap: 12px; }
+  :where(html[data-yq-page="guildes"]) .user-row div span { display: none; }
+}
+
+:where(html[data-yq-page="guildes"]) .avatar { width: 32px; height: 32px; flex: none; border-radius: 50%; display: inline-grid; place-items: center; font-size: 12px; font-weight: 600; background: var(--accent); color: #000; }
+:where(html[data-yq-page="guildes"]) .avatar.sm { width: 30px; height: 30px; font-size: 11px; }
+
+/* ---------- page head: Playfair capitals, italic subtitle, as on every slide ---------- */
+:where(html[data-yq-page="guildes"]) .canvas { padding: 40px 40px 64px; max-width: 100%; }
+:where(html[data-yq-page="guildes"]) .title-row { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; margin-bottom: 32px; }
+:where(html[data-yq-page="guildes"]) .title-row .head { display: flex; gap: 24px; align-items: flex-end; min-width: 0; }
+:where(html[data-yq-page="guildes"]) .emblem { width: 104px; height: 104px; flex: none; border-radius: 18px; object-fit: cover; display: block; }
+:where(html[data-yq-page="guildes"]) .kicker { font-size: 11px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+:where(html[data-yq-page="guildes"]) .title-row h1 { font-family: var(--display); font-weight: 400; text-transform: uppercase; font-size: 56px; line-height: 1; letter-spacing: -0.01em; }
+:where(html[data-yq-page="guildes"]) .title-row .about { margin-top: 10px; font-style: italic; color: var(--muted); font-size: 17px; max-width: 60ch; }
+:where(html[data-yq-page="guildes"]) .title-row .sub { margin-top: 14px; font-size: 16px; color: #d4d4d4; max-width: 64ch; }
+:where(html[data-yq-page="guildes"]) .title-row .sub strong { color: #fff; font-weight: 600; }
+:where(html[data-yq-page="guildes"]) .title-row .actions { display: flex; gap: 8px; flex: none; }
+
+:where(html[data-yq-page="guildes"]) .btn { font: inherit; font-size: 14px; font-weight: 500; height: 40px; padding: 0 18px; border-radius: 999px; border: 1px solid var(--control); background: transparent; color: #fff; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer; transition: background 150ms ease, border-color 150ms ease, transform 100ms ease; }
+:where(html[data-yq-page="guildes"]) .btn:hover { border-color: #fff; }
+:where(html[data-yq-page="guildes"]) .btn:active { transform: scale(.98); }
+:where(html[data-yq-page="guildes"]) .btn.primary { background: var(--accent); border-color: var(--accent); color: #000; height: 44px; padding: 0 22px; font-weight: 600; }
+:where(html[data-yq-page="guildes"]) .btn.primary:hover { background: #f3d7f7; }
+:where(html[data-yq-page="guildes"]) .btn.ghost { border-color: transparent; }
+:where(html[data-yq-page="guildes"]) .btn.danger { color: var(--gold); border-color: #4a3a1c; }
+:where(html[data-yq-page="guildes"]) .btn svg { width: 16px; height: 16px; }
+
+:where(html[data-yq-page="guildes"]) .panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-card); padding: var(--card-pad); }
+:where(html[data-yq-page="guildes"]) .split { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 32px; align-items: start; }
+:where(html[data-yq-page="guildes"]) .stack { display: grid; gap: 20px; min-width: 0; }
+:where(html[data-yq-page="guildes"]) .rail { display: grid; gap: 24px; min-width: 0; }
+:where(html[data-yq-page="guildes"]) .rail h2 { font-family: var(--display); font-weight: 400; font-size: 26px; line-height: 1.15; margin: 0 0 12px; }
+:where(html[data-yq-page="guildes"]) .rail h2 .n { font-family: var(--font); font-size: 15px; color: var(--muted); margin-left: 6px; }
+:where(html[data-yq-page="guildes"]) .foot-btn { margin-top: 16px; width: 100%; }
+
+/* tabs */
+:where(html[data-yq-page="guildes"]) .tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+:where(html[data-yq-page="guildes"]) .tabs a { height: 36px; padding: 0 14px; border-radius: 999px; display: inline-flex; align-items: center; gap: 8px; text-decoration: none; cursor: pointer; color: #d4d4d4; font-size: 14px; border: 1px solid var(--border); }
+:where(html[data-yq-page="guildes"]) .tabs a:hover { border-color: var(--control); color: #fff; }
+:where(html[data-yq-page="guildes"]) .tabs a[aria-selected="true"] { background: #fff; color: #000; border-color: #fff; font-weight: 500; }
+:where(html[data-yq-page="guildes"]) .tabs a .n { color: inherit; opacity: .6; font-variant-numeric: tabular-nums; }
+:where(html[data-yq-page="guildes"]) .tabs { margin-bottom: 24px; }
+:where(html[data-yq-page="guildes"]) .stack > .tabs { margin-bottom: 4px; }
+
+/* ---------- the proposition: an ivory quest card, as in the front-office template ---------- */
+:where(html[data-yq-page="guildes"]) .proposal { display: grid; grid-template-columns: 168px minmax(0, 1fr); background: var(--ivory); color: #000; border-radius: var(--radius-card); overflow: hidden; }
+:where(html[data-yq-page="guildes"]) .proposal .art { width: 100%; height: 100%; min-height: 220px; object-fit: cover; display: block; }
+:where(html[data-yq-page="guildes"]) .proposal .body { padding: 22px 26px 18px; display: grid; gap: 12px; min-width: 0; }
+:where(html[data-yq-page="guildes"]) .qline { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #3d3d3d; flex-wrap: wrap; }
+:where(html[data-yq-page="guildes"]) .qline img { width: 18px; height: 18px; border-radius: 4px; object-fit: cover; }
+:where(html[data-yq-page="guildes"]) .qline .flag { margin-left: auto; height: 24px; padding: 0 10px; border-radius: 999px; background: var(--accent); color: #000; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; }
+:where(html[data-yq-page="guildes"]) .proposal h3 { font-family: var(--cond); font-weight: 600; font-size: 34px; line-height: 1.02; letter-spacing: -0.005em; }
+:where(html[data-yq-page="guildes"]) .qdesc { color: #2b2b2b; font-size: 15px; max-width: 60ch; }
+:where(html[data-yq-page="guildes"]) .votebar { display: flex; height: 10px; border-radius: 999px; background: #e3dfe6; overflow: hidden; gap: 2px; }
+:where(html[data-yq-page="guildes"]) .votebar i { display: block; height: 100%; transition: width 400ms cubic-bezier(.2,.8,.2,1); }
+:where(html[data-yq-page="guildes"]) .votebar i.pour { background: var(--night); }
+:where(html[data-yq-page="guildes"]) .votebar i.contre { background: #a8a8a8; }
+:where(html[data-yq-page="guildes"]) .votelegend { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 13px; color: #3d3d3d; font-variant-numeric: tabular-nums; }
+:where(html[data-yq-page="guildes"]) .votelegend span { display: inline-flex; align-items: center; gap: 6px; }
+:where(html[data-yq-page="guildes"]) .votelegend .k { width: 10px; height: 10px; border-radius: 50%; }
+:where(html[data-yq-page="guildes"]) .votelegend .k.pour { background: var(--night); }
+:where(html[data-yq-page="guildes"]) .votelegend .k.contre { background: #a8a8a8; }
+:where(html[data-yq-page="guildes"]) .votelegend .k.none { background: #e3dfe6; border: 1px solid #b9b4bd; }
+:where(html[data-yq-page="guildes"]) .pfoot { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding-top: 14px; border-top: 1px solid #dcd8df; }
+:where(html[data-yq-page="guildes"]) .deadline { font-size: 14px; color: #3d3d3d; flex: 1; min-width: 180px; }
+:where(html[data-yq-page="guildes"]) .deadline strong { color: #000; font-weight: 600; }
+:where(html[data-yq-page="guildes"]) .deadline.urgent strong { background: var(--gold); padding: 2px 8px; border-radius: 999px; }
+:where(html[data-yq-page="guildes"]) .choice { display: flex; gap: 8px; }
+:where(html[data-yq-page="guildes"]) .choice button { height: 40px; min-width: 96px; padding: 0 18px; font: inherit; font-size: 14px; font-weight: 600; border-radius: 999px; border: 1px solid #000; background: transparent; color: #000; cursor: pointer; transition: background 150ms ease, color 150ms ease, transform 100ms ease; }
+:where(html[data-yq-page="guildes"]) .choice button:hover { background: #ebe8ee; }
+:where(html[data-yq-page="guildes"]) .choice button:active { transform: scale(.97); }
+:where(html[data-yq-page="guildes"]) .choice button[aria-pressed="true"] { background: #000; color: #fff; }
+:where(html[data-yq-page="guildes"]) .mine { font-size: 13px; color: #3d3d3d; width: 100%; }
+:where(html[data-yq-page="guildes"]) .result { height: 30px; padding: 0 14px; border-radius: 999px; display: inline-flex; align-items: center; font-weight: 600; font-size: 14px; }
+:where(html[data-yq-page="guildes"]) .result.yes { background: var(--gold); color: #000; }
+:where(html[data-yq-page="guildes"]) .result.no { background: #dcdcdc; color: #000; }
+:where(html[data-yq-page="guildes"]) .voters { font-size: 13px; color: #3d3d3d; }
+:where(html[data-yq-page="guildes"]) .voters summary { cursor: pointer; width: fit-content; }
+:where(html[data-yq-page="guildes"]) .voters summary:hover { color: #000; }
+:where(html[data-yq-page="guildes"]) .voters ul { margin: 12px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px 20px; }
+:where(html[data-yq-page="guildes"]) .voters li { list-style: none; display: flex; align-items: center; gap: 8px; }
+:where(html[data-yq-page="guildes"]) .voters .avatar { background: #000; color: var(--accent); }
+:where(html[data-yq-page="guildes"]) .voters .nm { flex: 1; color: #000; }
+:where(html[data-yq-page="guildes"]) .ans { font-weight: 600; color: #000; }
+:where(html[data-yq-page="guildes"]) .empty-state { display: grid; justify-items: start; gap: 14px; }
+
+/* rail lists */
+:where(html[data-yq-page="guildes"]) .rows .row { display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 8px 0; border-top: 1px solid var(--rule); }
+:where(html[data-yq-page="guildes"]) .rows .row:first-child { border-top: 0; }
+:where(html[data-yq-page="guildes"]) .rows .row .who { flex: 1; min-width: 0; }
+:where(html[data-yq-page="guildes"]) .rows .row .who strong { display: block; font-weight: 500; }
+:where(html[data-yq-page="guildes"]) .rows .row .who span { display: block; font-size: 12px; color: var(--muted); }
+:where(html[data-yq-page="guildes"]) .rows .row .num { font-weight: 600; text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+:where(html[data-yq-page="guildes"]) .rows .row .num small { color: var(--muted); font-weight: 400; }
+:where(html[data-yq-page="guildes"]) .rows .row.me .avatar { box-shadow: 0 0 0 2px #000, 0 0 0 3px var(--accent); }
+:where(html[data-yq-page="guildes"]) .cap { display: grid; gap: 8px; margin-bottom: 12px; font-size: 13px; color: var(--muted); }
+:where(html[data-yq-page="guildes"]) .cap b { color: #fff; font-weight: 600; }
+:where(html[data-yq-page="guildes"]) .capbar { height: 6px; border-radius: 999px; background: var(--raised); overflow: hidden; }
+:where(html[data-yq-page="guildes"]) .capbar i { display: block; height: 100%; background: var(--accent); border-radius: inherit; }
+:where(html[data-yq-page="guildes"]) .adopted { display: flex; gap: 12px; align-items: center; }
+:where(html[data-yq-page="guildes"]) .adopted img { width: 40px; height: 40px; border-radius: 10px; object-fit: cover; flex: none; }
+
+/* ---------- tables (guilds, quests) in a dark panel, headers like the back-office ---------- */
+:where(html[data-yq-page="guildes"]) .sheet { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-card); padding: 8px 20px; }
+:where(html[data-yq-page="guildes"]) table { width: 100%; border-collapse: collapse; }
+:where(html[data-yq-page="guildes"]) th { text-align: left; font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); padding: 14px 12px 12px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+:where(html[data-yq-page="guildes"]) td { padding: 16px 12px; border-bottom: 1px solid var(--rule); vertical-align: middle; }
+:where(html[data-yq-page="guildes"]) tbody tr:last-child td { border-bottom: 0; }
+:where(html[data-yq-page="guildes"]) th.n, :where(html[data-yq-page="guildes"]) td.n { text-align: right; font-variant-numeric: tabular-nums; }
+:where(html[data-yq-page="guildes"]) td.id { min-width: 240px; }
+:where(html[data-yq-page="guildes"]) .gcell { display: flex; align-items: center; gap: 14px; }
+:where(html[data-yq-page="guildes"]) .gcell img { width: 48px; height: 48px; border-radius: 12px; object-fit: cover; flex: none; }
+:where(html[data-yq-page="guildes"]) td .desc { display: block; margin-top: 2px; font-size: 13px; color: var(--muted); max-width: 52ch; }
+:where(html[data-yq-page="guildes"]) td strong { font-weight: 600; }
+:where(html[data-yq-page="guildes"]) .glink { color: #fff; text-decoration: none; }
+:where(html[data-yq-page="guildes"]) .glink:hover strong { color: var(--accent); }
+:where(html[data-yq-page="guildes"]) .qt { font-family: var(--cond); font-size: 20px; font-weight: 600; line-height: 1.1; }
+:where(html[data-yq-page="guildes"]) .row-actions { display: flex; gap: 8px; justify-content: flex-end; white-space: nowrap; }
+:where(html[data-yq-page="guildes"]) .row-actions .btn { height: 36px; }
+:where(html[data-yq-page="guildes"]) .pill { display: inline-flex; align-items: center; gap: 6px; height: 24px; padding: 0 10px; border-radius: 999px; font-size: 12px; font-weight: 600; background: var(--raised); color: #e6e6e6; white-space: nowrap; }
+:where(html[data-yq-page="guildes"]) .pill.lilac { background: var(--accent); color: #000; }
+:where(html[data-yq-page="guildes"]) .pill.full { background: var(--gold); color: #000; }
+:where(html[data-yq-page="guildes"]) .skill { display: inline-flex; align-items: center; gap: 8px; }
+:where(html[data-yq-page="guildes"]) .skill img { width: 20px; height: 20px; border-radius: 5px; object-fit: cover; }
+:where(html[data-yq-page="guildes"]) .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+:where(html[data-yq-page="guildes"]) .chip { font-size: 12px; padding: 3px 10px; border-radius: 999px; background: var(--raised); color: #e6e6e6; text-decoration: none; white-space: nowrap; }
+:where(html[data-yq-page="guildes"]) .chip:hover { background: var(--accent); color: #000; }
+:where(html[data-yq-page="guildes"]) .empty { color: var(--muted); padding: 24px 0; }
+
+:where(html[data-yq-page="guildes"]) .field { display: grid; gap: 6px; }
+:where(html[data-yq-page="guildes"]) .field label { font-size: 13px; font-weight: 500; color: #e6e6e6; }
+:where(html[data-yq-page="guildes"]) .input { height: 44px; padding: 0 14px; border-radius: 12px; border: 1px solid var(--control); background: #0a0a0a; color: #fff; font: inherit; width: 100%; }
+:where(html[data-yq-page="guildes"]) .input:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 0 3px #3a2a3e; }
+:where(html[data-yq-page="guildes"]) textarea.input { height: 92px; padding: 12px 14px; resize: vertical; }
+:where(html[data-yq-page="guildes"]) select.input { appearance: auto; }
+:where(html[data-yq-page="guildes"]) .hint { font-size: 12px; color: var(--muted); }
+
+/* dialog: the one floating thing */
+:where(html[data-yq-page="guildes"]) dialog { border: 1px solid var(--border); padding: 0; border-radius: 20px; width: min(500px, calc(100vw - 32px)); background: var(--surface); color: #fff; font-family: var(--font); box-shadow: 0 24px 64px rgba(0,0,0,.6); }
+:where(html[data-yq-page="guildes"]) dialog::backdrop { background: rgba(0, 0, 0, .7); }
+:where(html[data-yq-page="guildes"]) dialog form { padding: 28px; display: grid; gap: 18px; }
+:where(html[data-yq-page="guildes"]) dialog h2 { font-family: var(--display); font-weight: 400; font-size: 30px; text-transform: uppercase; line-height: 1.05; }
+:where(html[data-yq-page="guildes"]) dialog .lead { color: var(--muted); font-size: 14px; }
+:where(html[data-yq-page="guildes"]) dialog .foot { display: flex; justify-content: flex-end; gap: 8px; margin-top: 6px; }
+:where(html[data-yq-page="guildes"]) .btn.primary.destructive { background: var(--gold); border-color: var(--gold); }
+:where(html[data-yq-page="guildes"]) .toast { position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 16px); opacity: 0; pointer-events: none; padding: 12px 18px; border-radius: 999px; background: var(--accent); color: #000; font-weight: 600; transition: opacity 200ms ease, transform 200ms ease; }
+:where(html[data-yq-page="guildes"]) .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+
+/* ---------- narrower screens ---------- */
+@media (max-width: 1200px) { :where(html[data-yq-page="guildes"]) .split { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 860px) {
+  :where(html[data-yq-page="guildes"]) .canvas { padding: 24px 16px 40px; }
+  :where(html[data-yq-page="guildes"]) .title-row { flex-direction: column; align-items: stretch; gap: 20px; margin-bottom: 24px; }
+  :where(html[data-yq-page="guildes"]) .title-row .head { flex-direction: column; align-items: flex-start; gap: 16px; }
+  :where(html[data-yq-page="guildes"]) .emblem { width: 72px; height: 72px; border-radius: 14px; }
+  :where(html[data-yq-page="guildes"]) .title-row h1 { font-size: 38px; }
+  :where(html[data-yq-page="guildes"]) .title-row .about { font-size: 15px; }
+  :where(html[data-yq-page="guildes"]) .title-row .actions .btn { flex: 1; }
+  :where(html[data-yq-page="guildes"]) .proposal { grid-template-columns: minmax(0, 1fr); }
+  :where(html[data-yq-page="guildes"]) .proposal .art { min-height: 0; height: 120px; }
+  :where(html[data-yq-page="guildes"]) .proposal .body { padding: 18px 18px 16px; }
+  :where(html[data-yq-page="guildes"]) .proposal h3 { font-size: 28px; }
+  :where(html[data-yq-page="guildes"]) .choice { width: 100%; }
+  :where(html[data-yq-page="guildes"]) .choice button { flex: 1; height: 48px; }
+  :where(html[data-yq-page="guildes"]) .tabs { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 2px; }
+  :where(html[data-yq-page="guildes"]) .tabs a { flex: none; }
+  :where(html[data-yq-page="guildes"]) .sheet { padding: 4px 16px; }
+  :where(html[data-yq-page="guildes"]) table.respond thead { display: none; }
+  :where(html[data-yq-page="guildes"]) table.respond, :where(html[data-yq-page="guildes"]) table.respond tbody, :where(html[data-yq-page="guildes"]) table.respond tr { display: block; width: 100%; }
+  :where(html[data-yq-page="guildes"]) table.respond tr { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px 12px; padding: 16px 0; border-bottom: 1px solid var(--rule); }
+  :where(html[data-yq-page="guildes"]) table.respond tbody tr:last-child { border-bottom: 0; }
+  :where(html[data-yq-page="guildes"]) table.respond td { display: block; padding: 0; border: 0; min-width: 0; text-align: left; }
+  :where(html[data-yq-page="guildes"]) table.respond td.hide-sm { display: none; }
+  :where(html[data-yq-page="guildes"]) table.respond td.second { grid-column: 1; font-size: 13px; color: var(--muted); }
+  :where(html[data-yq-page="guildes"]) table.respond td.end { grid-column: 2; grid-row: 1 / span 2; align-self: center; text-align: right; }
+  :where(html[data-yq-page="guildes"]) table.respond td.id { min-width: 0; }
+}
+@media (prefers-reduced-motion: reduce) { :where(html[data-yq-page="guildes"]) .votebar i, :where(html[data-yq-page="guildes"]) .btn, :where(html[data-yq-page="guildes"]) .choice button, :where(html[data-yq-page="guildes"]) .toast { transition: none; } }
+:where(html[data-yq-page="guildes"]) .tabs { border-bottom: 0; }
+:where(html[data-yq-page="guildes"]) .tabs a::after { display: none !important; }
+@media (max-width: 860px) { :where(html[data-yq-page="guildes"]) .qline img { display: none; } :where(html[data-yq-page="guildes"]) .qline .flag { margin-left: 0; } }
+
+
+/* vues : une section visible à la fois (cible de l'adresse, sinon #g1) */
+:where(html[data-yq-page="guildes"]) .yq-view { display: none; scroll-margin-top: 100vh; }
+:where(html[data-yq-page="guildes"]) .yq-view:target, .canvas:not(:has(.yq-view:target)) .yq-default { display: block; }
+/* anciens attributs style="" de la page */
+:where(html[data-yq-page="guildes"]) .yq-w-40 { width:40%; }
+:where(html[data-yq-page="guildes"]) .yq-w-20 { width:20%; }
+:where(html[data-yq-page="guildes"]) .yq-w-0 { width:0%; }
+:where(html[data-yq-page="guildes"]) .yq-st-1 { padding:20px 20px 16px !important; }
+:where(html[data-yq-page="guildes"]) .yq-w-50 { width:50%; }
+:where(html[data-yq-page="guildes"]) .yq-st-2 { padding:8px 20px 12px !important; }
+:where(html[data-yq-page="guildes"]) .yq-w-33-3333 { width:33.33333333333333%; }
+:where(html[data-yq-page="guildes"]) .yq-w-30 { width:30%; }
+:where(html[data-yq-page="guildes"]) .yq-w-66-6667 { width:66.66666666666666%; }
+:where(html[data-yq-page="guildes"]) .yq-st-3 { white-space:nowrap !important; }
