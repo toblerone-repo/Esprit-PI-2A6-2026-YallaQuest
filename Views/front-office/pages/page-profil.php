@@ -1,19 +1,26 @@
-
 <?php
-$utilisateur = [
-    'id_utilisateur' => 1,
-    'nom' => 'Martin',
-    'prenom' => 'Camille',
-    'mail' => 'camille.demo@gmail.com',
-    'mot_de_passe_hash' => 'hash_fictif',
-    'total_xp' => 2450,
-    'niveau' => 8,
-    'derniere_prolongation_at' => '2026-11-21',
-    'id_totem' => 3,
-    'date_obtention_totem' => '2026-11-14',
-    'img_profil' => 'chat',
-    'chemin' => '../../img/avatars/chat.png',
-];
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// $utilisateur = [
+//     'prenom' => 'Camille',
+//     'nom' => 'Martin',
+//     'mail' => 'camille.demo@gmail.com',
+//     'mot_de_passe_hash' => password_hash('MotDePasseDemo123!', PASSWORD_DEFAULT),
+//     'derniere_prolongation_at' => '2026-11-21',
+//     'img_profil' => 'chat',
+//     'chemin' => '../../img/avatars/chat.png',
+// ];
+
+$id = $_SESSION['user_id'] ?? null;
+if ($id === null) {
+    exit('Connexion requise.');
+}
+
+include_once __DIR__ . '/../../../Controllers/utilisateurC.php';
+$utilisateurC = new UtilisateurC();
+$utilisateur = $utilisateurC->chargerUtilisateur($id);
 ?>
 <!DOCTYPE html>
 <html lang="fr">
