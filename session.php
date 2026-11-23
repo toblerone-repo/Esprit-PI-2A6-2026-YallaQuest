@@ -9,7 +9,7 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
     ini_set('session.cookie_secure', !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? '1' : '0');
     session_start();
 }
-$sessionLifetime = 10;
+$sessionLifetime = 120;
 if (!defined('YQ_SESSION_DUREE')) {
     define('YQ_SESSION_DUREE', $sessionLifetime);   // lu par le compteur d'inactivité du front-office
 }

@@ -27,25 +27,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     header('Content-type: application/json');
 }
 
-// $ancienUtilisateur = [
-//     'prenom' => 'Camille',
-//     'nom' => 'Martin',
-//     'mail' => 'camille.demo@gmail.com',
-//     'mot_de_passe_hash' => password_hash('MotDePasseDemo123!', PASSWORD_DEFAULT),
-//     'derniere_prolongation_at' => '2026-11-21',
-//     'img_profil' => 'chat',
-//     'chemin' => '../../img/avatars/chat.png',
-// ];
-
-// $images = [
-//     ['id' => 'renard', 'chemin' => '../../img/avatars/renard.png'],
-//     ['id' => 'chat', 'chemin' => '../../img/avatars/chat.png'],
-//     ['id' => 'grenouille', 'chemin' => '../../img/avatars/grenouille.png'],
-//     ['id' => 'hibou', 'chemin' => '../../img/avatars/hibou.png'],
-//     ['id' => 'lapin', 'chemin' => '../../img/avatars/lapin.png'],
-//     ['id' => 'panda', 'chemin' => '../../img/avatars/panda.png'],
-//     ['id' => 'loutre', 'chemin' => '../../img/avatars/loutre.png'],
-// ];
 
 include_once __DIR__ . '/../../../Controllers/utilisateurC.php';
 $utilisateurC = new UtilisateurC();

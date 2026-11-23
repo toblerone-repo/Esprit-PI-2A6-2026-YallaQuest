@@ -14,19 +14,6 @@ if (session_status() === PHP_SESSION_NONE) {
     require_once __DIR__ . '/../../../session.php';
 }
 
-// $utilisateur = [
-//     'prenom' => 'Camille',
-//     'nom' => 'Martin',
-//     'mail' => 'camille.demo@gmail.com',
-//     'mot_de_passe_hash' => password_hash('MotDePasseDemo123!', PASSWORD_DEFAULT),
-//     'total_xp' => 2450,
-//     'niveau' => 8,
-//     'derniere_prolongation_at' => '2026-11-21',
-//     'id_totem' => 3,
-//     'date_obtention_totem' => '2026-11-14',
-//     'img_profil' => 'chat',
-//     'chemin' => '../../img/avatars/chat.png',
-// ];
 
 $id = $_SESSION['user_id'] ?? null;
 if ($id === null) {
