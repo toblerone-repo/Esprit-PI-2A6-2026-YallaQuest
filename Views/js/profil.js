@@ -40,8 +40,8 @@ document.getElementById("formulaire-modification").addEventListener("submit", as
             modificationValidee = false;
         };
 
-        if (mpInput.validity.valueMissing || mpInput.value.trim().length < 8) {
-            mpInput.nextElementSibling.textContent = "Le mot de passe doit contenir au moins 8 caractères.";
+        if (mpInput.validity.valueMissing || mpInput.value.trim().length < 6) {
+            mpInput.nextElementSibling.textContent = "Le mot de passe doit contenir au moins 6 caractères.";
             mpInput.classList.add("warning-border");
             modificationValidee = false;
         };

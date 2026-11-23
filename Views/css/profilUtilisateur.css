@@ -558,8 +558,8 @@
   }
 }
 
-span {
-  color: red;
+.message-erreur-modifier {
+  color: #D98288;
 }
 
 .warning-border {
