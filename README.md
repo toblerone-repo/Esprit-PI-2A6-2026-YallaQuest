@@ -14,7 +14,7 @@ YallaQuest est une application web de suivi des habitudes. Elle propose de trans
 | 2 · Journal et activités | Eya | Journal de bord, suivi des activités d’une quête et interfaces de gestion des activités et de leurs types. Inscription avec pseudo et blocage ou déblocage des comptes. |
 | 3 · Compétences et totems | Darine | Affichage de l’XP, de la progression par compétence et des totems. Interfaces de gestion des compétences et des totems, visuels et gabarits communs. Modèle utilisateur, conversion des lignes SQL en objets, liste et comptage des comptes, recherche par ID et protection du compte administrateur. |
 | 4 · Guildes | Amine | Interfaces des guildes, des propositions et des votes, effets visuels et indicateur de chargement. Routeur, espace utilisateur, connexion, déconnexion, gestion des sessions, compteur d’inactivité, validation JavaScript partagée et suppression des comptes. |
-| 5 · Objectifs et étapes | Mohamed | Interfaces de planification des objectifs, de suivi des étapes et de supervision côté administration. Gabarit d’inscription, ajout de comptes par un administrateur et changement de rôle. |
+| 5 · Objectifs et étapes | Mohamed | Interfaces de planification des objectifs, de suivi des étapes et de supervision côté administration. Gabarit d’inscription, ajout de comptes par un administrateur et changement de rôle, et authentification. |
 | 6 · Communauté | Houssem | Interfaces de publication de conseils et de signalement, avec vues de modération. Squelette MVC, recherche de comptes par nom, e-mail, rôle ou ID, requêtes préparées, hachage et vérification des mots de passe, protection CSRF et XSS, et en-têtes HTTP. |
 
 ### Parcours à découvrir
