@@ -17,6 +17,12 @@ header('X-Content-Type-Options: nosniff');
 header('Referrer-Policy: strict-origin-when-cross-origin');
 header("Content-Security-Policy: default-src 'self'; script-src 'self' 'nonce-$cspNonce' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://code.jquery.com; script-src-attr 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; font-src 'self' data: https://fonts.gstatic.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; img-src 'self' data: https:; object-src 'none'; base-uri 'self'; frame-ancestors 'none'");
 $csrfToken = AuthController::getCsrfToken();
+// Intégration : le compteur d'Amine envoie la déconnexion automatique en POST. Si le serveur a déjà
+// fermé la session, son ancien jeton n'est plus valide : personne n'est connecté, on affiche la connexion.
+if (($_GET['action'] ?? null) === 'logout' && isset($_GET['expire']) && !AuthController::isAuthenticated()) {
+    header('Location: index.php?action=login&expire=1');
+    exit;
+}
 if (in_array($_SERVER['REQUEST_METHOD'] ?? 'GET', ['POST', 'PUT', 'PATCH', 'DELETE'], true)
     && !AuthController::verifyCsrfToken($_POST['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? null)) {
     http_response_code(403);
@@ -44,6 +50,8 @@ switch ($action) {
         }
         $errors = [];
         $email = '';
+        // Amine : arrivée depuis le compteur d'inactivité (Views/js/session-timeout.js) : la vue affiche un message.
+        $sessionExpiree = isset($_GET['expire']);
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $email = is_string($_POST['email'] ?? null) ? trim($_POST['email']) : '';
             $errors = $authController->login($_POST);
@@ -63,7 +71,22 @@ switch ($action) {
             http_response_code(405); header('Allow: POST'); exit('La déconnexion doit être envoyée par POST.');
         }
         $authController->logout();
-        header('Location: index.php?action=login');
+        // Amine : &expire=1 : déconnexion automatique par le compteur d'inactivité.
+        header('Location: index.php?action=login' . (isset($_GET['expire']) ? '&expire=1' : ''));
+        exit;
+
+    // ---------------- PING (compteur d'inactivité) ----------------
+    // Amine : bouton « Rester connecté » du compteur. session.php vient déjà de remettre
+    // last_activity à maintenant, il suffit donc de répondre si la session est encore valide.
+    case 'ping':
+        header('Content-Type: application/json; charset=utf-8');
+        header('Cache-Control: no-store');
+        if (!AuthController::isAuthenticated()) {
+            http_response_code(401);
+            echo json_encode(['connecte' => false]);
+            exit;
+        }
+        echo json_encode(['connecte' => true, 'duree' => $sessionLifetime]);
         exit;
 
     // ---------------- USER SPACE (role: user - frontoffice) ----------------
