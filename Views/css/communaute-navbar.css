@@ -123,3 +123,40 @@
   }
 
 }
+
+/* Boutons Déconnexion et Back-office */
+.yq-community-navbar .community-navbar-logout {
+  color: #fca5a5 !important;
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  margin-left: 6px;
+}
+
+.yq-community-navbar .community-navbar-logout:hover {
+  background: rgba(239, 68, 68, 0.18) !important;
+  border-color: #ef4444;
+  color: #ffffff !important;
+}
+
+.yq-community-navbar .community-navbar-admin {
+  color: #cbb5f4 !important;
+  border: 1px solid rgba(203, 181, 244, 0.35);
+  margin-left: 6px;
+}
+
+.yq-community-navbar .community-navbar-admin:hover {
+  background: rgba(203, 181, 244, 0.18) !important;
+  border-color: #cbb5f4;
+  color: #ffffff !important;
+}
+
+.yq-community-navbar .community-navbar-login {
+  color: #cbb5f4 !important;
+  border: 1px solid rgba(203, 181, 244, 0.35);
+  margin-left: 6px;
+}
+
+.yq-community-navbar .community-navbar-login:hover {
+  background: rgba(203, 181, 244, 0.18) !important;
+  border-color: #cbb5f4;
+  color: #ffffff !important;
+}

@@ -19,6 +19,12 @@ $navbarAlias = [
 ];
 $navbarCurrent = basename($_SERVER['SCRIPT_NAME'] ?? '');
 $navbarCurrent = $navbarAlias[$navbarCurrent] ?? $navbarCurrent;
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+$isUserConnected = !empty($_SESSION['user_id']) || !empty($_SESSION['utilisateur']);
+$isAdminUser = (($_SESSION['role'] ?? ($_SESSION['utilisateur']['role'] ?? '')) === 'admin');
 ?>
 <link rel="stylesheet" href="../../css/communaute-navbar.css">
 <header class="yq-community-navbar">
@@ -33,6 +39,14 @@ $navbarCurrent = $navbarAlias[$navbarCurrent] ?? $navbarCurrent;
         <?php foreach ($navbarPages as $navbarFile => $navbarLabel): ?>
         <li><a class="community-navbar-link" href="<?= htmlspecialchars($navbarFile) ?>"<?= $navbarFile === $navbarCurrent ? ' aria-current="page"' : '' ?>><?= htmlspecialchars($navbarLabel) ?></a></li>
         <?php endforeach; ?>
+        <?php if ($isAdminUser): ?>
+        <li><a class="community-navbar-link community-navbar-admin" href="../../back-office/pages/listuser.php" title="Accéder au panneau d'administration">Back-office</a></li>
+        <?php endif; ?>
+        <?php if ($isUserConnected): ?>
+        <li><a class="community-navbar-link community-navbar-logout" href="logout.php" title="Se déconnecter de votre compte">Déconnexion</a></li>
+        <?php else: ?>
+        <li><a class="community-navbar-link community-navbar-login" href="login.php">Connexion</a></li>
+        <?php endif; ?>
       </ul>
     </nav>
 

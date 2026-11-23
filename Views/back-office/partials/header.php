@@ -9,7 +9,7 @@
    Le lien dont la clé vaut $currentPage (à définir avant l'include, facultatif) est marqué comme actif.
    Chaque membre ajoute sa page ci-dessous : 'clé' => ['Libellé', 'fichier.php'] (fichiers de Views/back-office/pages/). */
 $adminPages = [
-    'utilisateurs' => ['Aventuriers', 'utilisateurs.php'],
+    'utilisateurs' => ['Aventuriers', 'listuser.php'], // [DARINE · LISTE UTILISATEURS] page renommée
 ];
 ?>
 <link rel="stylesheet" href="../../css/bo-header.css">

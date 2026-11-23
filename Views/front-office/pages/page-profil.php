@@ -1,17 +1,37 @@
 
 <?php
-$utilisateur = [
-    'id_utilisateur' => 1,
-    'nom' => 'Nom',
-    'prenom' => 'Prenom',
-    'mail' => 'prenom.nom@exemple.com',
-    'mot_de_passe_hash' => 'hash_fictif',
-    'total_xp' => 2450,
-    'niveau' => 8,
-    'derniere_prolongation_at' => '2026-11-19 14:30:00',
-    'id_totem' => 3,
-    'date_obtention_totem' => '2026-11-14'
-];
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+require_once __DIR__ . '/../../../Controllers/utilisateurC.php';
+
+// [WORKSHOP 5.3] Protection de la page : authentification obligatoire
+UtilisateurC::requireAuth('login.php');
+
+$idConnecte = UtilisateurC::getIdConnecte();
+$utilisateurC = new UtilisateurC();
+$u = $idConnecte ? $utilisateurC->getUtilisateur($idConnecte) : null;
+
+if ($u) {
+    $utilisateur = [
+        'id_utilisateur' => $u->getId(),
+        'nom' => $u->getNom(),
+        'prenom' => $u->getPrenom(),
+        'mail' => $u->getEmail(),
+        'mot_de_passe_hash' => $u->getMp(),
+        'total_xp' => $u->getXp(),
+        'niveau' => $u->getNiveau(),
+        'derniere_prolongation_at' => $u->getDerniereProlongationAt()?->format('Y-m-d H:i:s') ?? '2026-11-19 14:30:00',
+        'id_totem' => $u->getIdTotem(),
+        'date_obtention_totem' => $u->getDateObtentionTotem()?->format('Y-m-d') ?? '2026-11-14',
+        'img_profil' => $u->getImgProfil() ?? 'renard'
+    ];
+} else {
+    // Si le compte a été supprimé en base
+    $utilisateurC->logout();
+    header('Location: login.php');
+    exit();
+}
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -67,12 +87,18 @@ $utilisateur = [
 
             </div>
 
-            <form action="modifier-profil.php" method="get">
-                <button class="bouton-modifier-profil" type="submit">
-                    <i class="bi bi-pencil-square"></i>
-                    Modifier mes informations
-                </button>
-            </form>
+            <div class="actions-profil">
+                <form action="modifier-profil.php" method="get" class="form-action-profil">
+                    <button class="bouton-modifier-profil" type="submit">
+                        <i class="bi bi-pencil-square"></i>
+                        Modifier mes informations
+                    </button>
+                </form>
+                <a href="logout.php" class="bouton-deconnexion-profil" title="Fermer la session">
+                    <i class="bi bi-box-arrow-right"></i>
+                    Se déconnecter
+                </a>
+            </div>
 
         </section>
 

@@ -209,7 +209,7 @@ td strong { font-weight: 600; }
 .ivory { background: var(--ivory); color: #000; border-radius: var(--radius-card); }
 
 /* ---------- fenêtre de dialogue et toast ---------- */
-dialog { border: 1px solid var(--border); padding: 0; border-radius: 20px; width: min(520px, calc(100vw - 32px)); max-height: calc(100svh - 32px); background: var(--surface); color: #fff; font-family: var(--font); box-shadow: 0 24px 64px rgba(0, 0, 0, .6); }
+dialog { border: 1px solid var(--border); padding: 0; border-radius: 20px; width: min(520px, calc(100vw - 32px)); max-height: calc(100svh - 32px); overflow-y: auto; background: var(--surface); color: #fff; font-family: var(--font); box-shadow: 0 24px 64px rgba(0, 0, 0, .6); }
 dialog::backdrop { background: rgba(0, 0, 0, .7); }
 dialog form { padding: 28px; display: grid; gap: 18px; }
 dialog h2 { font-family: var(--display); font-weight: 400; font-size: 30px; text-transform: uppercase; line-height: 1.05; }

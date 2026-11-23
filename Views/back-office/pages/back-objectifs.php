@@ -120,6 +120,10 @@ $pageTitle = 'Objectifs · Administration · Yalla Quest';
         </div>
         <div class="body">
             <div class="field">
+                <label for="adminIdUtilisateur">ID Utilisateur (Aventurier) *</label>
+                <input class="input" type="number" id="adminIdUtilisateur" name="id_utilisateur" min="1" placeholder="Ex. 1 (ID de l'aventurier)" required>
+            </div>
+            <div class="field">
                 <label for="adminTitre">Intitulé du but *</label>
                 <input class="input" type="text" id="adminTitre" name="titre" placeholder="Ex. Atelier nutrition" required>
             </div>
