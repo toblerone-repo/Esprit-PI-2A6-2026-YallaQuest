@@ -1,3 +1,4 @@
+// Mohamed : objectifs. Houssem : token CSRF pour les actions AJAX.
 /**
  * YallaQuest - Front-Office Objectifs
  * Fichier unique regroupant toute la logique JavaScript du Front-Office
@@ -69,7 +70,7 @@ function ajouterChampEtape() {
     var div = document.createElement('div');
     div.className = 'etape-item-row';
     div.style = "display:flex;justify-content:space-between;align-items:center;background:rgba(255,255,255,0.05);padding:6px 12px;border-radius:6px;margin-bottom:6px;";
-    div.innerHTML = 
+    div.innerHTML =
         '<input type="hidden" name="etapes[]" value="' + escapeHtml(texte) + '">' +
         '<span class="etape-item-text">🔹 ' + escapeHtml(texte) + '</span>' +
         '<button type="button" class="btn danger sm" onclick="this.parentElement.remove();" style="padding:2px 8px;font-size:12px;">✕</button>';
@@ -128,7 +129,7 @@ function validerFormulaireObjectif() {
 // 5. Validation interactive des étapes (Cocher / Décocher)
 function toggleEtape(idEO, checkbox) {
     var val = checkbox.checked ? 1 : 0;
-    fetch('front-objectifs.php?toggle_etape=' + idEO + '&val=' + val)
+    fetch('front-objectifs.php', { method: 'POST', headers: { 'X-CSRF-Token': document.querySelector('meta[name=\"csrf-token\"]').content }, body: new URLSearchParams({ toggle_etape: idEO, val: val }) })
         .then(function() {
             window.location.reload();
         })

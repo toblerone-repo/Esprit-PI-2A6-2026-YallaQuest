@@ -1,20 +1,28 @@
+<?php
+// Eya : journal. Houssem : protection CSRF/XSS.
+require_once __DIR__ . '/../../../Controllers/AuthController.php';
+$csrfToken = AuthController::getCsrfToken();
+$cspNonce = $cspNonce ?? bin2hex(random_bytes(16));
+$currentPage = 'journal';
+if (in_array($_SERVER['REQUEST_METHOD'] ?? 'GET', ['POST', 'PUT', 'PATCH', 'DELETE'], true)
+    && !AuthController::verifyCsrfToken($_POST['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? null)) {
+    http_response_code(403);
+    exit('Jeton de sécurité invalide. Rechargez la page.');
+}
+
+require_once __DIR__ . '/../../../Controllers/AuthController.php';
+$csrfToken = AuthController::getCsrfToken();
+
+?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Journal d'activité YallaQuest : suis la progression de tes quêtes.">
-  <title>Mon journal - YallaQuest</title>
-
-  
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Playfair+Display&display=swap">
-
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css">
-
-  
-  <link rel="stylesheet" href="../../css/journal.css">
+<meta name="csrf-token" content="<?= htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
+  <?php
+    $pageTitle = 'Mon journal - YallaQuest';
+    $currentPage = 'journal';
+    require_once __DIR__ . '/../includes/head.php';
+  ?>
 </head>
 <body>
 <?php include_once __DIR__ . '/../includes/navbar.php'; ?>
@@ -23,14 +31,14 @@
 
 <main class="journal-page">
 
-  
+
   <section class="journal-intro">
     <p class="journal-sous-titre">Journal d'activité</p>
     <h1>Mon journal</h1>
     <p>Termine tes quêtes étape par étape : chaque activité réalisée fait avancer ta progression.</p>
   </section>
 
-  
+
   <section class="journal-resume">
     <div class="journal-case">
       <p class="journal-libelle">Quêtes en cours</p>
@@ -64,7 +72,7 @@
 
         <div class="journal-progression">
           <p>3/6 activités terminées <strong>50 %</strong></p>
-          
+
           <div class="journal-barre"><div class="journal-remplissage" style="width: 50%"></div></div>
         </div>
 
@@ -179,6 +187,7 @@
         <div class="journal-pied-quete">
           <p class="journal-xp">+20 XP</p>
           <form action="#" method="post">
+                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
             <input type="hidden" name="id_quete" value="2">
             <button type="submit" class="journal-bouton journal-principal">Valider la quête</button>
           </form>
@@ -253,6 +262,7 @@
     <h2>Terminer une activité</h2>
 
     <form class="journal-formulaire" action="#" method="post">
+                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
 
       <div class="journal-champ">
         <label for="activite">Activité réalisée</label>

@@ -1,4 +1,5 @@
 <?php
+// Darine : structure commune. Amine : gabarit du routeur. Houssem : sorties échappées.
 /* Indicateur de chargement Yalla Quest (encre lilas qui se mélange), commun aux pages du front-office.
    À inclure juste après <body> d'une page de Views/front-office/pages/ :
        <?php require __DIR__ . '/../includes/spinner.php'; ?>
@@ -15,4 +16,4 @@
     <filter id="yq-goo"><feGaussianBlur in="SourceGraphic" stdDeviation="5"/><feColorMatrix values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 20 -8"/></filter>
   </svg>
 </div>
-<script src="../../js/spinner.js"></script>
+<script nonce="<?= htmlspecialchars($cspNonce ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>" src="../../js/spinner.js"></script>

@@ -31,6 +31,19 @@
   font-weight: 700;
   letter-spacing: -.025em;
   white-space: nowrap;
+  text-decoration: none;
+}
+
+/* Le logo est un lien vers l'accueil : il garde sa couleur, sans soulignement. */
+.yq-community-navbar .community-navbar-brand:hover {
+  color: #cbb5f4;
+  text-decoration: none;
+}
+
+.yq-community-navbar .community-navbar-brand:focus-visible {
+  outline: 2px solid #cbb5f4;
+  outline-offset: 4px;
+  border-radius: 8px;
 }
 
 .yq-community-navbar .community-navbar-logo {
@@ -123,3 +136,43 @@
   }
 
 }
+
+/* Boutons Déconnexion et Back-office */
+.yq-community-navbar .community-navbar-logout {
+  color: #fca5a5 !important;
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  margin-left: 6px;
+}
+
+.yq-community-navbar .community-navbar-logout:hover {
+  background: rgba(239, 68, 68, 0.18) !important;
+  border-color: #ef4444;
+  color: #ffffff !important;
+}
+
+.yq-community-navbar .community-navbar-admin {
+  color: #cbb5f4 !important;
+  border: 1px solid rgba(203, 181, 244, 0.35);
+  margin-left: 6px;
+}
+
+.yq-community-navbar .community-navbar-admin:hover {
+  background: rgba(203, 181, 244, 0.18) !important;
+  border-color: #cbb5f4;
+  color: #ffffff !important;
+}
+
+.yq-community-navbar .community-navbar-login {
+  color: #cbb5f4 !important;
+  border: 1px solid rgba(203, 181, 244, 0.35);
+  margin-left: 6px;
+}
+
+.yq-community-navbar .community-navbar-login:hover {
+  background: rgba(203, 181, 244, 0.18) !important;
+  border-color: #cbb5f4;
+  color: #ffffff !important;
+}
+/* Intégration : la déconnexion est un bouton de formulaire (POST + jeton CSRF). */
+.yq-community-navbar .community-navbar-logout-form { margin: 0; display: inline; }
+.yq-community-navbar button.community-navbar-logout { font: inherit; background: transparent; cursor: pointer; }

@@ -1,4 +1,19 @@
 <?php
+// Équipe : template de base. Houssem : protections CSRF/XSS sur cette interface.
+require_once __DIR__ . '/../../../Controllers/AuthController.php';
+$csrfToken = AuthController::getCsrfToken();
+$cspNonce = $cspNonce ?? bin2hex(random_bytes(16));
+$currentPage = 'quetes-programmation';
+if (in_array($_SERVER['REQUEST_METHOD'] ?? 'GET', ['POST', 'PUT', 'PATCH', 'DELETE'], true)
+    && !AuthController::verifyCsrfToken($_POST['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? null)) {
+    http_response_code(403);
+    exit('Jeton de sécurité invalide. Rechargez la page.');
+}
+
+require_once __DIR__ . '/../../../Controllers/AuthController.php';
+$csrfToken = AuthController::getCsrfToken();
+
+
 $currentPage = 'quetes-programmation';
 
 $quetes = [
@@ -174,24 +189,17 @@ $pas_de_prog = false;
 <html lang="fr">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Cormorant+Garamond:ital,wght@0,300..700;1,300..700&family=DM+Serif+Display:ital@0;1&family=Dancing+Script:wght@400..700&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Libre+Baskerville:ital,wght@0,400..700;1,400..700&family=Manrope:wght@200..800&family=Merriweather:ital,opsz,wght@0,18..144,300..900;1,18..144,300..900&family=Patrick+Hand&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Sacramento&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Cormorant+Garamond:ital,wght@0,300..700;1,300..700&family=DM+Serif+Display:ital@0;1&family=Dancing+Script:wght@400..700&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Libre+Baskerville:ital,wght@0,400..700;1,400..700&family=Manrope:wght@200..800&family=Merriweather:ital,opsz,wght@0,18..144,300..900;1,18..144,300..900&family=Patrick+Hand&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Sacramento&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.2.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <link rel="stylesheet" href="../../css/quetes.css">
+<meta name="csrf-token" content="<?= htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
+  <?php
+    $pageTitle = 'Mes quêtes · Yalla Quest';
+    require_once __DIR__ . '/../includes/head.php';
+  ?>
 </head>
 
 <body>
 <?php include_once __DIR__ . '/../includes/navbar.php'; ?>
 
-    <div class="container <?= $pas_de_prog ? 'sans-programmation' : '' ?>" id="liste-quetes-cartes">
+    <div class="container <?= htmlspecialchars((string) ($pas_de_prog ? 'sans-programmation' : ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>" id="liste-quetes-cartes">
         <p id="message-acceuil">Des vraies quêtes chaque jour. <br> Cinq compétences qui progressent à chaque fois que tu te lèves et bouges.</p>
         <h1 id="titre-acceuil">CONQUIERS TA JOURNÉE</h1>
 
@@ -204,6 +212,7 @@ $pas_de_prog = false;
         <div class="container form-container" id="quete-prog-formulaire">
             <h1 class="form-title">Choisissez vos quêtes du jour</h1>
             <form method="POST" action="" id="programmation-quetes-form">
+                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
                 <div id="quete-section">
                     <fieldset class="quete-champ">
                         <legend class="quete-numero">Quête 01</legend>
@@ -212,10 +221,11 @@ $pas_de_prog = false;
                             <legend class="quest-radio-label">Compétence</legend>
                             <div class="quete-competence-options">
                                 <?php foreach ($competences as $index => $competence) {
+                                $competence['id'] = (int) $competence['id'];
                                     $checked = $index === 0 ? 'checked' : '';
                                     echo "<input type='radio' class='competence-radio' name='competence-1' id='competence-1-{$competence['id']}' value='{$competence['id']}' {$checked}>";
 
-                                    echo "<label class='competence-pill' for='competence-1-{$competence['id']}'><i class='fa-solid fa-check'></i>" . htmlspecialchars($competence['nom']) . "</label>";
+                                    echo "<label class='competence-pill' for='competence-1-{$competence['id']}'><i class='fa-solid fa-check'></i>" . htmlspecialchars($competence['nom'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . "</label>";
                                 }
                                 ?>
                             </div>
@@ -225,10 +235,11 @@ $pas_de_prog = false;
                             <legend class="quest-radio-label">Difficulté</legend>
                             <div class="quete-difficulte-options">
                                 <?php foreach ($difficultes as $index => $difficulte) {
+                                $difficulteHtml = htmlspecialchars((string) $difficulte, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
                                     $checked = $index === 0 ? 'checked' : '';
-                                    echo "<input type='radio' class='difficulte-radio' name='difficulte-1' id='difficulte-1-{$difficulte}' value='{$difficulte}' {$checked}>";
+                                    echo "<input type='radio' class='difficulte-radio' name='difficulte-1' id='difficulte-1-{$difficulteHtml}' value='{$difficulteHtml}' {$checked}>";
 
-                                    echo "<label class='difficulte-pill' for='difficulte-1-{$difficulte}'><i class='fa-solid fa-check'></i>" . htmlspecialchars($difficulte) . "</label>";
+                                    echo "<label class='difficulte-pill' for='difficulte-1-{$difficulteHtml}'><i class='fa-solid fa-check'></i>" . htmlspecialchars($difficulte, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . "</label>";
                                 }
                                 ?>
                             </div>
@@ -274,10 +285,11 @@ $pas_de_prog = false;
                             <legend class="quest-radio-label">Compétence</legend>
                             <div class="quete-competence-options">
                                 <?php foreach ($competences as $index => $competence) {
+                                $competence['id'] = (int) $competence['id'];
                                     $checked1 = $index === 0 ? 'checked' : '';
                                     echo "<input type='radio' class='competence-radio' name='competence' id='competence-{$competence['id']}' value='{$competence['id']}' {$checked1}>";
 
-                                    echo "<label class='competence-pill' for='competence-{$competence['id']}'><i class='fa-solid fa-check'></i>" . htmlspecialchars($competence['nom']) . "</label>";
+                                    echo "<label class='competence-pill' for='competence-{$competence['id']}'><i class='fa-solid fa-check'></i>" . htmlspecialchars($competence['nom'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . "</label>";
                                 }
                                 ?>
                             </div>
@@ -287,10 +299,11 @@ $pas_de_prog = false;
                             <legend class="quest-radio-label">Difficulté</legend>
                             <div class="quete-difficulte-options">
                                 <?php foreach ($difficultes as $index => $difficulte) {
+                                $difficulteHtml = htmlspecialchars((string) $difficulte, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
                                     $checked = $index === 0 ? 'checked' : '';
-                                    echo "<input type='radio' class='difficulte-radio' name='difficulte' id='difficulte-{$difficulte}' value='{$difficulte}' {$checked}>";
+                                    echo "<input type='radio' class='difficulte-radio' name='difficulte' id='difficulte-{$difficulteHtml}' value='{$difficulteHtml}' {$checked}>";
 
-                                    echo "<label class='difficulte-pill' for='difficulte-{$difficulte}'><i class='fa-solid fa-check'></i>" . htmlspecialchars($difficulte) . "</label>";
+                                    echo "<label class='difficulte-pill' for='difficulte-{$difficulteHtml}'><i class='fa-solid fa-check'></i>" . htmlspecialchars($difficulte, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . "</label>";
                                 }
                                 ?>
                             </div>
@@ -326,7 +339,8 @@ $pas_de_prog = false;
                     avant de prolonger une autre quête, même nouvellement débloquée.
                 </p>
 
-                <form action="POST" id="extension-quete-form">
+                <form method="post" action="" id="extension-quete-form">
+                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
                     <input type="hidden" name="id-programmation" id="id-programmation-extension">
 
                     <div class="btn-div-form">
@@ -351,6 +365,11 @@ $pas_de_prog = false;
         <div id="quetes-grid" class="row mb-3">
             <?php
             foreach ($quetes as $quete) {
+                $titreHtml = htmlspecialchars((string) ($quete['titre'] ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+                $competenceHtml = htmlspecialchars((string) ($quete['competence'] ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+                $categorieHtml = htmlspecialchars((string) ($quete['categorie'] ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+                $difficulteHtml = htmlspecialchars((string) ($quete['difficulte'] ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+                $xp = (int) ($quete['xp'] ?? 0);
                 $echeanceAujourdhui = $quete['echeance_aujourdhui'];
                 $messageEcheance = $echeanceAujourdhui ? "<p class='quete-carte-echeance'>⏳ Échéance aujourd'hui</p>" : "";
                 $boutons = $quete['selected'] ? "" : "<button class='btn bouton-modifier p-1'><i class='fa-solid fa-clock'></i></button><button class='btn bouton-supprimer p-1'><i class='fa-solid fa-trash'></i></button>";
@@ -360,13 +379,13 @@ $pas_de_prog = false;
                 echo "<div class='col-2 px-1 quete-carte-div'>"
                     . "<div class='quete-carte p-3'>"
                     . "<div class='quete-carte-header'>"
-                    . "<p class='quete-carte-competence'>{$quete['competence']} &#183; </p>"
-                    . "<p class='quete-carte-difficulte'>{$quete['difficulte']}</p>"
+                    . "<p class='quete-carte-competence'>{$competenceHtml} &#183; </p>"
+                    . "<p class='quete-carte-difficulte'>{$difficulteHtml}</p>"
                     . "<button type='button' class='quete-carte-statut' aria-label='{$texteStatut}' title='{$texteStatut}' {$statutDesactive}><i class='{$iconeStatut}' aria-hidden='true'></i></button>"
                     . "</div>"
-                    . "<p class='quete-carte-titre'>{$quete['titre']}</p>"
+                    . "<p class='quete-carte-titre'>{$titreHtml}</p>"
                     . "<div class='carte-footer-div'>"
-                    . "<p class='quete-carte-xp'>{$quete['xp']}XP</p>"
+                    . "<p class='quete-carte-xp'>{$xp}XP</p>"
                     . "<div class='cartes-btn-div'>"
                     . $boutons
                     . "</div>"
@@ -387,13 +406,26 @@ $pas_de_prog = false;
         </div>
     </div>
 
-    <script>
-        const competences = <?php echo json_encode($competences) ?>;
-        const difficultes = <?php echo json_encode($difficultes) ?>;
+    <?php
+    // Échappement des libellés insérés dans du HTML par les scripts existants.
+    $competencesPourJs = [];
+    foreach ($competences as $competenceJs) {
+        $competenceJs['id'] = (int) $competenceJs['id'];
+        $competenceJs['nom'] = htmlspecialchars((string) $competenceJs['nom'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $competencesPourJs[] = $competenceJs;
+    }
+    $difficultesPourJs = [];
+    foreach ($difficultes as $difficulteJs) {
+        $difficultesPourJs[] = htmlspecialchars((string) $difficulteJs, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+    }
+    ?>
+    <script nonce="<?= htmlspecialchars($cspNonce ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
+        const competences = <?php echo json_encode($competencesPourJs, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;
+        const difficultes = <?php echo json_encode($difficultesPourJs, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;
     </script>
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="../../js/quetes.js"></script>
+    <script nonce="<?= htmlspecialchars($cspNonce ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>" src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script nonce="<?= htmlspecialchars($cspNonce ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>" src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.bundle.min.js"></script>
+    <script nonce="<?= htmlspecialchars($cspNonce ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>" src="../../js/quetes.js"></script>
 
 <?php include_once __DIR__ . '/../includes/footer.php'; ?>
 </body>

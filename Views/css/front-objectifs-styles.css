@@ -1,3 +1,4 @@
+/* Mohamed : présentation des objectifs et de l’inscription. */
 ﻿/* Yalla Quest · feuille commune (Front-Office, Back-Office, portail).
    CSS simple, sans framework. Charte : fond noir, lilas pour les actions, cartes ivoire au texte noir,
    Playfair Display (titres en capitales), Inter (texte), Barlow Condensed (titres de cartes).
@@ -182,6 +183,7 @@ input[type="datetime-local"].input { color-scheme: dark; }
 .alert { padding: 12px 14px; border-radius: var(--radius-control); background: var(--danger-bg); border: 1px solid var(--danger-line); color: #f1c9c9; font-size: 14px; }
 .alert ul { margin: 6px 0 0; padding-left: 18px; }
 .alert strong { color: #fff; }
+.alert.success { background: #142219; border-color: var(--sage); color: #cfe6d6; } /* [INSCRIPTION] message de réussite */
 
 /* ---------- tableaux ---------- */
 .sheet { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-card); padding: 8px 20px; }

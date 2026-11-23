@@ -1,47 +1,40 @@
 <?php
-session_start();
+// Amine : connexion via le routeur. Eya : confirmation d’inscription. Houssem : CSRF/XSS.
+require_once __DIR__ . '/../../../Controllers/AuthController.php';
+$csrfToken = AuthController::getCsrfToken();
+$cspNonce = $cspNonce ?? bin2hex(random_bytes(16));
+$currentPage = 'login';
+if (in_array($_SERVER['REQUEST_METHOD'] ?? 'GET', ['POST', 'PUT', 'PATCH', 'DELETE'], true)
+    && !AuthController::verifyCsrfToken($_POST['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? null)) {
+    http_response_code(403);
+    exit('Jeton de sécurité invalide. Rechargez la page.');
+}
 
-// Déjà connecté : pas besoin de revoir le formulaire.
-if (isset($_SESSION['utilisateur'])) {
-    header('Location: page-profil.php');
+/* PARTIE 5 : vue de connexion (index.php?action=login).
+   Vue seulement : la vérification est faite par AuthController::login(), appelé par le routeur,
+   qui fournit $errors (liste des erreurs) et $email (valeur à remettre dans le champ).
+   <base> : la page est servie par index.php ; les chemins restent relatifs à ce dossier. */
+
+// Accès direct au fichier : on repasse par le routeur.
+if (!defined('YQ_ROUTEUR')) {
+    header('Location: ../../../index.php?action=login' . (!empty($_GET['registered']) ? '&registered=1' : ''));
     exit();
 }
 
 $pageTitle = 'Connexion · Yalla Quest';
-$erreur = '';
-$email = '';
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email = trim($_POST['email'] ?? '');
-    $mot_de_passe = $_POST['mot_de_passe'] ?? '';
-
-    if ($email === '' || $mot_de_passe === '') {
-        $erreur = 'Saisis ton e-mail et ton mot de passe.';
-    } elseif (filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
-        $erreur = "L'adresse e-mail n'est pas valide.";
-    } else {
-        include_once __DIR__ . '/../../../Controllers/utilisateurC.php';
-        $utilisateurC = new UtilisateurC();
-        $utilisateur = $utilisateurC->login($email, $mot_de_passe);
-
-        if ($utilisateur === null) {
-            $erreur = 'E-mail ou mot de passe incorrect.';
-        } else {
-            session_regenerate_id(true);
-            $_SESSION['utilisateur'] = $utilisateur;
-            header('Location: page-profil.php');
-            exit();
-        }
-    }
-}
+$erreur = $errors[0] ?? '';
+$email = $email ?? '';
 ?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
+<meta name="csrf-token" content="<?= htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($pageTitle) ?></title>
+    <base href="Views/front-office/pages/">
+    <title><?= htmlspecialchars($pageTitle, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></title>
     <link rel="stylesheet" href="../../css/front-objectifs-styles.css">
+    <link rel="stylesheet" href="../../css/session-timeout.css">
 </head>
 <body>
     <main class="auth">
@@ -54,12 +47,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <p class="about">« Chaque habitude est une quête. »</p>
                 </div>
 
-                <div id="loginError" class="alert" role="alert"<?= $erreur === '' ? ' hidden' : '' ?>><?= htmlspecialchars($erreur) ?></div>
+                <?php if (!empty($sessionExpiree)): ?>
+                <!-- Amine : message après déconnexion par inactivité. -->
+                <p class="session-expiree" role="status">Ta session a été fermée après une période d'inactivité. Reconnecte-toi.</p>
+                <?php endif; ?>
 
-                <form id="loginForm" method="post" action="login.php" novalidate>
+                <?php if (!empty($_GET['registered']) && $erreur === ''): ?>
+                <!-- Eya : confirmation après inscription. -->
+                <div class="alert success" role="status">Compte créé avec succès, tu peux maintenant te connecter.</div>
+                <?php endif; ?>
+                <div id="loginError" class="alert" role="alert"<?= $erreur === '' ? ' hidden' : '' ?>><?= htmlspecialchars($erreur, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></div>
+
+                <form id="loginForm" method="post" action="../../../index.php?action=login" novalidate>
+    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
                     <div class="field">
                         <label for="email">E-mail</label>
-                        <input class="input" type="email" id="email" name="email" autocomplete="email" placeholder="yassine@esprit.tn" value="<?= htmlspecialchars($email) ?>">
+                        <input class="input" type="email" id="email" name="email" autocomplete="email" placeholder="yassine@esprit.tn" value="<?= htmlspecialchars($email, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
                     </div>
                     <div class="field">
                         <label for="mot_de_passe">Mot de passe</label>
@@ -73,7 +76,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
     </main>
 
-<script src="../../js/ui.js"></script>
-<script src="../../js/validation.js"></script>
+<script nonce="<?= htmlspecialchars($cspNonce ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>" src="../../js/regex.js"></script>
+<script nonce="<?= htmlspecialchars($cspNonce ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>" src="../../js/ui.js"></script>
+<script nonce="<?= htmlspecialchars($cspNonce ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>" src="../../js/validation.js"></script>
 </body>
 </html>

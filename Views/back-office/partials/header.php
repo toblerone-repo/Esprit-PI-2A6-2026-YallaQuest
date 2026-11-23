@@ -1,4 +1,5 @@
 <?php
+// Darine : structure commune. Amine : gabarit du routeur. Houssem : sorties échappées.
 /* En-tête commun des pages Back-Office (tous les membres).
    À inclure juste après la barre latérale, au début de <body> :
        <?php include_once __DIR__ . '/../partials/sidebar.php'; ?>
@@ -9,7 +10,8 @@
    Le lien dont la clé vaut $currentPage (à définir avant l'include, facultatif) est marqué comme actif.
    Chaque membre ajoute sa page ci-dessous : 'clé' => ['Libellé', 'fichier.php'] (fichiers de Views/back-office/pages/). */
 $adminPages = [
-    'utilisateurs' => ['Aventuriers', 'utilisateurs.php'],
+    'utilisateurs' => ['Aventuriers', 'listuser.php'], // [DARINE · LISTE UTILISATEURS] page renommée
+    'suppression' => ['Suppression des comptes', 'liste_utilisateurs.php'],
 ];
 ?>
 <link rel="stylesheet" href="../../css/bo-header.css">
@@ -19,7 +21,7 @@ $adminPages = [
     </div>
     <nav aria-label="Administration">
         <?php foreach ($adminPages as $boHeaderKey => [$boHeaderLabel, $boHeaderHref]): ?>
-        <a class="bo-header-link" href="<?= htmlspecialchars($boHeaderHref) ?>"<?= ($currentPage ?? '') === $boHeaderKey ? ' aria-current="page"' : '' ?>><?= htmlspecialchars($boHeaderLabel) ?></a>
+        <a class="bo-header-link" href="<?= htmlspecialchars($boHeaderHref, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>"<?= ($currentPage ?? '') === $boHeaderKey ? ' aria-current="page"' : '' ?>><?= htmlspecialchars($boHeaderLabel, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></a>
         <?php endforeach; ?>
     </nav>
 </header>
