@@ -43,7 +43,7 @@ export const SEL = {
   blocks: '.sheet, .stack > .empty-state, .stack > .tabs, .yq-view > .tabs',
 };
 
-/* ---------- réglages (voir le tableau dans Views/js/effects/README.md) ---------- */
+/* ---------- réglages (voir « Effets visuels des guildes » dans le README du projet) ---------- */
 export const TUNE = {
   lenis: { lerp: 0.1 },
   echoWindow: 700,          // ms : un re-rendu sur la même route juste après un changement de route en fait partie
