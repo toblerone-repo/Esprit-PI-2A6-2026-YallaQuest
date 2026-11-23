@@ -61,7 +61,7 @@ L’inscription publique fonctionne maintenant avec le code récemment publié p
 
 Des commentaires d’auteur sont ajoutés aux sections et méthodes : Houssem, Darine, Amine, Eya, Mohamed et Dorra. Les raccordements communs sont identifiés comme Intégration.
 
-La colonne pseudo et sa contrainte unique sont ajoutées une seule fois à la fin de yalla_quest_.sql avec l’ALTER demandé. Pour une base existante, appliquer uniquement migration-pseudo.sql une fois ; ne pas réimporter tout le schéma sur des données existantes.
+Le seul fichier SQL est yalla_quest.sql. Il contient le schéma complet et, à la fin, l’ALTER qui ajoute pseudo et sa contrainte unique. Pour une base existante où pseudo est absente, exécuter uniquement cet ALTER une fois ; ne pas réimporter tout le schéma sur des données existantes. Si pseudo existe déjà, cet ALTER ne doit pas être rejoué.
 
 ## Vérifications
 
@@ -75,4 +75,4 @@ La colonne pseudo et sa contrainte unique sont ajoutées une seule fois à la fi
 - Syntaxes PHP et JavaScript vérifiées. Toutes les méthodes originales des trois classes communes et tous les chemins des six branches sont contrôlés.
 - Tests effectués sur une base et des sessions temporaires séparées. Aucun jeu d’essai n’est ajouté au projet.
 
-Pour l’exécution, utiliser la base yalla_quest et le schéma yalla_quest_.sql fourni, puis configurer config.php. L’absence de comptes en base produit une liste vide, pas des utilisateurs fictifs.
+Pour l’exécution, utiliser la base yalla_quest et le schéma yalla_quest.sql fourni, puis configurer config.php. L’absence de comptes en base produit une liste vide, pas des utilisateurs fictifs.
