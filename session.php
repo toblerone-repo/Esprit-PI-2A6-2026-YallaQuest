@@ -9,7 +9,7 @@ ini_set('session.cookie_samesite', 'Lax'); // limite le CSRF
 session_start();
 
 // Expiration par inactivité (30 min)
-$sessionLifetime = 1800;
+$sessionLifetime = 10;
 if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity'] > $sessionLifetime)) {
     $_SESSION = [];
     session_destroy();

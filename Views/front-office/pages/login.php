@@ -22,6 +22,7 @@ $email = $email ?? '';
     <base href="Views/front-office/pages/">
     <title><?= htmlspecialchars($pageTitle, ENT_QUOTES, 'UTF-8') ?></title>
     <link rel="stylesheet" href="../../css/front-objectifs-styles.css">
+    <link rel="stylesheet" href="../../css/session-timeout.css">
 </head>
 <body>
     <main class="auth">
@@ -33,6 +34,10 @@ $email = $email ?? '';
                     <h1 id="loginTitle">Connexion</h1>
                     <p class="about">« Chaque habitude est une quête. »</p>
                 </div>
+
+                <?php if (!empty($sessionExpiree)): ?>
+                <p class="session-expiree" role="status">Ta session a été fermée après une période d'inactivité. Reconnecte-toi.</p>
+                <?php endif; ?>
 
                 <div id="loginError" class="alert" role="alert"<?= $erreur === '' ? ' hidden' : '' ?>><?= htmlspecialchars($erreur, ENT_QUOTES, 'UTF-8') ?></div>
 

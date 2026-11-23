@@ -29,5 +29,25 @@
 <?= $content ?? '' ?>
 
 <?php include_once __DIR__ . '/footer.php'; ?>
+
+<?php if (isset($sessionLifetime, $_SESSION['user_id'])): ?>
+<!-- Compteur d'inactivité : s'ouvre avant la fermeture de la session (Views/js/session-timeout.js).
+     $sessionLifetime vient de session.php (durée d'inactivité autorisée, en secondes). -->
+<link rel="stylesheet" href="../../css/session-timeout.css">
+<div id="yqSessionTimeout" class="yq-session-timeout" role="alertdialog" aria-labelledby="yqSessionTimeoutTitre" aria-describedby="yqSessionTimeoutTexte" hidden
+     data-duree="<?= (int) $sessionLifetime ?>"
+     data-ping="../../../index.php?action=ping"
+     data-deconnexion="../../../index.php?action=logout"
+     data-expiree="../../../index.php?action=logout&amp;expire=1">
+    <p id="yqSessionTimeoutTitre" class="yq-session-timeout-titre">Session inactive</p>
+    <p id="yqSessionTimeoutTexte" class="yq-session-timeout-texte">La session va se fermer dans <strong data-yq-compteur><?= (int) $sessionLifetime ?></strong>&nbsp;s.</p>
+    <p class="yq-session-timeout-erreur" data-yq-erreur hidden>Impossible de joindre le serveur. Réessaie.</p>
+    <div class="yq-session-timeout-actions">
+        <button type="button" class="yq-session-timeout-rester" data-yq-rester>Rester connecté</button>
+        <button type="button" data-yq-quitter>Se déconnecter</button>
+    </div>
+</div>
+<script src="../../js/session-timeout.js"></script>
+<?php endif; ?>
 </body>
 </html>

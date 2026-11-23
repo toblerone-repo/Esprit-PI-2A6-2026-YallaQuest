@@ -29,6 +29,8 @@ switch ($action) {
         }
         $errors = [];
         $email = '';
+        // Arrivée depuis le compteur d'inactivité (Views/js/session-timeout.js) : la vue affiche un message.
+        $sessionExpiree = isset($_GET['expire']);
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $email = trim((string) ($_POST['email'] ?? ''));
             $errors = $authController->login($_POST);
@@ -45,7 +47,21 @@ switch ($action) {
     // ---------------- LOGOUT ----------------
     case 'logout':
         $authController->logout();
-        header('Location: index.php?action=login');
+        // &expire=1 : déconnexion automatique par le compteur d'inactivité.
+        header('Location: index.php?action=login' . (isset($_GET['expire']) ? '&expire=1' : ''));
+        exit;
+
+    // ---------------- PING (compteur d'inactivité) ----------------
+    // Bouton « Rester connecté » du compteur : session.php vient déjà de remettre
+    // last_activity à maintenant, il suffit donc de répondre si la session est encore valide.
+    case 'ping':
+        header('Content-Type: application/json; charset=utf-8');
+        if (!AuthController::isAuthenticated()) {
+            http_response_code(401);
+            echo json_encode(['connecte' => false]);
+            exit;
+        }
+        echo json_encode(['connecte' => true, 'duree' => $sessionLifetime]);
         exit;
 
     // ---------------- USER SPACE (role: user - frontoffice) ----------------

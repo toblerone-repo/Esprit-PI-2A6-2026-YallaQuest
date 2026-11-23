@@ -1,0 +1,106 @@
+/* Compteur d'inactivité de la session (Views/js/session-timeout.js, layout.php)
+   et message « session expirée » de la page de connexion (login.php).
+   Couleurs du front-office (lilas Yalla Quest sur fond sombre) ; ne dépend d'aucune autre feuille. */
+
+.yq-session-timeout {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    z-index: 1000;
+    box-sizing: border-box;
+    width: min(360px, calc(100vw - 32px));
+    padding: 20px;
+    border: 1px solid #393244;
+    border-radius: 16px;
+    background: #211D2B;
+    box-shadow: 0 18px 48px rgba(0, 0, 0, 0.45);
+    color: #F6F4F8;
+    font: 400 15px/1.5 Arial, Helvetica, sans-serif;
+    text-align: left;
+}
+
+.yq-session-timeout[hidden] {
+    display: none;
+}
+
+.yq-session-timeout-titre {
+    margin: 0 0 6px;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.yq-session-timeout-texte {
+    margin: 0;
+    color: #B7AFC0;
+}
+
+.yq-session-timeout-texte strong {
+    color: #EBC1F2;
+    font-size: 18px;
+    font-variant-numeric: tabular-nums;
+}
+
+.yq-session-timeout-erreur {
+    margin: 10px 0 0;
+    color: #F2A7A7;
+    font-size: 13px;
+}
+
+.yq-session-timeout-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 16px;
+}
+
+.yq-session-timeout-actions button {
+    flex: 1 1 auto;
+    height: 40px;
+    padding: 0 16px;
+    border: 1px solid #393244;
+    border-radius: 999px;
+    background: transparent;
+    color: #F6F4F8;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.yq-session-timeout-actions .yq-session-timeout-rester {
+    border-color: #EBC1F2;
+    background: #EBC1F2;
+    color: #15131F;
+}
+
+.yq-session-timeout-actions .yq-session-timeout-rester:hover {
+    background: #F4D8F8;
+}
+
+.yq-session-timeout-actions button:disabled {
+    opacity: 0.6;
+    cursor: wait;
+}
+
+.yq-session-timeout-actions button:focus-visible {
+    outline: 2px solid #EBC1F2;
+    outline-offset: 2px;
+}
+
+/* Page de connexion : message affiché après une déconnexion automatique */
+.session-expiree {
+    margin: 0;
+    padding: 12px 14px;
+    border: 1px solid #3a2a3e;
+    border-radius: 12px;
+    background: #241a27;
+    color: #ebc1f2;
+    font-size: 14px;
+}
+
+@media (max-width: 576px) {
+    .yq-session-timeout {
+        right: 16px;
+        bottom: 16px;
+    }
+}
