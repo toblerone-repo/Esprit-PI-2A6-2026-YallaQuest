@@ -1,0 +1,53 @@
+/* PARTIE 5.3 : styles de l'espace utilisateur (Views/front-office/pages/user_space.php).
+   S'ajoute à profil.css, dont il reprend les variables de couleur. */
+
+.user-space-badge {
+    display: inline-block;
+    margin: 0;
+    padding: 0.3rem 0.85rem;
+    color: var(--texte-principal);
+    font-size: 0.8rem;
+    letter-spacing: 0.05em;
+    border: 1px solid var(--bordure-profil);
+    border-radius: 999px;
+}
+
+.user-space-table {
+    width: 100%;
+    margin-bottom: 1.5rem;
+    border-collapse: collapse;
+}
+
+.user-space-table caption {
+    caption-side: top;
+    padding: 0 0 0.75rem;
+}
+
+.user-space-table th,
+.user-space-table td {
+    padding: 0.85rem 0;
+    border-bottom: 1px solid var(--bordure-profil);
+    text-align: left;
+    vertical-align: top;
+}
+
+.user-space-table th {
+    width: 40%;
+    color: var(--texte-discret);
+    font-size: 0.8rem;
+    font-weight: 400;
+    letter-spacing: 0.05em;
+}
+
+.user-space-table td {
+    color: var(--texte-principal);
+    overflow-wrap: anywhere;
+}
+
+.user-space-logout {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    text-decoration: none;
+}

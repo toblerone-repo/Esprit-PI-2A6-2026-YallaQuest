@@ -1,7 +1,21 @@
 <?php
+// Dorra : modification du profil/avatar. Amine : REGEX. Houssem : sécurité.
+require_once __DIR__ . '/../../../Controllers/AuthController.php';
+$csrfToken = AuthController::getCsrfToken();
+$cspNonce = $cspNonce ?? bin2hex(random_bytes(16));
+$currentPage = 'modifier-profil';
+if (in_array($_SERVER['REQUEST_METHOD'] ?? 'GET', ['POST', 'PUT', 'PATCH', 'DELETE'], true)
+    && !AuthController::verifyCsrfToken($_POST['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? null)) {
+    http_response_code(403);
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode('Jeton de sécurité invalide. Rechargez la page.', JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
+    exit;
+}
+AuthController::requireAuth();
+
 
 if (session_status() === PHP_SESSION_NONE) {
-    session_start();
+    require_once __DIR__ . '/../../../session.php';
 }
 
 $id = $_SESSION['user_id'] ?? null;
@@ -9,7 +23,7 @@ if ($id === null) {
      exit('Connexion requise.');
 }
 
-//$id = 1; 
+//$id = 1;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     header('Content-type: application/json');
@@ -37,10 +51,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 include_once __DIR__ . '/../../../Controllers/utilisateurC.php';
 $utilisateurC = new UtilisateurC();
-$ancienUtilisateur = $utilisateurC->rechercherParId($id);
+$ancienUtilisateur = $utilisateurC->getProfilUtilisateur((int) $id);
 $images = $utilisateurC->listerImagesProfil();
+if (!$ancienUtilisateur) { http_response_code(404); exit('Compte introuvable.'); }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    foreach (['nom', 'prenom', 'email'] as $field) {
+        if (!is_string($_POST[$field] ?? null)) { http_response_code(400); echo json_encode('Données invalides.', JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); exit; }
+    }
     $hash = $ancienUtilisateur['mot_de_passe_hash'];
 
     $nom = $_POST['nom'];
@@ -55,36 +73,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($changerMotDePasse) {
         if (!is_string($ancien_mot_de_passe) || $ancien_mot_de_passe === '' ||
             !is_string($nouveau_mp) || strlen(trim($nouveau_mp)) < 8 || $nouveau_mp !== $confirmation_mp) {
-            echo json_encode("Données invalides.");
+            echo json_encode("Données invalides.", JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
             exit();
         }
 
         $resultat = password_verify($ancien_mot_de_passe, $hash);
 
         if (!$resultat) {
-            echo json_encode(false);
+            echo json_encode(false, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
             exit();
         }
     }
 
     if (empty(trim($nom)) || empty(trim($prenom)) || filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
-        echo json_encode("Données invalides.");
+        echo json_encode("Données invalides.", JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
         exit();
     }
-    $imgProfil = $_POST['img_profil'] ?? null;
+    $imgProfil = $_POST['img_profil'] ?? $ancienUtilisateur['img_profil'] ?? '';
     $id_images = array_map('strval', array_column($images, 'id'));
 
-    if (!is_string($imgProfil) || !in_array($imgProfil, $id_images, true)) {
-        echo json_encode('Imadge de profil invalide.');
+    if (!is_string($imgProfil) || ($imgProfil !== '' && !in_array($imgProfil, $id_images, true))) {
+        echo json_encode('Imadge de profil invalide.', JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
         exit();
     }
 
     $nouveau_hash = $changerMotDePasse ? password_hash($nouveau_mp, PASSWORD_DEFAULT) : $hash;
 
     $utilisateur = new Utilisateur($nom, $prenom, $email, $nouveau_hash, $imgProfil, $id);
-    $utilisateurC->updateUtilisateur($utilisateur, $id);
+    try {
+        $resultat = $utilisateurC->updateProfilUtilisateur($utilisateur, (int) $id, $ancien_mot_de_passe);
+    } catch (PDOException $e) {
+        error_log('Modification du profil : ' . $e->getMessage());
+        http_response_code($e->getCode() === '23000' ? 409 : 500);
+        echo json_encode($e->getCode() === '23000' ? 'Cette adresse e-mail est déjà utilisée.' : 'La modification a échoué.', JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
+        exit;
+    }
 
-    echo json_encode(true);
+    echo json_encode($resultat, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
     exit();
 };
 
@@ -93,10 +118,7 @@ $pageTitle = 'Modifier mon profil · Yalla Quest';
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($pageTitle) ?></title>
-    <link rel="stylesheet" href="../../css/profilUtilisateur.css">
+<?php $currentPage = 'modifier-profil'; $pageTitle = $pageTitle ?? 'Mon profil | YallaQuest'; require_once __DIR__ . '/../includes/head.php'; ?>
 </head>
 <body class="page-modifier-profil">
 <?php include_once __DIR__ . '/../includes/navbar.php'; ?>
@@ -116,20 +138,21 @@ $pageTitle = 'Modifier mon profil · Yalla Quest';
             <?php endif; ?>
 
             <form id="formulaire-modification" method="post" action="modifier-profil.php" novalidate>
+    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
                 <div class="field-grid">
                     <div class="field">
                         <label for="prenom">Prénom</label>
-                        <input class="input" type="text" id="prenom" name="prenom" value="<?php echo htmlspecialchars($ancienUtilisateur['prenom']) ?>">
+                        <input class="input" type="text" id="prenom" name="prenom" value="<?php echo htmlspecialchars($ancienUtilisateur['prenom'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
                         <span></span>
                     </div>
                     <div class="field">
                         <label for="nom">Nom</label>
-                        <input class="input" type="text" id="nom" name="nom" value="<?php echo htmlspecialchars($ancienUtilisateur['nom']) ?>">
+                        <input class="input" type="text" id="nom" name="nom" value="<?php echo htmlspecialchars($ancienUtilisateur['nom'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
                         <span></span>
                     </div>
                     <div class="field full">
                         <label for="email">E-mail</label>
-                        <input class="input" type="email" id="email" name="email" value="<?php echo htmlspecialchars($ancienUtilisateur['mail']) ?>">
+                        <input class="input" type="email" id="email" name="email" value="<?php echo htmlspecialchars($ancienUtilisateur['mail'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
                         <span></span>
                     </div>
                     <fieldset class="choix-avatars full">
@@ -141,10 +164,10 @@ $pageTitle = 'Modifier mon profil · Yalla Quest';
                             ?>
                                 <label class="option-avatar">
                                     <input type="radio" name="img_profil"
-                                        value="<?= htmlspecialchars($idImage) ?>"
-                                        aria-label="<?= htmlspecialchars('Image de profil ' . $idImage) ?>"
+                                        value="<?= htmlspecialchars($idImage, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>"
+                                        aria-label="<?= htmlspecialchars('Image de profil ' . $idImage, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>"
                                         <?= $estSelectionnee ? 'checked' : '' ?>>
-                                    <img src="<?= htmlspecialchars($image['chemin']) ?>"
+                                    <img src="<?= htmlspecialchars($image['chemin'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>"
                                         alt="" width="64" height="64">
                                 </label>
                             <?php } ?>
@@ -173,7 +196,8 @@ $pageTitle = 'Modifier mon profil · Yalla Quest';
         </section>
     </div>
 
-    <script src="../../js/profil.js"></script>
+    <script nonce="<?= htmlspecialchars($cspNonce ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>" src="../../js/regex.js"></script>
+    <script nonce="<?= htmlspecialchars($cspNonce ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>" src="../../js/profil.js"></script>
 </main>
 <?php include_once __DIR__ . '/../includes/footer.php'; ?>
 </body>

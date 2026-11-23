@@ -1,14 +1,37 @@
 <?php
+// Mohamed : objectifs front. Houssem : protection CSRF/XSS.
+require_once __DIR__ . '/../../../Controllers/AuthController.php';
+$csrfToken = AuthController::getCsrfToken();
+$cspNonce = $cspNonce ?? bin2hex(random_bytes(16));
+$currentPage = 'front-objectifs';
+if (in_array($_SERVER['REQUEST_METHOD'] ?? 'GET', ['POST', 'PUT', 'PATCH', 'DELETE'], true)
+    && !AuthController::verifyCsrfToken($_POST['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? null)) {
+    http_response_code(403);
+    exit('Jeton de sécurité invalide. Rechargez la page.');
+}
+
+require_once __DIR__ . '/../../../Controllers/AuthController.php';
+$csrfToken = AuthController::getCsrfToken();
+
+
+if (isset($_GET['supprimer']) || isset($_GET['toggle']) || isset($_GET['toggle_etape'])) {
+    http_response_code(405);
+    header('Allow: POST');
+    exit('Cette action doit être envoyée par POST.');
+}
+
 $currentPage = 'front-objectifs';
 $pageTitle = 'Mes objectifs · Yalla Quest';
+$niveau = (int) ($niveau ?? 1);
+$xpDansNiveau = max(0, min(100, (float) ($xpDansNiveau ?? 0)));
 ?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($pageTitle ?? 'Mes objectifs · Yalla Quest') ?></title>
-    <link rel="stylesheet" href="../../css/front-objectifs-styles.css">
+<meta name="csrf-token" content="<?= htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
+  <?php
+    require_once __DIR__ . '/../includes/head.php';
+  ?>
 </head>
 <body>
 <?php include_once __DIR__ . '/../includes/navbar.php'; ?>
@@ -37,35 +60,35 @@ $pageTitle = 'Mes objectifs · Yalla Quest';
             <div class="who">
                 <h2>Aventurier</h2>
                 <div class="pills">
-                    <span class="pill lilac">Niveau <?= $niveau ?? 1 ?></span>
+                    <span class="pill lilac">Niveau <?= (int) ($niveau ?? 1) ?></span>
                     <span class="pill">Félin Géométrique</span>
                 </div>
                 <div class="xp">
                     <div class="xp-line">
-                        <div class="capbar" role="progressbar" aria-valuenow="<?= $xpDansNiveau ?? 0 ?>" aria-valuemin="0" aria-valuemax="100">
-                            <i style="width: <?= $xpDansNiveau ?? 0 ?>%;"></i>
+                        <div class="capbar" role="progressbar" aria-valuenow="<?= max(0, min(100, (float) ($xpDansNiveau ?? 0))) ?>" aria-valuemin="0" aria-valuemax="100">
+                            <i style="width: <?= max(0, min(100, (float) ($xpDansNiveau ?? 0))) ?>%;"></i>
                         </div>
-                        <strong><?= $xpTotal ?? 0 ?> XP</strong>
+                        <strong><?= (int) ($xpTotal ?? 0) ?> XP</strong>
                     </div>
-                    <small>Plus que <?= (100 - ($xpDansNiveau ?? 0)) ?> XP pour atteindre le niveau <?= (($niveau ?? 1) + 1) ?></small>
+                    <small>Plus que <?= htmlspecialchars((string) ((100 - ($xpDansNiveau ?? 0))), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?> XP pour atteindre le niveau <?= htmlspecialchars((string) ((($niveau ?? 1) + 1)), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></small>
                 </div>
             </div>
         </div>
         <!-- Compteurs KPI -->
         <div class="kpis" aria-label="Compteurs">
-            <div class="kpi"><div class="kpi-label">Total</div><div class="kpi-value"><?= $totalObjectifs ?? 0 ?></div></div>
-            <div class="kpi"><div class="kpi-label"><span class="dot lilac"></span>À venir</div><div class="kpi-value"><?= $nbAVenir ?? 0 ?></div></div>
-            <div class="kpi"><div class="kpi-label"><span class="dot gold"></span>En cours</div><div class="kpi-value"><?= $nbEnCours ?? 0 ?></div></div>
-            <div class="kpi"><div class="kpi-label"><span class="dot sage"></span>Atteints</div><div class="kpi-value"><?= $nbAtteints ?? 0 ?></div></div>
+            <div class="kpi"><div class="kpi-label">Total</div><div class="kpi-value"><?= (int) ($totalObjectifs ?? 0) ?></div></div>
+            <div class="kpi"><div class="kpi-label"><span class="dot lilac"></span>À venir</div><div class="kpi-value"><?= (int) ($nbAVenir ?? 0) ?></div></div>
+            <div class="kpi"><div class="kpi-label"><span class="dot gold"></span>En cours</div><div class="kpi-value"><?= (int) ($nbEnCours ?? 0) ?></div></div>
+            <div class="kpi"><div class="kpi-label"><span class="dot sage"></span>Atteints</div><div class="kpi-value"><?= (int) ($nbAtteints ?? 0) ?></div></div>
         </div>
     </section>
 
     <!-- Onglets de filtrage -->
     <div class="tabs" role="tablist">
-        <button type="button" role="tab" aria-selected="true" onclick="filtrerObjectifs('all', this)">Tous <span class="n"><?= $totalObjectifs ?? 0 ?></span></button>
-        <button type="button" role="tab" aria-selected="false" onclick="filtrerObjectifs('a_venir', this)">À venir <span class="n"><?= $nbAVenir ?? 0 ?></span></button>
-        <button type="button" role="tab" aria-selected="false" onclick="filtrerObjectifs('en_cours', this)">En cours <span class="n"><?= $nbEnCours ?? 0 ?></span></button>
-        <button type="button" role="tab" aria-selected="false" onclick="filtrerObjectifs('atteint', this)">Atteints <span class="n"><?= $nbAtteints ?? 0 ?></span></button>
+        <button type="button" role="tab" aria-selected="true" onclick="filtrerObjectifs('all', this)">Tous <span class="n"><?= (int) ($totalObjectifs ?? 0) ?></span></button>
+        <button type="button" role="tab" aria-selected="false" onclick="filtrerObjectifs('a_venir', this)">À venir <span class="n"><?= (int) ($nbAVenir ?? 0) ?></span></button>
+        <button type="button" role="tab" aria-selected="false" onclick="filtrerObjectifs('en_cours', this)">En cours <span class="n"><?= (int) ($nbEnCours ?? 0) ?></span></button>
+        <button type="button" role="tab" aria-selected="false" onclick="filtrerObjectifs('atteint', this)">Atteints <span class="n"><?= (int) ($nbAtteints ?? 0) ?></span></button>
     </div>
 
     <!-- Grille des cartes d'objectifs -->
@@ -76,8 +99,8 @@ $pageTitle = 'Mes objectifs · Yalla Quest';
                 <p>Clique sur « Nouveau but » ci-dessus pour planifier ton premier objectif avec ses étapes !</p>
             </div>
         <?php else: ?>
-            <?php foreach ($listeObjectifs as $obj): 
-                $id = $obj['id'];
+            <?php foreach ($listeObjectifs as $obj):
+                $id = (int) $obj['id'];
                 $cat = $obj['categorie'] ?? 'Activité physique';
                 $img = $imagesPiliers[$cat] ?? 'focus';
                 $isAtteint = ($obj['statut'] === 'atteint');
@@ -86,24 +109,24 @@ $pageTitle = 'Mes objectifs · Yalla Quest';
                 $valideesE = 0;
                 foreach ($etapes as $e) { if ($e['est_validee']) $valideesE++; }
                 $pourcentage = ($totalE > 0) ? round(($valideesE / $totalE) * 100) : ($isAtteint ? 100 : 0);
-                
+
                 $dateDebStr = !empty($obj['date_debut']) ? date('d M', strtotime($obj['date_debut'])) : '';
                 $dateFinStr = !empty($obj['date_fin']) ? date('d M', strtotime($obj['date_fin'])) : '';
             ?>
-            <article class="obj-card ivory on-ivory" data-statut="<?= htmlspecialchars($obj['statut']) ?>">
-                <img class="art" src="../../img/piliers/<?= $img ?>.jpg" alt="" loading="lazy">
+            <article class="obj-card ivory on-ivory" data-statut="<?= htmlspecialchars($obj['statut'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
+                <img class="art" src="../../img/piliers/<?= htmlspecialchars((string) ($img), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>.jpg" alt="" loading="lazy">
                 <div class="body">
                     <!-- En-tête de la carte -->
                     <p class="meta">
-                        <span class="pilier"><?= htmlspecialchars($cat) ?></span> · 
-                        du <strong><?= $dateDebStr ?></strong> au <strong><?= $dateFinStr ?></strong>
-                        <span class="flag">+<?= $obj['xp_recompense'] ?? 50 ?> XP</span>
+                        <span class="pilier"><?= htmlspecialchars($cat, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></span> ·
+                        du <strong><?= htmlspecialchars((string) ($dateDebStr), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></strong> au <strong><?= htmlspecialchars((string) ($dateFinStr), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></strong>
+                        <span class="flag">+<?= (int) ($obj['xp_recompense'] ?? 50) ?> XP</span>
                     </p>
-                    <h3 class="<?= $isAtteint ? 'done' : '' ?>"><?= htmlspecialchars($obj['titre']) ?></h3>
-                    
+                    <h3 class="<?= htmlspecialchars((string) ($isAtteint ? 'done' : ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>"><?= htmlspecialchars($obj['titre'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></h3>
+
                     <!-- Note / Description -->
                     <div class="desc">
-                        <p><?= htmlspecialchars($obj['note'] ?? $obj['description'] ?? 'Aucune note.') ?></p>
+                        <p><?= htmlspecialchars($obj['note'] ?? $obj['description'] ?? 'Aucune note.', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></p>
                     </div>
 
                     <!-- Liste des Étapes Obligatoires & Progression -->
@@ -111,23 +134,23 @@ $pageTitle = 'Mes objectifs · Yalla Quest';
                     <div class="etapes-container">
                         <div class="etapes-header">
                             <span class="etapes-label">Étapes de progression</span>
-                            <span class="etapes-ratio"><?= $valideesE ?> / <?= $totalE ?> complétée<?= $totalE > 1 ? 's' : '' ?> (<?= $pourcentage ?>%)</span>
+                            <span class="etapes-ratio"><?= htmlspecialchars((string) ((int) ($valideesE)), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?> / <?= htmlspecialchars((string) ((int) ($totalE)), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?> complétée<?= $totalE > 1 ? 's' : '' ?> (<?= htmlspecialchars((string) (max(0, min(100, (float) ($pourcentage)))), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>%)</span>
                         </div>
-                        <div class="etapes-progress-bar" role="progressbar" aria-valuenow="<?= $pourcentage ?>" aria-valuemin="0" aria-valuemax="100">
-                            <div class="etapes-progress-fill" style="width: <?= $pourcentage ?>%;"></div>
+                        <div class="etapes-progress-bar" role="progressbar" aria-valuenow="<?= htmlspecialchars((string) (max(0, min(100, (float) ($pourcentage)))), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>" aria-valuemin="0" aria-valuemax="100">
+                            <div class="etapes-progress-fill" style="width: <?= htmlspecialchars((string) (max(0, min(100, (float) ($pourcentage)))), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>%;"></div>
                         </div>
                         <ul class="etapes-list">
-                            <?php foreach ($etapes as $etape): 
+                            <?php foreach ($etapes as $etape):
                                 $isEtapeValidee = (bool)$etape['est_validee'];
-                                $checkId = 'etape_' . $etape['IdEO'];
+                                $checkId = 'etape_' . (int) $etape['IdEO'];
                             ?>
-                            <li class="etape-row <?= $isEtapeValidee ? 'validee' : '' ?>">
-                                <input class="etape-check" type="checkbox" id="<?= $checkId ?>" 
-                                       <?= $isEtapeValidee ? 'checked' : '' ?> 
-                                       onchange="toggleEtape(<?= $etape['IdEO'] ?>, this)">
-                                <label for="<?= $checkId ?>" class="etape-title"><?= htmlspecialchars($etape['titre']) ?></label>
+                            <li class="etape-row <?= htmlspecialchars((string) ($isEtapeValidee ? 'validee' : ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
+                                <input class="etape-check" type="checkbox" id="<?= htmlspecialchars((string) ($checkId), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>"
+                                       <?= htmlspecialchars((string) ($isEtapeValidee ? 'checked' : ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
+                                       onchange="toggleEtape(<?= htmlspecialchars((string) ((int) ($etape['IdEO'])), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>, this)">
+                                <label for="<?= htmlspecialchars((string) ($checkId), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>" class="etape-title"><?= htmlspecialchars($etape['titre'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></label>
                                 <?php if ($isEtapeValidee && !empty($etape['date_validation'])): ?>
-                                    <span class="etape-date">✓ <?= date('d M', strtotime($etape['date_validation'])) ?></span>
+                                    <span class="etape-date">✓ <?= htmlspecialchars((string) (date('d M', strtotime($etape['date_validation']))), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></span>
                                 <?php endif; ?>
                             </li>
                             <?php endforeach; ?>
@@ -138,21 +161,24 @@ $pageTitle = 'Mes objectifs · Yalla Quest';
                     <!-- Pied de carte : Statut & Actions -->
                     <div class="pfoot">
                         <p class="times">
-                            <span>Début : <strong><?= date('d M à H:i', strtotime($obj['date_debut'])) ?></strong></span>
-                            <span>Fin : <strong><?= date('d M à H:i', strtotime($obj['date_fin'])) ?></strong></span>
+                            <span>Début : <strong><?= htmlspecialchars((string) (date('d M à H:i', strtotime($obj['date_debut']))), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></strong></span>
+                            <span>Fin : <strong><?= htmlspecialchars((string) (date('d M à H:i', strtotime($obj['date_fin']))), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></strong></span>
                         </p>
-                        <span class="pill st-<?= $obj['statut'] ?>">
-                            <?= $isAtteint ? 'Accompli' : ($obj['statut'] === 'a_venir' ? 'À venir' : 'En cours') ?>
+                        <span class="pill st-<?= htmlspecialchars((string) ($obj['statut']), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
+                            <?= htmlspecialchars((string) ($isAtteint ? 'Accompli' : ($obj['statut'] === 'a_venir' ? 'À venir' : 'En cours')), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
                         </span>
                         <div class="actions">
                             <?php if ($isAtteint): ?>
-                                <a class="btn sm" href="front-objectifs.php?toggle=<?= $id ?>">Reprendre</a>
+                                <form method="post" action="front-objectifs.php" style="display:contents">
+                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>"><input type="hidden" name="toggle" value="<?= htmlspecialchars((string) ((int) $id), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>"><button class="btn sm" type="submit">Reprendre</button></form>
                             <?php else: ?>
-                                <a class="btn primary sm" href="front-objectifs.php?toggle=<?= $id ?>">Accomplir</a>
+                                <form method="post" action="front-objectifs.php" style="display:contents">
+                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>"><input type="hidden" name="toggle" value="<?= htmlspecialchars((string) ((int) $id), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>"><button class="btn primary sm" type="submit">Accomplir</button></form>
                             <?php endif; ?>
-                            <a class="btn danger sm icon" href="front-objectifs.php?supprimer=<?= $id ?>" onclick="return confirm('Voulez-vous vraiment supprimer cet objectif ?');" title="Supprimer">
+                            <form method="post" action="front-objectifs.php" style="display:contents" onsubmit="return confirm('Voulez-vous vraiment supprimer cet objectif ?');">
+                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>"><input type="hidden" name="supprimer" value="<?= htmlspecialchars((string) ((int) $id), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>"><button class="btn danger sm icon" type="submit" title="Supprimer">
                                 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" style="width:14px;height:14px;"><path d="M3 4.5h10M6.5 4.5V3h3v1.5M4.5 4.5l.6 8.5h5.8l.6-8.5"/></svg>
-                            </a>
+                            </button></form>
                         </div>
                     </div>
                 </div>
@@ -166,8 +192,9 @@ $pageTitle = 'Mes objectifs · Yalla Quest';
 <!-- Boîte de dialogue : Formulaire d'ajout d'objectif -->
 <dialog class="dlg" id="dlgBut" aria-labelledby="dlgButTitle">
     <form method="POST" action="front-objectifs.php" onsubmit="return validerFormulaireObjectif()">
+                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
         <input type="hidden" name="ajouter_objectif" value="1">
-        
+
         <div class="head">
             <h2 id="dlgButTitle">Nouveau but pour le futur</h2>
             <button class="btn icon" type="button" onclick="fermerModal()" aria-label="Fermer">✕</button>
@@ -203,11 +230,11 @@ $pageTitle = 'Mes objectifs · Yalla Quest';
             <div class="field-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
                 <div class="field">
                     <label for="butDateDebut">Date & heure de début <span style="color:#d9534f">*</span></label>
-                    <input class="input" type="datetime-local" id="butDateDebut" name="date_debut" value="<?= date('Y-m-d\TH:i') ?>" required>
+                    <input class="input" type="datetime-local" id="butDateDebut" name="date_debut" value="<?= htmlspecialchars((string) (date('Y-m-d\TH:i')), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>" required>
                 </div>
                 <div class="field">
                     <label for="butDateFin">Date & heure de fin <span style="color:#d9534f">*</span></label>
-                    <input class="input" type="datetime-local" id="butDateFin" name="date_fin" value="<?= date('Y-m-d\TH:i', strtotime('+7 days')) ?>" required>
+                    <input class="input" type="datetime-local" id="butDateFin" name="date_fin" value="<?= htmlspecialchars((string) (date('Y-m-d\TH:i', strtotime('+7 days'))), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>" required>
                 </div>
             </div>
             <p class="field-error" id="butDateErr" style="color:#d9534f;font-size:13px;"></p>
@@ -216,7 +243,7 @@ $pageTitle = 'Mes objectifs · Yalla Quest';
             <div class="field etapes-form-section" style="margin-top:16px;">
                 <label>Étapes obligatoires pour accomplir ce but <span style="color:#d9534f">*</span></label>
                 <p class="field-help" style="font-size:13px;color:#aaa;margin-bottom:8px;">Chaque but doit être découpé en au moins une étape concrète.</p>
-                
+
                 <div class="add-etape-row" style="display:flex;gap:8px;margin-bottom:8px;">
                     <input class="input" type="text" id="nouvelleEtapeInput" placeholder="Ex. Acheter un carnet de méditation..." style="flex:1;">
                     <button type="button" class="btn primary sm" onclick="ajouterChampEtape()">+ Ajouter</button>
