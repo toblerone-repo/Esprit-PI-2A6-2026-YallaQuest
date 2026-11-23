@@ -37,7 +37,10 @@ if ($id === null) {
 include_once __DIR__ . '/../../../Controllers/utilisateurC.php';
 $utilisateurC = new UtilisateurC();
 $utilisateur = $utilisateurC->getProfilUtilisateur((int) $id);
-if (!$utilisateur) { http_response_code(404); exit('Compte introuvable.'); }
+if (!$utilisateur) { 
+    http_response_code(404); 
+    exit('Compte introuvable.'); 
+}
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -142,6 +145,7 @@ if (!$utilisateur) { http_response_code(404); exit('Compte introuvable.'); }
                 </div>
 
                 <div class="infos-totem">
+                    <?php if (isset($utilisateur['id_totem'])) {?>
                     <h3 class="nom-totem">
                         Totem n°<?= htmlspecialchars((string) ($utilisateur['id_totem']), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
                     </h3>
@@ -154,6 +158,9 @@ if (!$utilisateur) { http_response_code(404); exit('Compte introuvable.'); }
                         <i class="bi bi-calendar3"></i>
                         Obtenu le <?= htmlspecialchars($utilisateur['date_obtention_totem'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
                     </p>
+                    <?php } else {?>
+                    <p class="texte-secondaire">Aucun totem obtenu pour le moment.</p>
+                    <?php } ?>
                 </div>
 
             </div>
@@ -172,7 +179,7 @@ if (!$utilisateur) { http_response_code(404); exit('Compte introuvable.'); }
             </p>
 
             <p class="date-prolongation">
-                <?= htmlspecialchars($utilisateur['derniere_prolongation_at'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
+                <?= $utilisateur['derniere_prolongation_at']? htmlspecialchars($utilisateur['derniere_prolongation_at']) : "Pas de prolongation" ?>
             </p>
 
             <div class="information-prolongation">

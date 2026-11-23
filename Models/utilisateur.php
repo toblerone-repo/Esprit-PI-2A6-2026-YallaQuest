@@ -224,3 +224,4 @@ class Utilisateur
     public function getPseudo(): string { return $this->pseudo; }
     public function setPseudo(string $pseudo): void { $this->pseudo = $pseudo; }
 }
+
