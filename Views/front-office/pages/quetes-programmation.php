@@ -1,5 +1,4 @@
 <?php
-// Équipe : template de base. Houssem : protections CSRF/XSS sur cette interface.
 require_once __DIR__ . '/../../../Controllers/AuthController.php';
 $csrfToken = AuthController::getCsrfToken();
 $cspNonce = $cspNonce ?? bin2hex(random_bytes(16));
@@ -407,7 +406,6 @@ $pas_de_prog = false;
     </div>
 
     <?php
-    // Échappement des libellés insérés dans du HTML par les scripts existants.
     $competencesPourJs = [];
     foreach ($competences as $competenceJs) {
         $competenceJs['id'] = (int) $competenceJs['id'];

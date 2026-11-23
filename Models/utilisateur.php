@@ -1,35 +1,6 @@
 <?php
-// Darine : modèle et fromArray. Houssem/Amine/Dorra : compatibilité. Eya : pseudo.
-/* =====================================================================
-   [DARINE · MVC UTILISATEUR] Modèle Utilisateur (table `utilisateur`)
-   Même forme que UserModel du workshop (partie 3.1) :
-   attributs privés + getters/setters + fromArray(). Aucune requête SQL.
-
-   ---------------------------------------------------------------------
-   [DARINE · GUIDE] COMMENT UTILISER CE MODÈLE
-   ---------------------------------------------------------------------
-   - Ligne SQL -> objet (dans le contrôleur) :
-       $u = Utilisateur::fromArray($row);
-   - Créer un objet pour un INSERT / UPDATE (comme register() du workshop) :
-       $u = new Utilisateur();
-       $u->setNom($nom);
-       $u->setPrenom($prenom);
-       $u->setEmail($email);
-       $u->setPassword(password_hash($motDePasse, PASSWORD_DEFAULT));
-       $u->setRole('user');
-   - Attribut -> colonne : id -> id_utilisateur, email -> mail,
-     password -> mot_de_passe_hash, totalXp -> total_xp, ...
-   - Valeurs possibles : role = 'user' | 'admin', statut = 'actif' | 'bloque'
-
-   [INTEGRATION] Le constructeur vide de Darine et les anciens appels
-   positionnels de Houssem, Amine et Dorra restent acceptés.
-   getPassword()/getMp() et getTotalXp()/getXp() lisent les mêmes données.
-   ===================================================================== */
 class Utilisateur
 {
-    // ------------------------------------------------------------
-    // ATTRIBUTES
-    // ------------------------------------------------------------
     private int $id = 0;
     private string $nom = '';
     private string $prenom = '';
@@ -45,9 +16,6 @@ class Utilisateur
     private int $idTotem = 0;
     private string $dateObtentionTotem = '';
 
-    // ------------------------------------------------------------
-    // CONSTRUCTOR
-    // ------------------------------------------------------------
     public function __construct(string $nom = '', string $prenom = '', string $email = '', string $mp = '', string|DateTimeImmutable $imageOuDate = '', string|int|null $imageOuId = null, ?int $id = null)
     {
         $this->nom = $nom;
@@ -64,9 +32,6 @@ class Utilisateur
         }
     }
 
-    // ------------------------------------------------------------
-    // GETTERS
-    // ------------------------------------------------------------
     public function getId(): int
     {
         return $this->id;
@@ -127,9 +92,6 @@ class Utilisateur
         return $this->dateObtentionTotem;
     }
 
-    // ------------------------------------------------------------
-    // SETTERS
-    // ------------------------------------------------------------
     public function setId(int $id): void
     {
         $this->id = $id;
@@ -190,9 +152,6 @@ class Utilisateur
         $this->dateObtentionTotem = $dateObtentionTotem instanceof DateTimeImmutable ? $dateObtentionTotem->format('Y-m-d') : $dateObtentionTotem;
     }
 
-    // ------------------------------------------------------------
-    // CONVERT ARRAY TO OBJECT
-    // ------------------------------------------------------------
     public static function fromArray(array $row): self
     {
         $utilisateur = new self();
@@ -212,7 +171,6 @@ class Utilisateur
         $utilisateur->setPseudo((string) ($row['pseudo'] ?? ''));
         return $utilisateur;
     }
-    // Compatibilité des getters/setters utilisés par les différentes contributions.
     public function getMp(): string { return $this->getPassword(); }
     public function setMp(string $mp): void { $this->setPassword($mp); }
     public function getXp(): int { return $this->getTotalXp(); }
@@ -220,7 +178,6 @@ class Utilisateur
     public function getImgProfil(): string { return $this->imgProfil; }
     public function setImgProfil(string $imgProfil): void { $this->imgProfil = $imgProfil; }
 
-    // Eya : pseudo unique utilisé par l’inscription.
     public function getPseudo(): string { return $this->pseudo; }
     public function setPseudo(string $pseudo): void { $this->pseudo = $pseudo; }
 }

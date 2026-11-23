@@ -1,5 +1,4 @@
 <?php
-// Dorra : modification du profil/avatar. Amine : REGEX. Houssem : sécurité.
 require_once __DIR__ . '/../../../Controllers/AuthController.php';
 $csrfToken = AuthController::getCsrfToken();
 $cspNonce = $cspNonce ?? bin2hex(random_bytes(16));
@@ -23,7 +22,6 @@ if ($id === null) {
      exit('Connexion requise.');
 }
 
-//$id = 1;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     header('Content-type: application/json');

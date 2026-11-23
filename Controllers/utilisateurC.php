@@ -1,34 +1,4 @@
 <?php
-// Darine : liste/modèle. Amine : suppression. Dorra : profil. Eya : inscription/blocage. Houssem : SQL/CSRF/XSS.
-/* =====================================================================
-   [DARINE · MVC UTILISATEUR] Contrôleur Utilisateur
-   Même forme que AuthController du workshop (parties 3.2 et 6.1) :
-   toute la logique et toutes les requêtes SQL sont ici, les Vues
-   ne font qu'afficher.
-
-   ---------------------------------------------------------------------
-   [DARINE · GUIDE] COMMENT UTILISER MES MÉTHODES DEPUIS VOTRE PAGE
-   ---------------------------------------------------------------------
-   require_once __DIR__ . '/../../../Controllers/utilisateurC.php';
-   $utilisateurC = new UtilisateurC();
-
-   $utilisateurC->listUtilisateurs()            -> Utilisateur[] (tous les comptes)
-   $utilisateurC->getUtilisateur($id)           -> Utilisateur ou null
-   $utilisateurC->rechercherParId($id)          -> Utilisateur[] (0 ou 1 compte)
-   $utilisateurC->countAllUtilisateurs()        -> int
-   $utilisateurC->countByRole('admin')          -> int
-   UtilisateurC::estSoiMeme($id)                -> true si $id = compte connecté
-   $utilisateurC->verifierSuppression($id)           -> tableau d'erreurs
-   $utilisateurC->verifierChangementRole($id, $role) -> tableau d'erreurs
-
-   Les méthodes renvoient des OBJETS Utilisateur : on lit les valeurs
-   avec les getters ($u->getNom(), $u->getEmail(), $u->getRole()...).
-   Le compte connecté est lu dans $_SESSION['user_id'] (clé du workshop,
-   remplie au login par la partie Sécurité).
-
-   Autres membres (ajout, modification, suppression, rôle, blocage,
-   recherche) : ajoutez vos méthodes dans cette classe avec $this->db.
-   ===================================================================== */
 
 require_once __DIR__ . '/../config.php';
 require_once __DIR__ . '/../Models/utilisateur.php';
@@ -37,25 +7,12 @@ class UtilisateurC
 {
     private PDO $db;
 
-    // Darine : connexion MVC
     public function __construct()
     {
         $this->db = config::getConnexion();
     }
 
-    // ==============================================================
-    // [DARINE · LISTE] ADMIN BACKOFFICE DATA (workshop 6.1)
-    // ==============================================================
 
-    /**
-     * Récupère tous les utilisateurs (liste du back-office).
-     * Utilisation : foreach ($utilisateurC->listUtilisateurs() as $u) { echo $u->getNom(); }
-     * [Recherche] : votre méthode de recherche doit aussi renvoyer
-     * des objets Utilisateur (Utilisateur::fromArray), pour que
-     * listuser.php puisse l'afficher avec la même boucle.
-     * @return Utilisateur[]
-     */
-    // Darine / Amine : liste des comptes
     public function listUtilisateurs(): array
     {
         $stmt = $this->db->query('SELECT * FROM utilisateur ORDER BY id_utilisateur ASC');
@@ -64,11 +21,6 @@ class UtilisateurC
         return array_map(fn(array $row) => Utilisateur::fromArray($row), $rows);
     }
 
-    /**
-     * Récupère un utilisateur par son id (null s'il n'existe pas).
-     * Utilisation : $u = $utilisateurC->getUtilisateur((int) $_GET['id']);
-     */
-    // Darine : récupération par ID
     public function getUtilisateur(int $id): ?Utilisateur
     {
         $stmt = $this->db->prepare('SELECT * FROM utilisateur WHERE id_utilisateur = :id LIMIT 1');
@@ -78,14 +30,6 @@ class UtilisateurC
         return $row ? Utilisateur::fromArray($row) : null;
     }
 
-    /**
-     * [DARINE · RECHERCHE PAR ID] Bouton "Rechercher" de listuser.php.
-     * Renvoie un tableau avec l'utilisateur trouvé, ou un tableau vide :
-     * même forme que listUtilisateurs(), donc la page l'affiche avec la même boucle.
-     * Utilisation : $liste = $utilisateurC->rechercherParId(3);
-     * @return Utilisateur[]
-     */
-    // Darine : recherche par ID
     public function rechercherParId(int $id): array
     {
         $utilisateur = $this->getUtilisateur($id);
@@ -96,10 +40,6 @@ class UtilisateurC
         return [$utilisateur];
     }
 
-    /**
-     * Compte les utilisateurs d'un rôle ('user' ou 'admin').
-     */
-    // Darine / Amine : comptage par rôle
     public function countByRole(string $role): int
     {
         $stmt = $this->db->prepare('SELECT COUNT(*) FROM utilisateur WHERE role = :role');
@@ -107,45 +47,17 @@ class UtilisateurC
         return (int) $stmt->fetchColumn();
     }
 
-    /**
-     * Nombre total de comptes.
-     */
-    // Darine / Amine : comptage total
     public function countAllUtilisateurs(): int
     {
         return (int) $this->db->query('SELECT COUNT(*) FROM utilisateur')->fetchColumn();
     }
 
-    // ==============================================================
-    // [DARINE · RÈGLE ADMIN] Un admin ne peut pas se supprimer
-    // ni se retirer le rôle admin.
-    // --------------------------------------------------------------
-    // À appeler par les membres Suppression / Rôle AVANT leur requête :
-    //
-    //   $errors = $utilisateurC->verifierSuppression((int) $_POST['id']);
-    //   if (empty($errors)) { ...votre DELETE... }
-    //
-    //   $errors = $utilisateurC->verifierChangementRole((int) $_POST['id'], $_POST['role']);
-    //   if (empty($errors)) { ...votre UPDATE du rôle... }
-    //
-    // Tableau vide = autorisé (même principe que register() du workshop).
-    // Le cadenas affiché dans listuser.php n'est qu'un repère visuel :
-    // c'est cet appel, côté serveur, qui bloque vraiment l'action.
-    // ==============================================================
 
-    /**
-     * true si $id est le compte actuellement connecté.
-     * (int) : l'id peut avoir été rangé en texte ('1') dans la session ;
-     * sans conversion, '1' === 1 serait faux et la règle ne bloquerait rien.
-     * Personne de connecté -> 0, qui ne correspond à aucun compte.
-     */
-    // Darine : protection du compte connecté
     public static function estSoiMeme(int $id): bool
     {
         return (int) ($_SESSION['user_id'] ?? 0) === $id;
     }
 
-    // Darine : interdiction de supprimer son compte
     public function verifierSuppression(int $id): array
     {
         $errors = [];
@@ -157,7 +69,6 @@ class UtilisateurC
         return $errors;
     }
 
-    // Darine : interdiction de se rétrograder
     public function verifierChangementRole(int $id, string $nouveauRole): array
     {
         $errors = [];
@@ -169,8 +80,6 @@ class UtilisateurC
         return $errors;
     }
 
-    // Le modèle fournit le nouveau mot de passe en clair.
-    // Houssem : hachage avant la mise à jour SQL
     function updateUtilisateur(Utilisateur $utilisateur, int $id, string $ancienMotDePasse): bool
     {
         if ($id < 1 || strlen($utilisateur->getMp()) < 8) {
@@ -191,7 +100,6 @@ class UtilisateurC
                 return false;
             }
 
-            // Le hachage est calculé ici, avant toute écriture en base.
             $passwordHash = password_hash($utilisateur->getMp(), PASSWORD_DEFAULT);
 
             $query = $db->prepare(
@@ -220,8 +128,6 @@ class UtilisateurC
 
    
     
-    // Renvoie l'utilisateur (sans le hash) si l'e-mail et le mot de passe sont corrects, sinon null.
-    // Houssem / Eya : vérification des identifiants et du statut
     function login(string $mail, string $mp): ?array
     {
         $db = config::getConnexion();
@@ -246,7 +152,6 @@ class UtilisateurC
         unset($utilisateur['mot_de_passe_hash']);
         return $utilisateur;
     }
-    // Amine : identifiant de session
     public static function getIdConnecte(): ?int
     {
         if (!empty($_SESSION['user_id'])) {
@@ -254,7 +159,6 @@ class UtilisateurC
         }
         return null;
     }
-    // Amine : suppression et clés étrangères
     function deleteUtilisateur($id)
     {
         try {
@@ -263,8 +167,6 @@ class UtilisateurC
             $query->execute(['id' => $id]);
             return $query->rowCount();
         } catch (PDOException $e) {
-            // Code 23000 : clé étrangère. Le compte est encore utilisé par une autre table
-            // (quêtes programmées, publications, guilde créée...) : MySQL refuse le DELETE.
             if ($e->getCode() == 23000) {
                 return -1;
             }
@@ -273,7 +175,6 @@ class UtilisateurC
             die('Une erreur est survenue lors du traitement des données.');
         }
     }
-    // Dorra : images disponibles
     function listerImagesProfil()
     {
         $sql = "SELECT id_image AS id, chemin FROM images";
@@ -288,8 +189,6 @@ class UtilisateurC
             die('Une erreur est survenue lors du traitement des données.');
         };
     }
-    // Dorra garde ses tableaux pour l'affichage du profil ; la liste garde ses objets.
-    // Intégration : tableaux de profil utilisés par Dorra
     public function getProfilUtilisateur(int $id): ?array
     {
         $db = config::getConnexion();
@@ -302,8 +201,6 @@ class UtilisateurC
         return $profil ?: null;
     }
 
-    // Le formulaire de Dorra transmet un hash : il ne doit pas être haché une seconde fois.
-    // Dorra / Houssem : profil avec hash déjà calculé, sans double hachage
     public function updateProfilUtilisateur(Utilisateur $utilisateur, int $id, string $ancienMotDePasse = ''): bool
     {
         if ($id < 1 || $id !== self::getIdConnecte()) {
@@ -330,11 +227,6 @@ class UtilisateurC
     }
 
 
-    /**
-     * Recherche par nom, prénom ou e-mail, avec rôle et ID facultatifs.
-     * Les filtres se cumulent et le résultat conserve la forme Utilisateur[].
-     */
-    // Houssem : recherche nom/e-mail/rôle/ID
     public function rechercherUtilisateurs(string $recherche = '', string $role = '', ?int $id = null): array
     {
         if (!in_array($role, ['', 'admin', 'user'], true) || ($id !== null && $id < 1)) {
@@ -380,20 +272,14 @@ class UtilisateurC
         return array_map(fn(array $row) => Utilisateur::fromArray($row), $rows);
     }
 
-    // Eya : inscription et blocage/déblocage.
-    // Eya : état de connexion
     public static function isAuthenticated(): bool
     {
         return !empty($_SESSION['utilisateur']);
     }
-    // Eya : inscription et blocage/déblocage.
-    // Eya : contrôle du rôle
     public static function hasRole(string $role): bool
     {
         return self::isAuthenticated() && ($_SESSION['utilisateur']['role'] ?? null) === $role;
     }
-    // Eya : inscription et blocage/déblocage.
-    // Eya : unicité e-mail/pseudo
     private function existsByEmailOrUsername(string $email, string $pseudo): bool
     {
         $db = config::getConnexion();
@@ -409,8 +295,6 @@ class UtilisateurC
             die('Une erreur est survenue lors du traitement des données.');
         }
     }
-    // Eya : inscription et blocage/déblocage.
-    // Eya : insertion du compte avec rôle user
     private function insertUser(Utilisateur $utilisateur): bool
     {
         $db = config::getConnexion();
@@ -432,8 +316,6 @@ class UtilisateurC
             die('Une erreur est survenue lors du traitement des données.');
         }
     }
-    // Eya : inscription et blocage/déblocage.
-    // Eya : inscription, Houssem : vérification CSRF
     public function register(array $post): array
     {
         $errors = [];
@@ -477,7 +359,6 @@ class UtilisateurC
             return $errors;
         }
 
-        // Hachage sécurisé du mot de passe (bcrypt)
         $hash = password_hash($motDePasse, PASSWORD_DEFAULT);
 
         $utilisateur = new Utilisateur($nom, $prenom, $email, $hash, new DateTimeImmutable("now"), "");
@@ -489,20 +370,14 @@ class UtilisateurC
 
         return $errors;
     }
-    // Eya : inscription et blocage/déblocage.
-    // Eya : blocage
     public function bloquerUtilisateur(int $id): array
     {
         return $this->changerStatut($id, 'bloque');
     }
-    // Eya : inscription et blocage/déblocage.
-    // Eya : déblocage
     public function debloquerUtilisateur(int $id): array
     {
         return $this->changerStatut($id, 'actif');
     }
-    // Eya : inscription et blocage/déblocage.
-    // Eya : lecture du statut
     private function findStatutById(int $id): ?string
     {
         $db = config::getConnexion();
@@ -520,13 +395,10 @@ class UtilisateurC
 
         return $ligne ? $ligne['statut'] : null;
     }
-    // Eya : inscription et blocage/déblocage.
-    // Eya : changement de statut et protection de son compte
     private function changerStatut(int $id, string $statut): array
     {
         $errors = [];
 
-        // Seul un administrateur connecté peut bloquer / débloquer
         if (!self::hasRole('admin')) {
             $errors[] = "Accès refusé : action réservée aux administrateurs.";
             return $errors;
@@ -538,7 +410,6 @@ class UtilisateurC
             return $errors;
         }
 
-        // Un admin ne doit pas pouvoir se bloquer lui-même (il ne pourrait plus se connecter)
         if ($statut === 'bloque' && (int) ($_SESSION['utilisateur']['id_utilisateur'] ?? 0) === $id) {
             $errors[] = "Vous ne pouvez pas bloquer votre propre compte.";
             return $errors;
@@ -564,11 +435,7 @@ class UtilisateurC
         return $errors;
     }
 
-    // ==============================================================
-    // Mohamed : AJOUT D'UN COMPTE ET CHANGEMENT DE RÔLE (back-office)
-    // ==============================================================
 
-    // Mohamed : e-mail déjà utilisé ?
     public function emailExiste(string $email, ?int $exclureId = null): bool
     {
         $sql = 'SELECT COUNT(*) FROM utilisateur WHERE mail = :mail';
@@ -582,7 +449,6 @@ class UtilisateurC
         return (int) $stmt->fetchColumn() > 0;
     }
 
-    // Mohamed : validation du formulaire addUser.php
     public function verifierAjout(array $data): array
     {
         $errors = [];
@@ -616,7 +482,6 @@ class UtilisateurC
         if ($password === '') {
             $errors['mot_de_passe'] = "Le mot de passe est obligatoire.";
         } elseif (strlen($password) < 8) {
-            // Intégration : même longueur minimale que updateUtilisateur().
             $errors['mot_de_passe'] = "Le mot de passe doit contenir au moins 8 caractères.";
         }
         if ($confirmPassword !== null && $password !== $confirmPassword) {
@@ -631,11 +496,8 @@ class UtilisateurC
         return $errors;
     }
 
-    // Mohamed : insertion d'un compte créé par un admin (mot de passe déjà haché par addUser.php)
     public function addUtilisateur(Utilisateur $utilisateur): bool
     {
-        // Intégration : img_profil est une clé étrangère vers images. Si l'avatar demandé
-        // n'existe pas dans cette table, le compte est créé sans avatar plutôt que d'échouer.
         $img = $utilisateur->getImgProfil();
         if ($img !== '') {
             $check = $this->db->prepare('SELECT 1 FROM images WHERE id_image = :img LIMIT 1');
@@ -671,7 +533,6 @@ class UtilisateurC
         }
     }
 
-    // Mohamed : recherche d'un compte par e-mail (changeRole.php)
     public function getUtilisateurParEmail(string $email): ?Utilisateur
     {
         $stmt = $this->db->prepare('SELECT * FROM utilisateur WHERE mail = :mail LIMIT 1');
@@ -680,7 +541,6 @@ class UtilisateurC
         return $row ? Utilisateur::fromArray($row) : null;
     }
 
-    // Mohamed : changement de rôle, avec la règle de Darine (pas de rétrogradation de soi-même)
     public function changerRole(int $id, string $nouveauRole): bool
     {
         if ($id < 1 || !in_array($nouveauRole, ['user', 'admin'], true)
