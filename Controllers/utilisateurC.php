@@ -218,18 +218,7 @@ class UtilisateurC
         }
     }
 
-    function listerImagesProfil()
-    {
-        $sql = "SELECT id_image AS id, chemin FROM images";
-        $db = config::getConnexion();
-
-        try {
-            $list = $db->query($sql);
-            return $list->fetchAll();
-        } catch (PDOException $e) {
-            die("Erreur: " . $e->getMessage());
-        };
-    }
+   
     
     // Renvoie l'utilisateur (sans le hash) si l'e-mail et le mot de passe sont corrects, sinon null.
     // Houssem / Eya : vérification des identifiants et du statut
