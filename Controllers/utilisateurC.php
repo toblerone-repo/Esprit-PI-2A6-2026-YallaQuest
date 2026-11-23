@@ -561,4 +561,137 @@ class UtilisateurC
 
         return $errors;
     }
+
+    // ==============================================================
+    // Mohamed : AJOUT D'UN COMPTE ET CHANGEMENT DE RÔLE (back-office)
+    // ==============================================================
+
+    // Mohamed : e-mail déjà utilisé ?
+    public function emailExiste(string $email, ?int $exclureId = null): bool
+    {
+        $sql = 'SELECT COUNT(*) FROM utilisateur WHERE mail = :mail';
+        $params = ['mail' => $email];
+        if ($exclureId !== null) {
+            $sql .= ' AND id_utilisateur != :id';
+            $params['id'] = $exclureId;
+        }
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+        return (int) $stmt->fetchColumn() > 0;
+    }
+
+    // Mohamed : validation du formulaire addUser.php
+    public function verifierAjout(array $data): array
+    {
+        $errors = [];
+        $nom = trim((string) ($data['nom'] ?? ''));
+        $prenom = trim((string) ($data['prenom'] ?? ''));
+        $mail = trim((string) ($data['mail'] ?? $data['email'] ?? ''));
+        $password = (string) ($data['mot_de_passe'] ?? $data['password'] ?? '');
+        $confirmPassword = isset($data['confirmer_mot_de_passe']) ? (string) $data['confirmer_mot_de_passe'] : null;
+        $role = (string) ($data['role'] ?? 'user');
+        $statut = (string) ($data['statut'] ?? 'actif');
+
+        if ($nom === '') {
+            $errors['nom'] = "Le nom est obligatoire.";
+        } elseif (mb_strlen($nom) > 100) {
+            $errors['nom'] = "Le nom ne doit pas dépasser 100 caractères.";
+        }
+        if ($prenom === '') {
+            $errors['prenom'] = "Le prénom est obligatoire.";
+        } elseif (mb_strlen($prenom) > 100) {
+            $errors['prenom'] = "Le prénom ne doit pas dépasser 100 caractères.";
+        }
+        if ($mail === '') {
+            $errors['mail'] = "L'adresse e-mail est obligatoire.";
+        } elseif (!filter_var($mail, FILTER_VALIDATE_EMAIL)) {
+            $errors['mail'] = "L'adresse e-mail n'est pas valide.";
+        } elseif (mb_strlen($mail) > 254) {
+            $errors['mail'] = "L'e-mail ne doit pas dépasser 254 caractères.";
+        } elseif ($this->emailExiste($mail)) {
+            $errors['mail'] = "Cette adresse e-mail est déjà utilisée par un autre aventurier.";
+        }
+        if ($password === '') {
+            $errors['mot_de_passe'] = "Le mot de passe est obligatoire.";
+        } elseif (strlen($password) < 8) {
+            // Intégration : même longueur minimale que updateUtilisateur().
+            $errors['mot_de_passe'] = "Le mot de passe doit contenir au moins 8 caractères.";
+        }
+        if ($confirmPassword !== null && $password !== $confirmPassword) {
+            $errors['confirmer_mot_de_passe'] = "Les mots de passe ne correspondent pas.";
+        }
+        if (!in_array($role, ['user', 'admin'], true)) {
+            $errors['role'] = "Le rôle sélectionné est invalide.";
+        }
+        if (!in_array($statut, ['actif', 'bloque'], true)) {
+            $errors['statut'] = "Le statut sélectionné est invalide.";
+        }
+        return $errors;
+    }
+
+    // Mohamed : insertion d'un compte créé par un admin (mot de passe déjà haché par addUser.php)
+    public function addUtilisateur(Utilisateur $utilisateur): bool
+    {
+        // Intégration : img_profil est une clé étrangère vers images. Si l'avatar demandé
+        // n'existe pas dans cette table, le compte est créé sans avatar plutôt que d'échouer.
+        $img = $utilisateur->getImgProfil();
+        if ($img !== '') {
+            $check = $this->db->prepare('SELECT 1 FROM images WHERE id_image = :img LIMIT 1');
+            $check->execute(['img' => $img]);
+            if (!$check->fetchColumn()) {
+                $img = '';
+            }
+        }
+
+        try {
+            $stmt = $this->db->prepare(
+                'INSERT INTO utilisateur (nom, prenom, mail, mot_de_passe_hash, role, statut, total_xp, niveau, img_profil)
+                 VALUES (:nom, :prenom, :mail, :mp, :role, :statut, :total_xp, :niveau, :img_profil)'
+            );
+            $ok = $stmt->execute([
+                'nom' => $utilisateur->getNom(),
+                'prenom' => $utilisateur->getPrenom(),
+                'mail' => $utilisateur->getEmail(),
+                'mp' => $utilisateur->getMp(),
+                'role' => $utilisateur->getRole() ?: 'user',
+                'statut' => $utilisateur->getStatut() ?: 'actif',
+                'total_xp' => $utilisateur->getXp(),
+                'niveau' => max(1, $utilisateur->getNiveau()),
+                'img_profil' => $img !== '' ? $img : null,
+            ]);
+            if ($ok) {
+                $utilisateur->setId((int) $this->db->lastInsertId());
+            }
+            return $ok;
+        } catch (PDOException $e) {
+            error_log('Ajout utilisateur : ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    // Mohamed : recherche d'un compte par e-mail (changeRole.php)
+    public function getUtilisateurParEmail(string $email): ?Utilisateur
+    {
+        $stmt = $this->db->prepare('SELECT * FROM utilisateur WHERE mail = :mail LIMIT 1');
+        $stmt->execute(['mail' => trim($email)]);
+        $row = $stmt->fetch();
+        return $row ? Utilisateur::fromArray($row) : null;
+    }
+
+    // Mohamed : changement de rôle, avec la règle de Darine (pas de rétrogradation de soi-même)
+    public function changerRole(int $id, string $nouveauRole): bool
+    {
+        if ($id < 1 || !in_array($nouveauRole, ['user', 'admin'], true)
+            || !empty($this->verifierChangementRole($id, $nouveauRole))) {
+            return false;
+        }
+        try {
+            $stmt = $this->db->prepare('UPDATE utilisateur SET role = :role WHERE id_utilisateur = :id');
+            $stmt->execute(['role' => $nouveauRole, 'id' => $id]);
+            return $stmt->rowCount() === 1;
+        } catch (PDOException $e) {
+            error_log('Changement de rôle : ' . $e->getMessage());
+            return false;
+        }
+    }
 }

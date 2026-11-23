@@ -1,15 +1,18 @@
-CREATE DATABASE yalla_quest
+-- Intégration : le fichier peut être importé sur une base neuve comme sur une base existante.
+-- Les tables et contraintes déjà présentes sont conservées avec leurs données ; seules les parties
+-- manquantes sont créées (par exemple la colonne pseudo d'Eya sur une ancienne base).
+CREATE DATABASE IF NOT EXISTS yalla_quest
     CHARACTER SET utf8mb4
     COLLATE utf8mb4_unicode_ci;
 
 USE yalla_quest;
 
-CREATE TABLE images (
+CREATE TABLE IF NOT EXISTS images (
     id_image VARCHAR(64) PRIMARY KEY,
     chemin VARCHAR(2048) NOT NULL
 ) ENGINE=InnoDB;
 
-CREATE TABLE guilde (
+CREATE TABLE IF NOT EXISTS guilde (
     id_guilde INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     nom VARCHAR(100) NOT NULL,
     description TEXT NULL,
@@ -17,7 +20,7 @@ CREATE TABLE guilde (
     id_utilisateur_createur INT UNSIGNED NOT NULL
 ) ENGINE=InnoDB;
 
-CREATE TABLE utilisateur (
+CREATE TABLE IF NOT EXISTS utilisateur (
     id_utilisateur INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     nom VARCHAR(100) NOT NULL,
     prenom VARCHAR(100) NOT NULL,
@@ -39,11 +42,14 @@ CREATE TABLE utilisateur (
         FOREIGN KEY (id_guilde) REFERENCES guilde (id_guilde)
 ) ENGINE=InnoDB;
 
-ALTER TABLE guilde
-    ADD CONSTRAINT fk_guilde_createur
-        FOREIGN KEY (id_utilisateur_createur) REFERENCES utilisateur (id_utilisateur);
+SET @yq_sql := IF((SELECT COUNT(*) FROM information_schema.TABLE_CONSTRAINTS WHERE CONSTRAINT_SCHEMA = DATABASE() AND TABLE_NAME = 'guilde' AND CONSTRAINT_NAME = 'fk_guilde_createur') = 0,
+    'ALTER TABLE guilde ADD CONSTRAINT fk_guilde_createur FOREIGN KEY (id_utilisateur_createur) REFERENCES utilisateur (id_utilisateur)',
+    'DO 0');
+PREPARE yq_stmt FROM @yq_sql;
+EXECUTE yq_stmt;
+DEALLOCATE PREPARE yq_stmt;
 
-CREATE TABLE competence (
+CREATE TABLE IF NOT EXISTS competence (
     id_competence INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     nom VARCHAR(100) NOT NULL,
     description TEXT NULL,
@@ -54,7 +60,7 @@ CREATE TABLE competence (
         FOREIGN KEY (id_utilisateur_maj) REFERENCES utilisateur (id_utilisateur)
 ) ENGINE=InnoDB;
 
-CREATE TABLE totem (
+CREATE TABLE IF NOT EXISTS totem (
     id_totem INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     nom VARCHAR(100) NOT NULL,
     visuel VARCHAR(255) NOT NULL,
@@ -69,7 +75,7 @@ CREATE TABLE totem (
         FOREIGN KEY (id_utilisateur_maj) REFERENCES utilisateur (id_utilisateur)
 ) ENGINE=InnoDB;
 
-CREATE TABLE exp_competence (
+CREATE TABLE IF NOT EXISTS exp_competence (
     id_utilisateur INT UNSIGNED NOT NULL,
     id_competence INT UNSIGNED NOT NULL,
     xp_c INT UNSIGNED NOT NULL DEFAULT 0,
@@ -80,17 +86,20 @@ CREATE TABLE exp_competence (
         FOREIGN KEY (id_competence) REFERENCES competence (id_competence)
 ) ENGINE=InnoDB;
 
-ALTER TABLE utilisateur
-    ADD CONSTRAINT fk_utilisateur_totem
-        FOREIGN KEY (id_totem) REFERENCES totem (id_totem);
+SET @yq_sql := IF((SELECT COUNT(*) FROM information_schema.TABLE_CONSTRAINTS WHERE CONSTRAINT_SCHEMA = DATABASE() AND TABLE_NAME = 'utilisateur' AND CONSTRAINT_NAME = 'fk_utilisateur_totem') = 0,
+    'ALTER TABLE utilisateur ADD CONSTRAINT fk_utilisateur_totem FOREIGN KEY (id_totem) REFERENCES totem (id_totem)',
+    'DO 0');
+PREPARE yq_stmt FROM @yq_sql;
+EXECUTE yq_stmt;
+DEALLOCATE PREPARE yq_stmt;
 
-CREATE TABLE categorie (
+CREATE TABLE IF NOT EXISTS categorie (
     id_categorie INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     nom VARCHAR(100) NOT NULL,
     description TEXT NULL
 ) ENGINE=InnoDB;
 
-CREATE TABLE quete (
+CREATE TABLE IF NOT EXISTS quete (
     id_quete INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     titre VARCHAR(150) NOT NULL,
     difficulte VARCHAR(30) NOT NULL,
@@ -103,7 +112,7 @@ CREATE TABLE quete (
         FOREIGN KEY (id_competence) REFERENCES competence (id_competence)
 ) ENGINE=InnoDB;
 
-CREATE TABLE programmation (
+CREATE TABLE IF NOT EXISTS programmation (
     id_programmation INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     id_utilisateur INT UNSIGNED NOT NULL,
     id_quete INT UNSIGNED NOT NULL,
@@ -120,13 +129,13 @@ CREATE TABLE programmation (
         FOREIGN KEY (id_quete) REFERENCES quete (id_quete)
 ) ENGINE=InnoDB;
 
-CREATE TABLE type_act (
+CREATE TABLE IF NOT EXISTS type_act (
     id_type_act INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     nom VARCHAR(100) NOT NULL,
     unite_mesure VARCHAR(50) NULL
 ) ENGINE=InnoDB;
 
-CREATE TABLE activite_quete (
+CREATE TABLE IF NOT EXISTS activite_quete (
     id_activite INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     nom VARCHAR(150) NOT NULL,
     quantite DECIMAL(10,2) NOT NULL,
@@ -139,7 +148,7 @@ CREATE TABLE activite_quete (
         FOREIGN KEY (id_type_act) REFERENCES type_act (id_type_act)
 ) ENGINE=InnoDB;
 
-CREATE TABLE realiser (
+CREATE TABLE IF NOT EXISTS realiser (
     id_utilisateur INT UNSIGNED NOT NULL,
     id_activite INT UNSIGNED NOT NULL,
     ressenti TEXT NULL,
@@ -152,7 +161,7 @@ CREATE TABLE realiser (
         FOREIGN KEY (id_activite) REFERENCES activite_quete (id_activite)
 ) ENGINE=InnoDB;
 
-CREATE TABLE objectif (
+CREATE TABLE IF NOT EXISTS objectif (
     id_objectif INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     titre VARCHAR(150) NOT NULL,
     note TEXT NOT NULL,
@@ -167,7 +176,7 @@ CREATE TABLE objectif (
         FOREIGN KEY (id_competence) REFERENCES competence (id_competence)
 ) ENGINE=InnoDB;
 
-CREATE TABLE etape_objectif (
+CREATE TABLE IF NOT EXISTS etape_objectif (
     id_etape_objectif INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     titre VARCHAR(150) NOT NULL,
     est_validee BOOLEAN NOT NULL DEFAULT FALSE,
@@ -177,7 +186,7 @@ CREATE TABLE etape_objectif (
         FOREIGN KEY (id_objectif) REFERENCES objectif (id_objectif)
 ) ENGINE=InnoDB;
 
-CREATE TABLE adherer (
+CREATE TABLE IF NOT EXISTS adherer (
     id_utilisateur INT UNSIGNED NOT NULL,
     id_guilde INT UNSIGNED NOT NULL,
     date_adhesion DATE NOT NULL,
@@ -188,7 +197,7 @@ CREATE TABLE adherer (
         FOREIGN KEY (id_guilde) REFERENCES guilde (id_guilde)
 ) ENGINE=InnoDB;
 
-CREATE TABLE proposition (
+CREATE TABLE IF NOT EXISTS proposition (
     id_proposition INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     date_proposition DATE NOT NULL,
     date_limite_vote DATE NOT NULL,
@@ -200,7 +209,7 @@ CREATE TABLE proposition (
         FOREIGN KEY (id_quete) REFERENCES quete (id_quete)
 ) ENGINE=InnoDB;
 
-CREATE TABLE voter (
+CREATE TABLE IF NOT EXISTS voter (
     id_utilisateur INT UNSIGNED NOT NULL,
     id_proposition INT UNSIGNED NOT NULL,
     date_vote DATE NOT NULL,
@@ -212,7 +221,7 @@ CREATE TABLE voter (
         FOREIGN KEY (id_proposition) REFERENCES proposition (id_proposition)
 ) ENGINE=InnoDB;
 
-CREATE TABLE publication (
+CREATE TABLE IF NOT EXISTS publication (
     id_publication INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     type VARCHAR(50) NOT NULL,
     titre VARCHAR(150) NOT NULL,
@@ -225,7 +234,7 @@ CREATE TABLE publication (
         FOREIGN KEY (id_utilisateur) REFERENCES utilisateur (id_utilisateur)
 ) ENGINE=InnoDB;
 
-CREATE TABLE signalement (
+CREATE TABLE IF NOT EXISTS signalement (
     id_signalement INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     motif VARCHAR(150) NOT NULL,
     commentaire TEXT NULL,
@@ -240,6 +249,15 @@ CREATE TABLE signalement (
 ) ENGINE=InnoDB;
 
 -- Eya : pseudo utilisé par l’inscription, compatible avec les anciens comptes.
-ALTER TABLE utilisateur
-  ADD COLUMN pseudo VARCHAR(50) NULL AFTER prenom,
-  ADD CONSTRAINT uq_utilisateur_pseudo UNIQUE (pseudo);
+SET @yq_sql := IF((SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'utilisateur' AND COLUMN_NAME = 'pseudo') = 0,
+    'ALTER TABLE utilisateur ADD COLUMN pseudo VARCHAR(50) NULL AFTER prenom',
+    'DO 0');
+PREPARE yq_stmt FROM @yq_sql;
+EXECUTE yq_stmt;
+DEALLOCATE PREPARE yq_stmt;
+SET @yq_sql := IF((SELECT COUNT(*) FROM information_schema.TABLE_CONSTRAINTS WHERE CONSTRAINT_SCHEMA = DATABASE() AND TABLE_NAME = 'utilisateur' AND CONSTRAINT_NAME = 'uq_utilisateur_pseudo') = 0,
+    'ALTER TABLE utilisateur ADD CONSTRAINT uq_utilisateur_pseudo UNIQUE (pseudo)',
+    'DO 0');
+PREPARE yq_stmt FROM @yq_sql;
+EXECUTE yq_stmt;
+DEALLOCATE PREPARE yq_stmt;

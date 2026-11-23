@@ -20,6 +20,11 @@ $navbarAlias = [
 ];
 $navbarCurrent = basename($_SERVER['SCRIPT_NAME'] ?? '');
 $navbarCurrent = $navbarAlias[$navbarCurrent] ?? $navbarCurrent;
+
+// Mohamed : liens Back-office / Déconnexion / Connexion selon la session.
+require_once __DIR__ . '/../../../Controllers/AuthController.php';   // session.php sécurisé d'Amine
+$isUserConnected = !empty($_SESSION['user_id']) || !empty($_SESSION['utilisateur']);
+$isAdminUser = (($_SESSION['role'] ?? ($_SESSION['utilisateur']['role'] ?? '')) === 'admin');
 ?>
 <link rel="stylesheet" href="../../css/communaute-navbar.css">
 <header class="yq-community-navbar">
@@ -35,6 +40,14 @@ $navbarCurrent = $navbarAlias[$navbarCurrent] ?? $navbarCurrent;
         <?php foreach ($navbarPages as $navbarFile => $navbarLabel): ?>
         <li><a class="community-navbar-link" href="<?= htmlspecialchars($navbarFile, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>"<?= $navbarFile === $navbarCurrent ? ' aria-current="page"' : '' ?>><?= htmlspecialchars($navbarLabel, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></a></li>
         <?php endforeach; ?>
+        <?php if ($isAdminUser): ?>
+        <li><a class="community-navbar-link community-navbar-admin" href="../../back-office/pages/listuser.php" title="Accéder au panneau d'administration">Back-office</a></li>
+        <?php endif; ?>
+        <?php if ($isUserConnected): ?>
+        <li><form method="post" action="logout.php" class="community-navbar-logout-form"><input type="hidden" name="csrf_token" value="<?= htmlspecialchars(AuthController::getCsrfToken(), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>"><button type="submit" class="community-navbar-link community-navbar-logout" title="Se déconnecter de votre compte">Déconnexion</button></form></li>
+        <?php else: ?>
+        <li><a class="community-navbar-link community-navbar-login" href="login.php">Connexion</a></li>
+        <?php endif; ?>
       </ul>
     </nav>
 

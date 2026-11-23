@@ -91,22 +91,61 @@ body:has(.bo-sidebar) {
   font-weight: 600;
 }
 
-.bo-sidebar .bo-sidebar-front {
+.bo-sidebar .bo-sidebar-footer,
+.bo-sidebar .bo-sidebar-bottom {
   margin-top: auto;
-  display: block;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 16px;
+  border-top: 1px solid var(--bo-sidebar-border);
+}
+
+.bo-sidebar .bo-sidebar-front {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   padding: 9px 12px;
   border: 1px solid var(--bo-sidebar-border);
   border-radius: 999px;
+  background: #16161b;
   color: var(--bo-sidebar-text);
   font-weight: 600;
+  font-size: 13px;
   text-align: center;
   text-decoration: none;
-  transition: border-color 150ms ease, color 150ms ease;
+  transition: all 150ms ease;
 }
 
 .bo-sidebar .bo-sidebar-front:hover {
   border-color: var(--bo-sidebar-accent);
+  background: var(--bo-sidebar-hover);
   color: var(--bo-sidebar-accent);
+  text-decoration: none;
+}
+
+.bo-sidebar .bo-sidebar-logout {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 9px 12px;
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  border-radius: 999px;
+  background: rgba(239, 68, 68, 0.08);
+  color: #fca5a5;
+  font-weight: 600;
+  font-size: 13px;
+  text-align: center;
+  text-decoration: none;
+  transition: all 150ms ease;
+}
+
+.bo-sidebar .bo-sidebar-logout:hover {
+  background: rgba(239, 68, 68, 0.22);
+  border-color: #ef4444;
+  color: #ffffff;
   text-decoration: none;
 }
 
@@ -138,8 +177,18 @@ body:has(.bo-sidebar) {
     padding: 0;
   }
 
-  .bo-sidebar .bo-sidebar-front {
+  .bo-sidebar .bo-sidebar-footer,
+  .bo-sidebar .bo-sidebar-bottom {
     margin: 0 0 0 auto;
+    padding-top: 0;
+    border-top: 0;
+    flex-direction: row;
+    gap: 8px;
+  }
+
+  .bo-sidebar .bo-sidebar-front,
+  .bo-sidebar .bo-sidebar-logout {
+    margin: 0;
     padding: 7px 12px;
   }
 
@@ -156,3 +205,6 @@ body:has(.bo-sidebar) {
     white-space: nowrap;
   }
 }
+/* Intégration : la déconnexion est un bouton de formulaire (POST + jeton CSRF). */
+.bo-sidebar .bo-sidebar-logout-form { margin: 0; display: flex; flex-direction: column; }
+.bo-sidebar button.bo-sidebar-logout { width: 100%; font: inherit; font-size: 13px; cursor: pointer; }

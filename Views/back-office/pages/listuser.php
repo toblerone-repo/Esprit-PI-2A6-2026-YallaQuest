@@ -48,6 +48,27 @@ $utilisateurC = new UtilisateurC();
 // Eya : message laissé par le changement de statut.
 $messageStatut = $_SESSION['message_statut'] ?? null;
 unset($_SESSION['message_statut']);
+
+// Mohamed : rétrogradation d'un admin depuis la liste (POST + jeton vérifié en haut de page).
+// La promotion passe par changeRole.php ; la règle de Darine interdit de se rétrograder soi-même.
+$notificationSuccess = null;
+$notificationError = null;
+if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST' && ($_POST['action'] ?? null) === 'changer_role') {
+    $idCible = (int) ($_POST['id'] ?? 0);
+    $nouveauRole = is_string($_POST['role'] ?? null) ? $_POST['role'] : '';
+    $roleErrors = $utilisateurC->verifierChangementRole($idCible, $nouveauRole);
+    if (empty($roleErrors) && $utilisateurC->changerRole($idCible, $nouveauRole)) {
+        header('Location: listuser.php?success=role');
+        exit;
+    }
+    $notificationError = $roleErrors ? implode(' ', $roleErrors) : "Impossible de modifier le rôle de cet aventurier.";
+}
+// Mohamed : messages après addUser.php / changement de rôle.
+if (($_GET['success'] ?? null) === 'user_added') {
+    $notificationSuccess = "L'aventurier a été inscrit avec succès !";
+} elseif (($_GET['success'] ?? null) === 'role') {
+    $notificationSuccess = "Le rôle de l'aventurier a été mis à jour avec succès !";
+}
 $totalUsers = $utilisateurC->countAllUtilisateurs();
 $totalAdmins = $utilisateurC->countByRole('admin');
 $totalRegular = $utilisateurC->countByRole('user');
@@ -94,7 +115,9 @@ require_once __DIR__ . '/../partials/head.php';
             </p>
         </div>
         <div class="actions">
-            <!-- [À COMPLÉTER · partie Ajout] bouton "Inscrire un aventurier" -->
+            <!-- Mohamed : changement de rôle et ajout d'un compte. -->
+            <a href="changeRole.php" class="btn sm">Changer un rôle</a>
+            <a href="addUser.php" class="btn primary">+ Inscrire un aventurier</a>
         </div>
     </header>
 
@@ -148,6 +171,12 @@ require_once __DIR__ . '/../partials/head.php';
         <?= htmlspecialchars((string) (count($liste)), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?> résultat<?= count($liste) > 1 ? 's' : '' ?> sur <?= htmlspecialchars((string) ($totalUsers), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?> aventuriers
     </p>
 
+    <?php if (!empty($notificationSuccess)): ?>
+    <div class="alert alert-success" role="status"><?= htmlspecialchars($notificationSuccess, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></div>
+    <?php endif; ?>
+    <?php if (!empty($notificationError)): ?>
+    <div class="alert alert-danger" role="alert"><?= htmlspecialchars($notificationError, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></div>
+    <?php endif; ?>
     <?php if ($messageStatut): ?>
     <!-- Eya : résultat du blocage/déblocage. -->
     <p class="search-error" role="status"><?= htmlspecialchars($messageStatut['texte'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></p>
@@ -215,6 +244,19 @@ require_once __DIR__ . '/../partials/head.php';
                                     <input type="hidden" name="id" value="<?= (int) $u->getId() ?>">
                                     <button type="submit" class="btn sm" name="action" value="<?= $u->getStatut() === 'bloque' ? 'debloquer' : 'bloquer' ?>"><?= $u->getStatut() === 'bloque' ? 'Débloquer' : 'Bloquer' ?></button>
                                 </form>
+
+                                <!-- Mohamed : promotion (changeRole.php, confirmation par formulaire) ou rétrogradation (POST + jeton). -->
+                                <?php if ($u->getRole() === 'user'): ?>
+                                <a href="changeRole.php?email=<?= htmlspecialchars(urlencode($u->getEmail()), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>" class="btn sm btn-role-admin" title="Promouvoir cet aventurier en administrateur">Promouvoir Admin</a>
+                                <?php else: ?>
+                                <form method="post" action="listuser.php" class="form-supprimer" onsubmit="return confirm('Rétrograder cet administrateur en utilisateur standard ?');">
+                                    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
+                                    <input type="hidden" name="action" value="changer_role">
+                                    <input type="hidden" name="id" value="<?= (int) $u->getId() ?>">
+                                    <input type="hidden" name="role" value="user">
+                                    <button type="submit" class="btn sm btn-role-user" title="Rétrograder en utilisateur standard">Rétrograder User</button>
+                                </form>
+                                <?php endif; ?>
 
                                 <!-- [À COMPLÉTER · parties Modifier / Rôle / Bloquer / Supprimer]
                                      Classes prêtes : <a class="btn sm">Modifier</a>, <button class="btn danger sm">Supprimer</button>. -->

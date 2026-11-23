@@ -7,8 +7,8 @@ Cette branche réunit les versions publiées ci-dessous. Les branches sources ne
 | Houssem | `fd9a9597835cd2c7b970ba4de22127ad39889f41` |
 | Darine | `5b1715ab32923fdee68cd19b87872b8abba8ae31` |
 | Eya | `552d5e842551669a8c5d22b3373a0be9362b4687` |
-| Amine | `5eff88f947c09d6f0b899e98fb8f905b7001f8f9` |
-| Mohamed | `9bd6a0ee90b8d175fb5ffff11fc24af6603fd35c` |
+| Amine | `741f81187a5de7fcdb98984f4bbbfc31a0a69639` |
+| Mohamed | `d18a2cd70e7f81beaec1e18b188fce7c1bc6be77` |
 | Dorra | `ba12e8c963d0b991a86320bd3612611db0d5e284` |
 
 ## Contributions conservées
@@ -18,8 +18,8 @@ Cette branche réunit les versions publiées ci-dessous. Les branches sources ne
 | Houssem | Squelette MVC, requêtes préparées, hachage/vérification du mot de passe, CSRF, XSS, en-têtes HTTP et recherche nom/e-mail/rôle/ID. |
 | Darine | Modèle avec getters/setters et fromArray, liste/comptage/recherche par ID, règles de protection du compte admin, compétences/totems, images et mises en page communes. |
 | Eya | Journal, activités, types d’activité, inscription avec pseudo/hachage et blocage/déblocage récemment publiés. |
-| Amine | Connexion, déconnexion, espace utilisateur, sessions sécurisées et délai de 30 minutes, suppression avec messages et gestion des clés étrangères, validations REGEX, pages et scripts publiés. |
-| Mohamed | Objectifs front/back, formulaire join_now, scripts et helpers HTML de ces interfaces, README. |
+| Amine | Connexion, déconnexion, espace utilisateur, sessions sécurisées et délai de 30 minutes, compteur d’inactivité (« Rester connecté » / déconnexion automatique), suppression avec messages et gestion des clés étrangères, validations REGEX, pages et scripts publiés. |
+| Mohamed | Objectifs front/back (avec ID de l’aventurier côté admin), formulaire join_now, ajout d’un compte par l’admin (addUser.php), changement de rôle par e-mail (changeRole.php) et rétrogradation depuis la liste, boutons Back-office/Déconnexion, scripts et helpers HTML de ces interfaces, README. |
 | Dorra | Profil réel, choix d’avatar, modification facultative du mot de passe, styles et images du profil. |
 
 ## Adaptations nécessaires à la réunion
@@ -31,6 +31,12 @@ Cette branche réunit les versions publiées ci-dessous. Les branches sources ne
 - Les deux listes listuser.php et liste_utilisateurs.php restent accessibles : recherche dans la première, suppression et messages dans la seconde.
 - Les styles de recherche, de suppression, l’ancien profil.css et le nouveau profilUtilisateur.css sont conservés. Les noms currentPage relient chaque page à sa feuille de style commune.
 - Les validations REGEX d’Amine sont conservées sur le formulaire de Dorra, avec son choix d’avatar et le changement de mot de passe facultatif. Le format général d’e-mail évite de rejeter les domaines valides des autres formulaires.
+
+## Dernières versions d’Amine et de Mohamed
+
+- Amine : le compteur d’inactivité est raccordé au gabarit du routeur. La déconnexion qu’il déclenche passe par POST avec le jeton CSRF ; si le serveur a déjà fermé la session, la page de connexion s’ouvre directement avec le message d’inactivité. La durée de session reste 30 minutes (la branche Amine contient 10 secondes, valeur de test).
+- Mohamed : sa branche est une copie complète du projet. Seules ses nouveautés sont reprises ; les fichiers communs (routeur, session, AuthController, modèle, connexion, profil, espace utilisateur) restent ceux de l’intégration. addUser.php et changeRole.php reçoivent le contrôle admin et le jeton CSRF, les deux logout.php n’acceptent que POST avec jeton, et les liens Déconnexion de la barre latérale et de la navbar sont des formulaires. Un changement de rôle n’a lieu qu’après envoi du formulaire : un lien ne fait qu’afficher le compte.
+- Les méthodes emailExiste, verifierAjout, addUtilisateur, getUtilisateurParEmail et changerRole de Mohamed sont ajoutées à UtilisateurC. addUtilisateur crée le compte sans avatar si l’image choisie n’existe pas dans la table images.
 
 ## Sécurité appliquée aux contributions
 
@@ -50,9 +56,9 @@ Cette branche réunit les versions publiées ci-dessous. Les branches sources ne
 | Validation REGEX | Intégrée dans les scripts existants. |
 | Profil utilisateur / modification de son profil | Intégrés avec avatar et mot de passe facultatif. |
 | Admin ne peut pas se supprimer ou se rétrograder | Règles serveur conservées ; la rétrogradation est un helper prêt pour le futur traitement de rôle. |
-| Ajout d’un compte par admin | Traitement non publié dans les six branches. |
+| Ajout d’un compte par admin | Intégré : addUser.php de Mohamed, réservé aux admins, avec jeton CSRF. |
 | Édition d’un autre compte par admin | Aucun écran/traitement complet publié ; la modification personnelle existe. |
-| Changement de rôle | Traitement non publié ; garde de protection disponible. |
+| Changement de rôle | Intégré : promotion par e-mail dans changeRole.php (formulaire POST) et rétrogradation depuis listuser.php ; la règle de Darine empêche de se rétrograder soi-même. |
 | Blocage/déblocage | Intégré avec les méthodes et changerStatut.php d’Eya, boutons POST/CSRF dans les deux listes, refus de blocage de soi-même et révocation des sessions des comptes bloqués. |
 
 L’inscription publique fonctionne maintenant avec le code récemment publié par Eya. Les traitements admin encore absents ci-dessus ne sont pas inventés, conformément à la demande d’intégrer uniquement le travail publié.
@@ -61,7 +67,7 @@ L’inscription publique fonctionne maintenant avec le code récemment publié p
 
 Des commentaires d’auteur sont ajoutés aux sections et méthodes : Houssem, Darine, Amine, Eya, Mohamed et Dorra. Les raccordements communs sont identifiés comme Intégration.
 
-Le seul fichier SQL est yalla_quest.sql. Il contient le schéma complet et, à la fin, l’ALTER qui ajoute pseudo et sa contrainte unique. Pour une base existante où pseudo est absente, exécuter uniquement cet ALTER une fois ; ne pas réimporter tout le schéma sur des données existantes. Si pseudo existe déjà, cet ALTER ne doit pas être rejoué.
+Le seul fichier SQL est yalla_quest.sql. Il peut être importé sur une base neuve comme sur une base existante : la base, les tables et les contraintes déjà présentes sont conservées avec leurs données, et seules les parties manquantes sont créées. Sur une ancienne base sans pseudo, l’import ajoute la colonne et sa contrainte unique ; si elles existent déjà, rien n’est rejoué.
 
 ## Vérifications
 
