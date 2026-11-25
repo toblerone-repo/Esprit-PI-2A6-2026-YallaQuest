@@ -1,5 +1,4 @@
 <?php
-// Équipe : template de base. Houssem : protections CSRF/XSS sur cette interface.
 require_once __DIR__ . '/../../../Controllers/AuthController.php';
 $csrfToken = AuthController::getCsrfToken();
 $cspNonce = $cspNonce ?? bin2hex(random_bytes(16));
@@ -15,7 +14,22 @@ require_once __DIR__ . '/../../../Controllers/AuthController.php';
 $csrfToken = AuthController::getCsrfToken();
 
 
-$currentPage = 'quetes';
+include_once __DIR__ . '/../../../Controllers/queteC.php';
+$queteC = new QueteC(); 
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $titre = $_POST['titre']; 
+    $difficulte = $_POST['difficulte']; 
+    $xp = $_POST['xp']; 
+    $id_categorie = $_POST['id_categorie']; 
+    $id_competence = $_POST['id_competence']; 
+
+    $quete = new Quete($titre, $difficulte, $xp, $id_categorie, $id_competence); 
+
+    $queteC->addQuete($quete); 
+    header('Location: quetes-liste.php'); 
+
+}; 
 
 $quetes = [
     [
@@ -227,14 +241,14 @@ require_once __DIR__ . '/../partials/head.php';
                         <fieldset class="form-group">
                             <legend class="quest-form-label">Difficulté</legend>
                             <div class="quete-difficulte-options">
-                                <input type='radio' class='difficulte-radio' name='difficulte' value="Difficile" id="difficulte-difficile" checked>
-                                <label class='difficulte-pill' for="difficulte-difficile"><i class='fa-solid fa-check'></i>Difficile</label>
+                                <input type='radio' class='difficulte-radio' name='difficulte' value="Difficile" id="difficulte-mod-difficile" checked>
+                                <label class='difficulte-pill' for="difficulte-mod-difficile"><i class='fa-solid fa-check'></i>Difficile</label>
 
-                                <input type='radio' class='difficulte-radio' name='difficulte' value="Moyenne" id="difficulte-moyenne">
-                                <label class='difficulte-pill' for="difficulte-moyenne"><i class='fa-solid fa-check'></i>Moyenne</label>
+                                <input type='radio' class='difficulte-radio' name='difficulte' value="Moyenne" id="difficulte-mod-moyenne">
+                                <label class='difficulte-pill' for="difficulte-mod-moyenne"><i class='fa-solid fa-check'></i>Moyenne</label>
 
-                                <input type='radio' class='difficulte-radio' name='difficulte' value="Facile" id="difficulte-facile">
-                                <label class='difficulte-pill' for="difficulte-facile"><i class='fa-solid fa-check'></i>Facile</label>
+                                <input type='radio' class='difficulte-radio' name='difficulte' value="Facile" id="difficulte-mod-facile">
+                                <label class='difficulte-pill' for="difficulte-mod-facile"><i class='fa-solid fa-check'></i>Facile</label>
                             </div>
                         </fieldset>
 
@@ -243,11 +257,11 @@ require_once __DIR__ . '/../partials/head.php';
                             <legend class="quest-form-label">Compétence</legend>
                             <div class="quete-competence-options">
                                 <?php foreach ($competences as $index => $competence) {
-                                $competence['id'] = (int) $competence['id'];
+                                $competence['id'] =  $competence['id'];
                                     $checked = $index === 0 ? 'checked' : '';
-                                    echo "<input type='radio' class='competence-radio' name='competence' id='competence-modifier-{$competence['id']}' value='{$competence['id']}' {$checked}>";
+                                    echo "<input type='radio' class='competence-radio' name='id_competence' id='competence-modifier-{$competence['id']}' value='{$competence['id']}' {$checked}>";
 
-                                    echo "<label class='competence-pill' for='competence-modifier-{$competence['id']}'><i class='fa-solid fa-check'></i>" . htmlspecialchars($competence['nom'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . "</label>";
+                                    echo "<label class='competence-pill' for='competence-modifier-{$competence['id']}'><i class='fa-solid fa-check'></i>" . htmlspecialchars($competence['nom']) . "</label>";
                                 }
                                 ?>
                             </div>
@@ -257,11 +271,11 @@ require_once __DIR__ . '/../partials/head.php';
                             <legend class="quest-form-label">Catégorie</legend>
                             <div class="quete-categorie-options">
                                 <?php foreach ($categories as $index => $categorie) {
-                                $categorie['id'] = (int) $categorie['id'];
+                                $categorie['id'] =  $categorie['id'];
                                     $checked = $index === 0 ? 'checked' : '';
-                                    echo "<input type='radio' class='categorie-radio' name='categorie' id='categorie-modifier-{$categorie['id']}' value='{$categorie['id']}' {$checked}>";
+                                    echo "<input type='radio' class='categorie-radio' name='id_categorie' id='categorie-modifier-{$categorie['id']}' value='{$categorie['id']}' {$checked}>";
 
-                                    echo "<label class='categorie-pill' for='categorie-modifier-{$categorie['id']}'><i class='fa-solid fa-check'></i>" . htmlspecialchars($categorie['nom'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . "</label>";
+                                    echo "<label class='categorie-pill' for='categorie-modifier-{$categorie['id']}'><i class='fa-solid fa-check'></i>" . htmlspecialchars($categorie['nom']) . "</label>";
                                 }
                                 ?>
                             </div>
@@ -271,7 +285,7 @@ require_once __DIR__ . '/../partials/head.php';
 
                         <div class="form-group">
                             <label class="quest-form-label" for="xp">XP</label>
-                            <input name="xp" id="xp" inputmode="numeric" data-regex="xp" required></input>
+                            <input name="xp" id="xp" type="text"></input>
                             <span class="message-erreur"></span>
                         </div>
 
@@ -291,8 +305,8 @@ require_once __DIR__ . '/../partials/head.php';
                     <form action="quetes-listes.php" method="POST" id="quest-ajout" novalidate>
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
                         <div class="form-group">
-                            <label class="quest-form-label" for="title">Titre</label>
-                            <input type="text" name="title" id="title" required>
+                            <label class="quest-form-label" for="titre">Titre</label>
+                            <input type="text" name="titre" id="titre" >
                             <span class="message-erreur"></span>
 
                         </div>
@@ -316,9 +330,9 @@ require_once __DIR__ . '/../partials/head.php';
                             <legend class="quest-form-label">Compétence</legend>
                             <div class="quete-competence-options">
                                 <?php foreach ($competences as $index => $competence) {
-                                $competence['id'] = (int) $competence['id'];
+                                $competence['id'] =  $competence['id'];
                                     $checked = $index === 0 ? 'checked' : '';
-                                    echo "<input type='radio' class='competence-radio' name='competence' id='competence-ajout-{$competence['id']}' value='{$competence['id']}' {$checked}>";
+                                    echo "<input type='radio' class='competence-radio' name='id_competence' id='competence-ajout-{$competence['id']}' value='{$competence['id']}' {$checked}>";
 
                                     echo "<label class='competence-pill' for='competence-ajout-{$competence['id']}'><i class='fa-solid fa-check'></i>" . htmlspecialchars($competence['nom'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . "</label>";
                                 }
@@ -330,9 +344,9 @@ require_once __DIR__ . '/../partials/head.php';
                             <legend class="quest-form-label">Catégorie</legend>
                             <div class="quete-categorie-options">
                                 <?php foreach ($categories as $index => $categorie) {
-                                $categorie['id'] = (int) $categorie['id'];
+                                $categorie['id'] =  $categorie['id'];
                                     $checked = $index === 0 ? 'checked' : '';
-                                    echo "<input type='radio' class='categorie-radio' name='categorie' id='categorie-ajout-{$categorie['id']}' value='{$categorie['id']}' {$checked}>";
+                                    echo "<input type='radio' class='categorie-radio' name='id_categorie' id='categorie-ajout-{$categorie['id']}' value='{$categorie['id']}' {$checked}>";
 
                                     echo "<label class='categorie-pill' for='categorie-ajout-{$categorie['id']}'><i class='fa-solid fa-check'></i>" . htmlspecialchars($categorie['nom'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . "</label>";
                                 }
@@ -342,7 +356,7 @@ require_once __DIR__ . '/../partials/head.php';
 
                         <div class="form-group">
                             <label class="quest-form-label" for="xp">XP</label>
-                            <input name="xp" id="xp" inputmode="numeric" data-regex="xp" required></input>
+                            <input name="xp" id="xp" type="number"></input>
                             <span class="message-erreur"></span>
 
                         </div>
@@ -375,11 +389,11 @@ require_once __DIR__ . '/../partials/head.php';
 
                     <?php
                     foreach ($quetes as $quete) {
-                $titreHtml = htmlspecialchars((string) ($quete['titre'] ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-                $competenceHtml = htmlspecialchars((string) ($quete['competence'] ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-                $categorieHtml = htmlspecialchars((string) ($quete['categorie'] ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-                $difficulteHtml = htmlspecialchars((string) ($quete['difficulte'] ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-                $xp = (int) ($quete['xp'] ?? 0);
+                $titreHtml = htmlspecialchars((string) ($quete['titre'] ?? ''));
+                $competenceHtml = htmlspecialchars((string) ($quete['competence'] ?? ''));
+                $categorieHtml = htmlspecialchars((string) ($quete['categorie'] ?? ''));
+                $difficulteHtml = htmlspecialchars((string) ($quete['difficulte'] ?? ''));
+                $xp =  ($quete['xp'] ?? 0);
 
                         echo "<tr>"
                             . "<td> {$titreHtml} </td>"

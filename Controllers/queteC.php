@@ -1,6 +1,6 @@
 <?php
 
-include(__DIR__ . '/../config.php');
+require_once __DIR__ . '/../config.php';
 require_once __DIR__ . '/../Models/quete.php';
 
 class QueteC
@@ -27,7 +27,7 @@ class QueteC
     function addQuete(Quete $quete)
     {
         $sql = "INSERT INTO quete (titre, difficulte, xp, id_categorie, id_competence)
-                VALUES (:titre, :difficulte, :xp, :id_cat, :id_comp)";
+                VALUES (:titre, :difficulte, :xp, :id_categorie, :id_competence)";
 
         $db = config::getConnexion();
 
@@ -38,8 +38,8 @@ class QueteC
                     'titre' => $quete->getTitre(),
                     'difficulte' => $quete->getDifficulte(),
                     'xp' => $quete->getXp(),
-                    'id_cat' => $quete->getIdCat(),
-                    'id_comp' => $quete->getIdComp()
+                    'id_categorie' => $quete->getIdCat(),
+                    'id_competence' => $quete->getIdComp()
                 ]
             );
         } catch (Exception $e) {

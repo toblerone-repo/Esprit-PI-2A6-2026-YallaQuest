@@ -160,24 +160,24 @@ $("#ouvrir-formulaire-vide").click(function () {
 });
 
 
-/* document.getElementById("quest-ajout").addEventListener("submit", function (event) {
+document.getElementById("quest-ajout").addEventListener("submit", function (event) {
     event.preventDefault();
     $("#add_quete_btn").prop("disabled", true).text("Enregistrement...");
     let submitValidee = true;
 
-    const titreChamp = $("#quest-ajout input[name='title']");
+    const titreChamp = $("#quest-ajout input[name='titre']");
     const titre = titreChamp.val();
     const xpChamp = $("#quest-ajout input[name='xp']");
     const xp = xpChamp.val();
 
-    if (titre.length === 0 ) {
+    console.log(titreChamp); 
+    if (titre.trim().length === 0) {
         $(titreChamp).next().text("Le champ de titre est obligatoire.");
         submitValidee = false;
     } else if (titre.length >60) {
         $(titreChamp).next().text("Le titre doit être au maximum 60 caractères.");
         submitValidee = false;
     };
-
     if (xp<=0) {
         $(xpChamp).next().text("La valeur d'xp doit être strictement supérieure à 0.");
         submitValidee = false;
@@ -191,4 +191,6 @@ $("#ouvrir-formulaire-vide").click(function () {
 
 
 });
- */
+
+
+

@@ -9,12 +9,15 @@
         private int $id_cat; 
 
 
-        function __construct(string $titre, string $difficulte, int $xp, int $id=NULL)
+        function __construct(string $titre, string $difficulte, int $xp, int $id_cat, int $id_comp, int $id=NULL)
         {
             $this->id = $id; 
             $this->titre =  $titre; 
             $this->difficulte = $difficulte; 
             $this->xp = $xp; 
+            $this->id_cat = $id_cat; 
+            $this->id_comp = $id_comp; 
+
         } 
 
         function getId(){

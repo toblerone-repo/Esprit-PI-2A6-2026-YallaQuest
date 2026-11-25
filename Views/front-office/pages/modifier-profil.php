@@ -36,7 +36,7 @@ if (!$ancienUtilisateur) { http_response_code(404); exit('Compte introuvable.');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     foreach (['nom', 'prenom', 'email'] as $field) {
-        if (!is_string($_POST[$field] ?? null)) { http_response_code(400); echo json_encode('Données invalides.', JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); exit; }
+        if (!is_string($_POST[$field] ?? null)) { http_response_code(400); echo json_encode('Données invalides.'); exit; }
     }
     $hash = $ancienUtilisateur['mot_de_passe_hash'];
 
@@ -52,27 +52,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($changerMotDePasse) {
         if (!is_string($ancien_mot_de_passe) || $ancien_mot_de_passe === '' ||
             !is_string($nouveau_mp) || strlen(trim($nouveau_mp)) < 8 || $nouveau_mp !== $confirmation_mp) {
-            echo json_encode("Données invalides.", JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
+            echo json_encode("Données invalides.");
             exit();
         }
 
         $resultat = password_verify($ancien_mot_de_passe, $hash);
 
         if (!$resultat) {
-            echo json_encode(false, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
+            echo json_encode(false);
             exit();
         }
     }
 
     if (empty(trim($nom)) || empty(trim($prenom)) || filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
-        echo json_encode("Données invalides.", JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
+        echo json_encode("Données invalides.");
         exit();
     }
     $imgProfil = $_POST['img_profil'] ?? $ancienUtilisateur['img_profil'] ?? '';
     $id_images = array_map('strval', array_column($images, 'id'));
 
     if (!is_string($imgProfil) || ($imgProfil !== '' && !in_array($imgProfil, $id_images, true))) {
-        echo json_encode('Imadge de profil invalide.', JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
+        echo json_encode('Imadge de profil invalide.');
         exit();
     }
 
@@ -88,7 +88,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    echo json_encode($resultat, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
+    echo json_encode($resultat);
     exit();
 };
 
