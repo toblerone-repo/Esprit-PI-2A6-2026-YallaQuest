@@ -178,7 +178,7 @@ $competences = [
 
 $difficultes = ["Difficile", "Moyenne", "Facile"];
 
-$pas_de_prog = false;
+$pas_de_prog = count($quetes)===0? true : false;
 
 ?>
 
@@ -198,7 +198,7 @@ $pas_de_prog = false;
 <body>
 <?php include_once __DIR__ . '/../includes/navbar.php'; ?>
 
-    <div class="container <?= htmlspecialchars((string) ($pas_de_prog ? 'sans-programmation' : ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>" id="liste-quetes-cartes">
+    <div class="container <?= htmlspecialchars((string) ($pas_de_prog ? 'sans-programmation' : '')) ?>" id="liste-quetes-cartes">
         <p id="message-acceuil">Des vraies quêtes chaque jour. <br> Cinq compétences qui progressent à chaque fois que tu te lèves et bouges.</p>
         <h1 id="titre-acceuil">CONQUIERS TA JOURNÉE</h1>
 
@@ -364,10 +364,10 @@ $pas_de_prog = false;
         <div id="quetes-grid" class="row mb-3">
             <?php
             foreach ($quetes as $quete) {
-                $titreHtml = htmlspecialchars((string) ($quete['titre'] ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-                $competenceHtml = htmlspecialchars((string) ($quete['competence'] ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-                $categorieHtml = htmlspecialchars((string) ($quete['categorie'] ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-                $difficulteHtml = htmlspecialchars((string) ($quete['difficulte'] ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+                $titreHtml = htmlspecialchars((string) ($quete['titre'] ?? ''));
+                $competenceHtml = htmlspecialchars((string) ($quete['competence'] ?? ''));
+                $categorieHtml = htmlspecialchars((string) ($quete['categorie'] ?? ''));
+                $difficulteHtml = htmlspecialchars((string) ($quete['difficulte'] ?? ''));
                 $xp = (int) ($quete['xp'] ?? 0);
                 $echeanceAujourdhui = $quete['echeance_aujourdhui'];
                 $messageEcheance = $echeanceAujourdhui ? "<p class='quete-carte-echeance'>⏳ Échéance aujourd'hui</p>" : "";
@@ -398,28 +398,12 @@ $pas_de_prog = false;
 
         </div>
 
-        <div class="btn-div-form">
-            <button style="background-color: black; border-color: aliceblue; color: aliceblue; margin-top: 800px;" type="button" id="demo-toggle-programmation" class="submit-btn">
-                Démo
-            </button>
-        </div>
+
     </div>
 
-    <?php
-    $competencesPourJs = [];
-    foreach ($competences as $competenceJs) {
-        $competenceJs['id'] = (int) $competenceJs['id'];
-        $competenceJs['nom'] = htmlspecialchars((string) $competenceJs['nom'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-        $competencesPourJs[] = $competenceJs;
-    }
-    $difficultesPourJs = [];
-    foreach ($difficultes as $difficulteJs) {
-        $difficultesPourJs[] = htmlspecialchars((string) $difficulteJs, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-    }
-    ?>
     <script nonce="<?= htmlspecialchars($cspNonce ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
-        const competences = <?php echo json_encode($competencesPourJs, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;
-        const difficultes = <?php echo json_encode($difficultesPourJs, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;
+        const competences = <?php echo json_encode($competences, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;
+        const difficultes = <?php echo json_encode($difficultes, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;
     </script>
     <script nonce="<?= htmlspecialchars($cspNonce ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>" src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script nonce="<?= htmlspecialchars($cspNonce ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>" src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.bundle.min.js"></script>
