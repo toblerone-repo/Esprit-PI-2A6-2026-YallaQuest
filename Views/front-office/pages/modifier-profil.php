@@ -121,17 +121,17 @@ $pageTitle = 'Modifier mon profil · Yalla Quest';
                 <div class="field-grid">
                     <div class="field">
                         <label for="prenom">Prénom</label>
-                        <input class="input" type="text" id="prenom" name="prenom" value="<?php echo htmlspecialchars($ancienUtilisateur['prenom'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
+                        <input class="input" type="text" id="prenom" name="prenom" value="<?php echo htmlspecialchars($ancienUtilisateur['prenom']) ?>">
                         <span></span>
                     </div>
                     <div class="field">
                         <label for="nom">Nom</label>
-                        <input class="input" type="text" id="nom" name="nom" value="<?php echo htmlspecialchars($ancienUtilisateur['nom'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
+                        <input class="input" type="text" id="nom" name="nom" value="<?php echo htmlspecialchars($ancienUtilisateur['nom']) ?>">
                         <span></span>
                     </div>
                     <div class="field full">
                         <label for="email">E-mail</label>
-                        <input class="input" type="email" id="email" name="email" value="<?php echo htmlspecialchars($ancienUtilisateur['mail'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
+                        <input class="input" type="email" id="email" name="email" value="<?php echo htmlspecialchars($ancienUtilisateur['mail']) ?>">
                         <span></span>
                     </div>
                     <fieldset class="choix-avatars full">
@@ -143,10 +143,10 @@ $pageTitle = 'Modifier mon profil · Yalla Quest';
                             ?>
                                 <label class="option-avatar">
                                     <input type="radio" name="img_profil"
-                                        value="<?= htmlspecialchars($idImage, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>"
-                                        aria-label="<?= htmlspecialchars('Image de profil ' . $idImage, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>"
+                                        value="<?= htmlspecialchars($idImage) ?>"
+                                        aria-label="<?= htmlspecialchars('Image de profil ' . $idImage) ?>"
                                         <?= $estSelectionnee ? 'checked' : '' ?>>
-                                    <img src="<?= htmlspecialchars($image['chemin'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>"
+                                    <img src="<?= htmlspecialchars($image['chemin']) ?>"
                                         alt="" width="64" height="64">
                                 </label>
                             <?php } ?>
