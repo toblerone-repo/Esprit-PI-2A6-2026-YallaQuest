@@ -81,5 +81,20 @@ class QueteC
         }
     }
 
+    //To remove after integration
+    public function listCompetencesTemp()
+    {
+        $sql = "SELECT *
+            FROM competence
+            ORDER BY id_competence";
 
+        $db = config::getConnexion();
+
+        try {
+            $query = $db->query($sql);
+            return $query->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            echo 'Error: ' . $e->getMessage();
+        }
+    }
 }

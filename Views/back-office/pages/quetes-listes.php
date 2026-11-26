@@ -15,7 +15,9 @@ $csrfToken = AuthController::getCsrfToken();
 
 
 include_once __DIR__ . '/../../../Controllers/queteC.php';
+include_once __DIR__ . '/../../../Controllers/categorieC.php';
 $queteC = new QueteC(); 
+$categorieC = new CategorieC(); 
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $titre = $_POST['titre']; 
@@ -27,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $quete = new Quete($titre, $difficulte, $xp, $id_categorie, $id_competence); 
 
     $queteC->addQuete($quete); 
-    header('Location: quetes-liste.php'); 
+    header('Location: quetes-listes.php'); 
 
 }; 
 
@@ -170,44 +172,38 @@ $quetes = [
     ]
 ];
 
-$competences = [
-    [
-        'id' => 1,
-        'nom' => 'Nutrition',
-        'description' => 'Quêtes liées à une alimentation saine et équilibrée.'
-    ],
-    [
-        'id' => 2,
-        'nom' => 'Endurance',
-        'description' => 'Quêtes visant à améliorer la résistance physique et cardiovasculaire.'
-    ],
-    [
-        'id' => 3,
-        'nom' => 'Mobilité',
-        'description' => 'Quêtes favorisant la souplesse, les étirements et la mobilité du corps.'
-    ],
-    [
-        'id' => 4,
-        'nom' => 'Focus',
-        'description' => 'Quêtes visant à améliorer la concentration, la relaxation et le bien-être mental.'
-    ],
-    [
-        'id' => 5,
-        'nom' => 'Force',
-        'description' => 'Quêtes destinées à développer la force et le renforcement musculaire.'
-    ]
-];
+$competences = $queteC->listCompetencesTemp(); 
+$categories = $categorieC->listCategories(); 
+
+// $competences = [
+//     [
+//         'id_competence' => 1,
+//         'nom' => 'Nutrition',
+//         'description' => 'Quêtes liées à une alimentation saine et équilibrée.'
+//     ],
+//     [
+//         'id_competence' => 2,
+//         'nom' => 'Endurance',
+//         'description' => 'Quêtes visant à améliorer la résistance physique et cardiovasculaire.'
+//     ],
+//     [
+//         'id_competence' => 3,
+//         'nom' => 'Mobilité',
+//         'description' => 'Quêtes favorisant la souplesse, les étirements et la mobilité du corps.'
+//     ],
+//     [
+//         'id_competence' => 4,
+//         'nom' => 'Focus',
+//         'description' => 'Quêtes visant à améliorer la concentration, la relaxation et le bien-être mental.'
+//     ],
+//     [
+//         'id_competence' => 5,
+//         'nom' => 'Force',
+//         'description' => 'Quêtes destinées à développer la force et le renforcement musculaire.'
+//     ]
+// ];
 
 
-$categories = [
-    ['id' => 1, 'nom' => 'Recette', 'id_type_activite' => 1],
-    ['id' => 2, 'nom' => 'Marche', 'id_type_activite' => 2],
-    ['id' => 3, 'nom' => 'Étirements', 'id_type_activite' => 3],
-    ['id' => 4, 'nom' => 'Exercice de respiration', 'id_type_activite' => 4],
-    ['id' => 5, 'nom' => 'Renforcement musculaire', 'id_type_activite' => 5],
-    ['id' => 6, 'nom' => 'Yoga', 'id_type_activite' => 3],
-    ['id' => 7, 'nom' => 'Pause sans écran', 'id_type_activite' => 6]
-];
 
 
 ?>
@@ -257,11 +253,11 @@ require_once __DIR__ . '/../partials/head.php';
                             <legend class="quest-form-label">Compétence</legend>
                             <div class="quete-competence-options">
                                 <?php foreach ($competences as $index => $competence) {
-                                $competence['id'] =  $competence['id'];
+                                $competence['id_competence'] =  $competence['id_competence'];
                                     $checked = $index === 0 ? 'checked' : '';
-                                    echo "<input type='radio' class='competence-radio' name='id_competence' id='competence-modifier-{$competence['id']}' value='{$competence['id']}' {$checked}>";
+                                    echo "<input type='radio' class='competence-radio' name='id_competence' id='competence-modifier-{$competence['id_competence']}' value='{$competence['id_competence']}' {$checked}>";
 
-                                    echo "<label class='competence-pill' for='competence-modifier-{$competence['id']}'><i class='fa-solid fa-check'></i>" . htmlspecialchars($competence['nom']) . "</label>";
+                                    echo "<label class='competence-pill' for='competence-modifier-{$competence['id_competence']}'><i class='fa-solid fa-check'></i>" . htmlspecialchars($competence['nom']) . "</label>";
                                 }
                                 ?>
                             </div>
@@ -271,11 +267,11 @@ require_once __DIR__ . '/../partials/head.php';
                             <legend class="quest-form-label">Catégorie</legend>
                             <div class="quete-categorie-options">
                                 <?php foreach ($categories as $index => $categorie) {
-                                $categorie['id'] =  $categorie['id'];
+                                $categorie['id_categorie'] =  $categorie['id_categorie'];
                                     $checked = $index === 0 ? 'checked' : '';
-                                    echo "<input type='radio' class='categorie-radio' name='id_categorie' id='categorie-modifier-{$categorie['id']}' value='{$categorie['id']}' {$checked}>";
+                                    echo "<input type='radio' class='categorie-radio' name='id_categorie' id='categorie-modifier-{$categorie['id_categorie']}' value='{$categorie['id_categorie']}' {$checked}>";
 
-                                    echo "<label class='categorie-pill' for='categorie-modifier-{$categorie['id']}'><i class='fa-solid fa-check'></i>" . htmlspecialchars($categorie['nom']) . "</label>";
+                                    echo "<label class='categorie-pill' for='categorie-modifier-{$categorie['id_categorie']}'><i class='fa-solid fa-check'></i>" . htmlspecialchars($categorie['nom']) . "</label>";
                                 }
                                 ?>
                             </div>
@@ -330,11 +326,11 @@ require_once __DIR__ . '/../partials/head.php';
                             <legend class="quest-form-label">Compétence</legend>
                             <div class="quete-competence-options">
                                 <?php foreach ($competences as $index => $competence) {
-                                $competence['id'] =  $competence['id'];
+                                $competence['id_competence'] =  $competence['id_competence'];
                                     $checked = $index === 0 ? 'checked' : '';
-                                    echo "<input type='radio' class='competence-radio' name='id_competence' id='competence-ajout-{$competence['id']}' value='{$competence['id']}' {$checked}>";
+                                    echo "<input type='radio' class='competence-radio' name='id_competence' id='competence-ajout-{$competence['id_competence']}' value='{$competence['id_competence']}' {$checked}>";
 
-                                    echo "<label class='competence-pill' for='competence-ajout-{$competence['id']}'><i class='fa-solid fa-check'></i>" . htmlspecialchars($competence['nom'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . "</label>";
+                                    echo "<label class='competence-pill' for='competence-ajout-{$competence['id_competence']}'><i class='fa-solid fa-check'></i>" . htmlspecialchars($competence['nom'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . "</label>";
                                 }
                                 ?>
                             </div>
@@ -344,11 +340,11 @@ require_once __DIR__ . '/../partials/head.php';
                             <legend class="quest-form-label">Catégorie</legend>
                             <div class="quete-categorie-options">
                                 <?php foreach ($categories as $index => $categorie) {
-                                $categorie['id'] =  $categorie['id'];
+                                $categorie['id_categorie'] =  $categorie['id_categorie'];
                                     $checked = $index === 0 ? 'checked' : '';
-                                    echo "<input type='radio' class='categorie-radio' name='id_categorie' id='categorie-ajout-{$categorie['id']}' value='{$categorie['id']}' {$checked}>";
+                                    echo "<input type='radio' class='categorie-radio' name='id_categorie' id='categorie-ajout-{$categorie['id_categorie']}' value='{$categorie['id_categorie']}' {$checked}>";
 
-                                    echo "<label class='categorie-pill' for='categorie-ajout-{$categorie['id']}'><i class='fa-solid fa-check'></i>" . htmlspecialchars($categorie['nom'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . "</label>";
+                                    echo "<label class='categorie-pill' for='categorie-ajout-{$categorie['id_categorie']}'><i class='fa-solid fa-check'></i>" . htmlspecialchars($categorie['nom'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . "</label>";
                                 }
                                 ?>
                             </div>
