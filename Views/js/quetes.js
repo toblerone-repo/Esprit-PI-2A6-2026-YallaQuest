@@ -132,7 +132,25 @@ $(".bouton-supprimer").click(function () {
 
 $(".action-btn.mod-btn").click(function () {
 
-    $("#form-modifier-quete").slideToggle("slow");
+    const id = $(this).data("id"); 
+    $.getJSON("quetes-listes.php", {id_quete: id})
+    .done(function(quete){
+        const form = $("#quest-modifier"); 
+
+        form.find("[name='id_quete']").val(quete.id_quete); 
+        form.find("[name='titre']").val(quete.titre); 
+        form.find("[name='difficulte']").val([quete.difficulte]); 
+        form.find("[name='xp']").val(quete.xp); 
+        form.find("[name='id_competence']").val([quete.id_competence]); 
+        form.find("[name='id_categorie']").val([quete.id_categorie]); 
+
+        $("#form-modifier-quete").slideToggle("slow");
+    })
+    .fail(function(){
+        alert("Impossible de charger la quête."); 
+    }); 
+
+    
 });
 
 
@@ -199,6 +217,7 @@ document.getElementById("quest-ajout").addEventListener("submit", function (even
 
 
 });
+
 
 
 

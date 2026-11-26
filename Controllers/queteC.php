@@ -71,14 +71,31 @@ class QueteC
 
     function deleteQuete(int $id)
     {
+        $sql = 'DELETE FROM quete WHERE id_quete = :id';
+        $db = config::getConnexion();
         try {
-            $db = config::getConnexion();
-            $query = $db->prepare('DELETE FROM quete WHERE id_quete = :id');
+
+            $query = $db->prepare($sql);
             $query->execute(['id' => $id]);
             echo $query->rowCount() . " record(s) DELETED";
         } catch (PDOException $e) {
             echo 'Error: ' . $e->getMessage();
         }
+    }
+
+    function chargerQuete(int $id_quete)
+    {
+
+        $sql = 'SELECT * FROM quete WHERE id_quete = :id';
+        $db = config::getConnexion();
+        try {
+
+            $query = $db->prepare($sql);
+            $query->execute(['id' => $id_quete]);
+            return $query->fetch();
+        } catch (PDOException $e) {
+            echo 'Error: ' . $e->getMessage();
+        }; 
     }
 
     //To remove after integration
