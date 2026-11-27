@@ -33,27 +33,20 @@ if (in_array($_SERVER['REQUEST_METHOD'] ?? 'GET', ['POST', 'PUT', 'PATCH', 'DELE
 // Les vues appelées par ce routeur vérifient cette constante (accès direct interdit).
 define('YQ_ROUTEUR', true);
 
+$authController = new AuthController();
 $action = is_string($_GET['action'] ?? null) ? $_GET['action'] : 'accueil';
 
 switch ($action) {
     // ---------------- ACCUEIL ----------------
     case 'accueil':
-        if (!AuthController::isAuthenticated()) {
-            header('Location: Views/front-office/pages/acceuil.php');
-            exit;
-        }
-        if (($_SESSION['role'] ?? '') === 'admin') {
-            header('Location: Views/back-office/pages/listuser.php');
-            exit;
-        }
         header('Location: Views/front-office/pages/quetes-programmation.php');
         exit;
 
     // ---------------- LOGIN ----------------
     case 'login':
         if (AuthController::isAuthenticated()) {
-            // Déjà connecté : l'admin retourne au back-office, l'utilisateur à ses quêtes.
-            header('Location: ' . (($_SESSION['role'] ?? '') === 'admin' ? 'Views/back-office/pages/listuser.php' : 'Views/front-office/pages/quetes-programmation.php'));
+            // Déjà connecté : l'admin retourne au back-office, l'utilisateur à son espace.
+            header('Location: ' . (($_SESSION['role'] ?? '') === 'admin' ? 'Views/back-office/pages/listuser.php' : 'index.php?action=dashboard'));
             exit;
         }
         $errors = [];
@@ -61,15 +54,14 @@ switch ($action) {
         // Amine : arrivée depuis le compteur d'inactivité (Views/js/session-timeout.js) : la vue affiche un message.
         $sessionExpiree = isset($_GET['expire']);
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $authController = new AuthController();
             $email = is_string($_POST['email'] ?? null) ? trim($_POST['email']) : '';
             $errors = $authController->login($_POST);
             if (empty($errors)) {
-                // Admin : liste des aventuriers ; utilisateur : programmation des quêtes.
+                // Admin : directement au back-office (liste des aventuriers) ; utilisateur : son espace.
                 if (($_SESSION['role'] ?? '') === 'admin') {
                     header('Location: Views/back-office/pages/listuser.php');
                 } else {
-                    header('Location: Views/front-office/pages/quetes-programmation.php');
+                    header('Location: index.php?action=dashboard');
                 }
                 exit;
             }
@@ -82,7 +74,6 @@ switch ($action) {
         if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
             http_response_code(405); header('Allow: POST'); exit('La déconnexion doit être envoyée par POST.');
         }
-        $authController = new AuthController();
         $authController->logout();
         // Amine : &expire=1 : déconnexion automatique par le compteur d'inactivité.
         header('Location: index.php?action=login' . (isset($_GET['expire']) ? '&expire=1' : ''));
@@ -105,7 +96,6 @@ switch ($action) {
     // ---------------- USER SPACE (role: user - frontoffice) ----------------
     case 'dashboard':
         AuthController::requireRole('user');
-        $authController = new AuthController();
         $user = $authController->findById((int) $_SESSION['user_id']);
         if (!$user) {               // compte supprimé alors que la session est encore active
             $authController->logout();
