@@ -12,141 +12,88 @@ if (in_array($_SERVER['REQUEST_METHOD'] ?? 'GET', ['POST', 'PUT', 'PATCH', 'DELE
 require_once __DIR__ . '/../../../Controllers/AuthController.php';
 $csrfToken = AuthController::getCsrfToken();
 
+AuthController::requireAuth();
+
+$id = $_SESSION['user_id'] ?? null;
 
 $currentPage = 'quetes-programmation';
 
-$quetes = [
+
+$programmation = [
     [
+        'id_programmation' => 1,
+        'id_utilisateur' => 2,
         'id_quete' => 1,
+        'date_debut' => '2026-11-24',
+        'date_fin' => '2026-11-27',
+        'statut' => 'programmee',
         'titre' => 'Préparer une salade méchouia.',
-        'consignes' => '',
         'difficulte' => 'Facile',
         'xp' => 10,
-        'competence' => 'Nutrition',
-        'categorie' => 'Recette',
-        'type_activite' => [
-            'libelle' => 'Cuisine',
-            'unite' => 'portion'
-        ],
-        'contenu_details' => 'Prépare une salade méchouia maison avec des légumes grillés, de l’huile d’olive et les épices de ton choix.',
-        'selected' => false,
-        'echeance_aujourdhui' => true
+        'competence' => 'Nutrition'
     ],
     [
-        'id_quete' => 2,
-        'titre' => 'Marcher 30 minutes près de chez soi.',
-        'consignes' => '',
+        'id_programmation' => 2,
+        'id_utilisateur' => 2,
+        'id_quete' => 20,
+        'date_debut' => '2026-11-25',
+        'date_fin' => '2026-11-28',
+        'statut' => 'selectionnee',
+        'titre' => 'Marcher 20 minutes dans son quartier.',
+        'difficulte' => 'Facile',
+        'xp' => 10,
+        'competence' => 'Endurance'
+    ],
+    [
+        'id_programmation' => 3,
+        'id_utilisateur' => 2,
+        'id_quete' => 34,
+        'date_debut' => '2026-11-24',
+        'date_fin' => '2026-11-27',
+        'statut' => 'programmee',
+        'titre' => 'Pratiquer 10 minutes de yoga doux au réveil.',
+        'difficulte' => 'Facile',
+        'xp' => 10,
+        'competence' => 'Mobilité'
+    ],
+    [
+        'id_programmation' => 4,
+        'id_utilisateur' => 2,
+        'id_quete' => 43,
+        'date_debut' => '2026-11-25',
+        'date_fin' => '2026-11-28',
+        'statut' => 'selectionnee',
+        'titre' => 'Suivre 15 minutes d\'exercices de respiration guidée.',
         'difficulte' => 'Moyenne',
         'xp' => 25,
-        'competence' => 'Endurance',
-        'categorie' => 'Marche',
-        'type_activite' => [
-            'libelle' => 'Physique',
-            'unite' => 'kilomètre'
-        ],
-        'contenu_details' => 'Profite d’une promenade de 30 minutes à ton rythme. Choisis un itinéraire agréable et reste en mouvement.',
-        'selected' => true,
-        'echeance_aujourdhui' => false
+        'competence' => 'Focus'
     ],
     [
-        'id_quete' => 3,
-        'titre' => "Séance d'étirements guidée.",
-        'consignes' => '',
+        'id_programmation' => 5,
+        'id_utilisateur' => 2,
+        'id_quete' => 50,
+        'date_debut' => '2026-11-27',
+        'date_fin' => '2026-11-30',
+        'statut' => 'programmee',
+        'titre' => 'Faire 2 séries de 8 pompes contre un mur.',
         'difficulte' => 'Facile',
         'xp' => 10,
-        'competence' => 'Mobilité',
-        'categorie' => 'Étirements',
-        'type_activite' => [
-            'libelle' => 'Souplesse',
-            'unite' => 'minute'
-        ],
-        'contenu_details' => 'Réalise une série d’étirements doux pour détendre tes muscles et améliorer ta souplesse.',
-        'selected' => false,
-        'echeance_aujourdhui' => false
+        'competence' => 'Force'
     ],
     [
-        'id_quete' => 4,
-        'titre' => '10 minutes de respiration guidée.',
-        'consignes' => '',
-        'difficulte' => 'Facile',
-        'xp' => 10,
-        'competence' => 'Focus',
-        'categorie' => 'Exercice de respiration',
-        'type_activite' => [
-            'libelle' => 'Respiration',
-            'unite' => 'minute'
-        ],
-        'contenu_details' => 'Installe-toi dans un endroit calme et concentre-toi sur ta respiration pendant 10 minutes.',
-        'selected' => true,
-        'echeance_aujourdhui' => true
-    ],
-    [
-        'id_quete' => 5,
-        'titre' => 'Renforcement adapté à son niveau.',
-        'consignes' => '',
-        'difficulte' => 'Difficile',
-        'xp' => 50,
-        'competence' => 'Force',
-        'categorie' => 'Renforcement musculaire',
-        'type_activite' => [
-            'libelle' => 'Musculation',
-            'unite' => 'répétition'
-        ],
-        'contenu_details' => 'Effectue des exercices de renforcement musculaire adaptés à tes capacités, comme des squats ou des pompes.',
-        'selected' => false,
-        'echeance_aujourdhui' => false
-    ],
-
-    [
-        'id_quete' => 6,
-        'titre' => "Chacun marche 20 minutes avant l'échéance.",
-        'consignes' => '',
+        'id_programmation' => 6,
+        'id_utilisateur' => 2,
+        'id_quete' => 15,
+        'date_debut' => '2026-11-27',
+        'date_fin' => '2026-11-30',
+        'statut' => 'programmee',
+        'titre' => 'Préparer une salade de lentilles et de légumes.',
         'difficulte' => 'Moyenne',
         'xp' => 25,
-        'competence' => 'Endurance',
-        'categorie' => 'Marche',
-        'type_activite' => [
-            'libelle' => 'Physique',
-            'unite' => 'kilomètre'
-        ],
-        'contenu_details' => 'Chaque membre de la guilde marche 20 minutes avant la date limite. Les XP sont attribués après la participation de tous.',
-        'selected' => false,
-        'echeance_aujourdhui' => false
-    ],
-    [
-        'id_quete' => 7,
-        'titre' => 'Faire 15 minutes de yoga doux.',
-        'consignes' => '',
-        'difficulte' => 'Facile',
-        'xp' => 10,
-        'competence' => 'Mobilité',
-        'categorie' => 'Yoga',
-        'type_activite' => [
-            'libelle' => 'Souplesse',
-            'unite' => 'minute'
-        ],
-        'contenu_details' => 'Pratique une courte séance de yoga pour détendre ton corps et améliorer ta souplesse.',
-        'selected' => false,
-        'echeance_aujourdhui' => false
-    ],
-    [
-        'id_quete' => 8,
-        'titre' => 'Prendre une pause sans écran pendant 20 minutes.',
-        'consignes' => '',
-        'difficulte' => 'Facile',
-        'xp' => 10,
-        'competence' => 'Focus',
-        'categorie' => 'Pause sans écran',
-        'type_activite' => [
-            'libelle' => 'Bien-être',
-            'unite' => 'minute'
-        ],
-        'contenu_details' => 'Éloigne-toi des écrans pendant 20 minutes et profite d’une activité calme.',
-        'selected' => true,
-        'echeance_aujourdhui' => false
+        'competence' => 'Nutrition'
     ]
-
 ];
+
 
 $competences = [
     [
@@ -178,7 +125,7 @@ $competences = [
 
 $difficultes = ["Difficile", "Moyenne", "Facile"];
 
-$pas_de_prog = count($quetes)===0? true : false;
+$pas_de_prog = count($programmation)===0? true : false;
 
 ?>
 
@@ -199,7 +146,7 @@ $pas_de_prog = count($quetes)===0? true : false;
 <?php include_once __DIR__ . '/../includes/navbar.php'; ?>
 
     <div class="container <?= htmlspecialchars((string) ($pas_de_prog ? 'sans-programmation' : '')) ?>" id="liste-quetes-cartes">
-        <p id="message-acceuil">Des vraies quêtes chaque jour. <br> Cinq compétences qui progressent à chaque fois que tu te lèves et bouges.</p>
+        <p id="message-acceuil">Des vraies quêtes chaque jour. <br> Des compétences qui progressent à chaque fois que tu te lèves et bouges.</p>
         <h1 id="titre-acceuil">CONQUIERS TA JOURNÉE</h1>
 
         <div id="etat-sans-programmation" class="btn-div-form">
@@ -363,28 +310,24 @@ $pas_de_prog = count($quetes)===0? true : false;
 
         <div id="quetes-grid" class="row mb-3">
             <?php
-            foreach ($quetes as $quete) {
-                $titreHtml = htmlspecialchars((string) ($quete['titre'] ?? ''));
-                $competenceHtml = htmlspecialchars((string) ($quete['competence'] ?? ''));
-                $categorieHtml = htmlspecialchars((string) ($quete['categorie'] ?? ''));
-                $difficulteHtml = htmlspecialchars((string) ($quete['difficulte'] ?? ''));
-                $xp = (int) ($quete['xp'] ?? 0);
-                $echeanceAujourdhui = $quete['echeance_aujourdhui'];
-                $messageEcheance = $echeanceAujourdhui ? "<p class='quete-carte-echeance'>⏳ Échéance aujourd'hui</p>" : "";
-                $boutons = $quete['selected'] ? "" : "<button class='btn bouton-modifier p-1'><i class='fa-solid fa-clock'></i></button><button class='btn bouton-supprimer p-1'><i class='fa-solid fa-trash'></i></button>";
-                $iconeStatut = $quete['selected'] ? 'fa-solid fa-circle-check' : 'fa-regular fa-circle';
-                $texteStatut = $quete['selected'] ? 'Quête sélectionnée' : 'Sélectionner cette quête';
-                $statutDesactive = $quete['selected'] ? 'disabled' : '';
+            foreach ($programmation as $quete) {
+                $dateFin = new DateTimeImmutable($quete['date_fin']); 
+                $aujourdhui = new DateTimeImmutable("today"); 
+                $messageEcheance = $dateFin == $aujourdhui ? "<p class='quete-carte-echeance'>⏳ Échéance aujourd'hui</p>" : "";
+                $boutons = $quete['statut'] == "selectionnee" ? "" : "<button class='btn bouton-modifier p-1'><i class='fa-solid fa-clock'></i></button><button class='btn bouton-supprimer p-1'><i class='fa-solid fa-trash'></i></button>";
+                $iconeStatut = $quete['statut'] == "selectionnee" ? 'fa-solid fa-circle-check' : 'fa-regular fa-circle';
+                $texteStatut = $quete['statut'] == "selectionnee" ? 'Quête sélectionnée' : 'Sélectionner cette quête';
+                $statutDesactive = $quete['statut'] == "selectionnee" ? 'disabled' : '';
                 echo "<div class='col-2 px-1 quete-carte-div'>"
                     . "<div class='quete-carte p-3'>"
                     . "<div class='quete-carte-header'>"
-                    . "<p class='quete-carte-competence'>{$competenceHtml} &#183; </p>"
-                    . "<p class='quete-carte-difficulte'>{$difficulteHtml}</p>"
-                    . "<button type='button' class='quete-carte-statut' aria-label='{$texteStatut}' title='{$texteStatut}' {$statutDesactive}><i class='{$iconeStatut}' aria-hidden='true'></i></button>"
+                    . "<p class='quete-carte-competence'>".htmlspecialchars($quete['competence']) . "&#183; </p>"
+                    . "<p class='quete-carte-difficulte'>".htmlspecialchars($quete['difficulte']) ."</p>"
+                    . "<button type='button' class='quete-carte-statut' title='{$texteStatut}' {$statutDesactive}><i class='{$iconeStatut}' aria-hidden='true'></i></button>"
                     . "</div>"
-                    . "<p class='quete-carte-titre'>{$titreHtml}</p>"
+                    . "<p class='quete-carte-titre'>".htmlspecialchars($quete['titre']) ."</p>"
                     . "<div class='carte-footer-div'>"
-                    . "<p class='quete-carte-xp'>{$xp}XP</p>"
+                    . "<p class='quete-carte-xp'>".htmlspecialchars($quete['xp']) ."XP</p>"
                     . "<div class='cartes-btn-div'>"
                     . $boutons
                     . "</div>"
