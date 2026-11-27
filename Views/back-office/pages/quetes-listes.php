@@ -45,6 +45,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $queteC->updateQuete($quete, $id); 
         header('Location: quetes-listes.php');
+    }else if(isset($_POST['supprimer'])){
+        $id = $_POST['id_quete']; 
+        $queteC->deleteQuete($id); 
     };
 } else if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     if (isset($_GET['id_quete'])) {
@@ -243,22 +246,18 @@ require_once __DIR__ . '/../partials/head.php';
 
                 <?php
                 foreach ($quetes as $quete) {
-                    $titreHtml = htmlspecialchars((string) ($quete['titre'] ?? ''));
-                    $competenceHtml = htmlspecialchars((string) ($quete['competence'] ?? ''));
-                    $categorieHtml = htmlspecialchars((string) ($quete['categorie'] ?? ''));
-                    $difficulteHtml = htmlspecialchars((string) ($quete['difficulte'] ?? ''));
-                    $xp =  ($quete['xp'] ?? 0);
-
                     echo "<tr>"
-                        . "<td> {$titreHtml} </td>"
-                        . "<td> {$competenceHtml}</td>"
-                        . "<td> {$categorieHtml}</td>"
-                        . "<td> {$difficulteHtml}</td>"
-                        . "<td> {$xp}</td>"
+                        . "<td> {$quete['titre']} </td>"
+                        . "<td> {$quete['competence']}</td>"
+                        . "<td> {$quete['categorie']}</td>"
+                        . "<td> {$quete['difficulte']}</td>"
+                        . "<td> {$quete['xp']}</td>"
                         . "<td class='cellule-actions'>"
                         . "<div class='actions-boutons'>"
                         . "<button data-id='{$quete['id_quete']}' name='mod-btn' type='button' class='action-btn mod-btn'> <i class='fa-solid fa-pen'></i></button>"
-                        . "<button data-id='{$quete['id_quete']}' name='supp-btn' type='button' class='action-btn supp-btn'><i class='fa-solid fa-trash'></i> </button>"
+                        ."<form action='quetes-listes.php' method='POST'>"
+                        . "<button name='supprimer' data-id='{$quete['id_quete']}' name='supp-btn' type='submit' class='action-btn supp-btn'><i class='fa-solid fa-trash'></i> </button>"
+                        ."</form>"
                         . "</div>"
                         . "</td>"
                         . "</tr>";

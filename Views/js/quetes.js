@@ -130,29 +130,6 @@ $(".bouton-supprimer").click(function () {
     $(this).closest(".quete-carte-div").remove();
 });
 
-$(".action-btn.mod-btn").click(function () {
-
-    const id = $(this).data("id"); 
-    $.getJSON("quetes-listes.php", {id_quete: id})
-    .done(function(quete){
-        const form = $("#quest-modifier"); 
-
-        form.find("[name='id_quete']").val(quete.id_quete); 
-        form.find("[name='titre']").val(quete.titre); 
-        form.find("[name='difficulte']").val([quete.difficulte]); 
-        form.find("[name='xp']").val(quete.xp); 
-        form.find("[name='id_competence']").val([quete.id_competence]); 
-        form.find("[name='id_categorie']").val([quete.id_categorie]); 
-
-        $("#form-modifier-quete").slideToggle("slow");
-    })
-    .fail(function(){
-        alert("Impossible de charger la quête."); 
-    }); 
-
-    
-});
-
 
 $("#extension-quete-form").on("submit", function (event) {
     event.preventDefault();
@@ -214,6 +191,50 @@ document.getElementById("quest-ajout").addEventListener("submit", function (even
     } else {
         $("#add_quete_btn").prop("disabled", false).text("Enregistrer");
     };
+
+
+});
+
+$(".action-btn.mod-btn").click(function () {
+
+    const id = $(this).data("id");
+    $.getJSON("quetes-listes.php", { id_quete: id })
+        .done(function (quete) {
+            const form = $("#quest-modifier");
+
+            form.find("[name='id_quete']").val(quete.id_quete);
+            form.find("[name='titre']").val(quete.titre);
+            form.find("[name='difficulte']").val([quete.difficulte]);
+            form.find("[name='xp']").val(quete.xp);
+            form.find("[name='id_competence']").val([quete.id_competence]);
+            form.find("[name='id_categorie']").val([quete.id_categorie]);
+
+            $("#form-modifier-quete").slideToggle("slow");
+        })
+        .fail(function () {
+            alert("Impossible de charger la quête.");
+        });
+
+
+});
+
+$(".action-btn.supp-btn").click(function (event) {
+    event.preventDefault();
+    const bouton = $(this);
+    const id = bouton.data("id");
+    $.post("quetes-listes.php",
+        {
+            id_quete: id,
+            supprimer: true,
+            csrf_token: $("meta[name='csrf-token']").attr("content")
+
+        })
+        .done(function () {
+            bouton.closest("tr").remove();
+        })
+        .fail(function () {
+            alert("Impossible de supprimer la quête.");
+        });
 
 
 });
