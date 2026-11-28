@@ -15,7 +15,7 @@ class ProgrammationQuete
         $this->id_quete = $id_quete;
         $this->id_utilisateur = $id_utilisateur;
         $this->dateDebut = new DateTimeImmutable("today");
-        $this->dateFin = $this->dateDebut->add(new DateInterval("P5D"));
+        $this->dateFin = $this->dateDebut->add(new DateInterval("P2D"));
         $this->statut = "programmee";
     }
 

@@ -1,7 +1,7 @@
 <?php
-include(__DIR__ . '/../config.php');
-include(__DIR__ . '/../Model/programmation-quete.php');
-include(__DIR__ . '/../Model/quete.php');
+include_once(__DIR__ . '/../config.php');
+include_once(__DIR__ . '/../Models/programmation-quete.php');
+include_once(__DIR__ . '/../Models/quete.php');
 
 class ProgrammationQueteC
 {
@@ -97,14 +97,11 @@ class ProgrammationQueteC
         };
     }
 
-    function createProgrammationQuete(array $donnees, array $quetes_programmees, int $id_utilisateur)
+    function createProgrammationQuete(array $donnees, int $id_utilisateur)
     {
         $programmation = [];
         $id_quetes_programmees = [];
 
-        foreach ($quetes_programmees as $p) {
-            $id_quetes_programmees[] = $p['id_quete'];
-        };
 
         $db = config::getConnexion();
 
@@ -132,7 +129,7 @@ class ProgrammationQueteC
                         };
                     };
                     $liste = array_values($liste);
-                    if (count($liste) !== 0) {
+                   
                         $index = random_int(0, count($liste) - 1);
                         $prog_cree = new ProgrammationQuete($liste[$index]['id_quete'], $id_utilisateur);
                         $sql = "INSERT INTO programmation (id_quete, id_utilisateur, date_debut, date_fin, statut)
@@ -158,7 +155,7 @@ class ProgrammationQueteC
                                 $e
                             );
                         };
-                    };
+                    
                 };
             } catch (Exception $e) {
                 error_log($e->getMessage());
