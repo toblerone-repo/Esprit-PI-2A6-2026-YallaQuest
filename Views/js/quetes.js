@@ -47,6 +47,11 @@ $(".quete-carte").each(function (index) {
 
 
 document.getElementById("ajouter-quete")?.addEventListener("click", function () {
+    if (nbInputChamps === 5) {
+        this.disabled = true;
+        return;
+    };
+
     nbInputChamps++;
     const queteSection = document.getElementById("quete-section");
     const queteInputChamp = document.createElement("fieldset");
@@ -59,9 +64,9 @@ document.getElementById("ajouter-quete")?.addEventListener("click", function () 
     let html = "";
     competences.forEach((competence, index) => {
         const checked = index === 0 ? 'checked' : '';
-        html += `<input type='radio' class='competence-radio' name='competence-${nbInputChamps}' id='competence-${nbInputChamps}-${escapeHtml(competence.id)}' value='${escapeHtml(competence.id)}' ${checked}>`
+        html += `<input type='radio' class='competence-radio' name='competence-${nbInputChamps}' id='competence-${nbInputChamps}-${escapeHtml(competence.id_competence)}' value='${escapeHtml(competence.id_competence)}' ${checked}>`
             +
-            `<label class='competence-pill' for='competence-${nbInputChamps}-${escapeHtml(competence.id)}'><i class='fa-solid fa-check'></i> ${escapeHtml(competence.nom)}</label>`;
+            `<label class='competence-pill' for='competence-${nbInputChamps}-${escapeHtml(competence.id_competence)}'><i class='fa-solid fa-check'></i> ${escapeHtml(competence.nom)}</label>`;
     });
 
     queteCompetenceOptions.innerHTML =
@@ -89,6 +94,7 @@ document.getElementById("ajouter-quete")?.addEventListener("click", function () 
     queteSection.append(queteInputChamp);
 
 });
+
 
 
 
@@ -155,9 +161,8 @@ $("#ouvrir-formulaire-vide").click(function () {
 });
 
 
-document.getElementById("quest-ajout").addEventListener("submit", function (event) {
+document.getElementById("quest-ajout")?.addEventListener("submit", function (event) {
     event.preventDefault();
-    console.log(new FormData(event.target));
     $("#add_quete_btn").prop("disabled", true).text("Enregistrement...");
     let submitValidee = true;
 
@@ -236,6 +241,18 @@ $(".action-btn.supp-btn").click(function (event) {
             alert("Impossible de supprimer la quête.");
         });
 
+
+});
+
+if (nbQuetesProgrammees >= 7) {
+    $("#charger-1quete-btn").prop("disabled", true);
+    $(".surprise-btn").prop("disabled", true);
+};
+
+$("#programmation-quetes-form").submit(function (event) {
+    $("#add_quete_btn").prop("disabled", true).text("Enregistrement...");
+    $(this).find('input[name="nb-inputs"]').val(nbInputChamps); 
+    $("#programmation-quetes-form button[name='submit-btn']").prop("disabled", false).text("Enregistrer");
 
 });
 
