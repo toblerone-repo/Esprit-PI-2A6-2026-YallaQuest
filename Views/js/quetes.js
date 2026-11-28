@@ -251,13 +251,13 @@ if (nbQuetesProgrammees >= 7) {
 
 $("#programmation-quetes-form").submit(function (event) {
     $("#add_quete_btn").prop("disabled", true).text("Enregistrement...");
-    $(this).find('input[name="nb-inputs"]').val(nbInputChamps); 
+    $(this).find('input[name="nb-inputs"]').val(nbInputChamps);
     $("#programmation-quetes-form button[name='submit-btn']").prop("disabled", false).text("Enregistrer");
 
 });
 
-$(".bouton-supprimer").click(function(event){
-    event.preventDefault(); 
+$(".bouton-supprimer").click(function (event) {
+    event.preventDefault();
     const bouton = $(this);
     const id = bouton.data("id");
     $.post("quetes-programmation.php",
@@ -271,11 +271,27 @@ $(".bouton-supprimer").click(function(event){
             bouton.closest(".quete-carte-div").remove();
 
             if ($("#quetes-grid .quete-carte-div").length === 0) {
-                $("#liste-quetes-cartes").addClass("sans-programmation"); 
+                $("#liste-quetes-cartes").addClass("sans-programmation");
             }
         })
         .fail(function () {
             alert("Impossible de supprimer la programmation.");
+        });
+});
+
+$(".bouton-modifier").click(function (event) {
+    event.preventDefault();
+    const bouton = $(this);
+    const id = bouton.data("id");
+    $.post("quetes-programmation.php",
+        {
+            id_prog: id,
+            modifier: true,
+            csrf_token: $("meta[name='csrf-token']").attr("content")
+
+        })
+        .fail(function () {
+            alert("Impossible de modifier la programmation.");
         });
 })
 

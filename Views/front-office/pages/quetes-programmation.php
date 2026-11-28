@@ -16,12 +16,17 @@ $csrfToken = AuthController::getCsrfToken();
 
 AuthController::requireAuth();
 
-$id_utilisateur = $_SESSION['user_id'] ?? null;
+
 
 $currentPage = 'quetes-programmation';
 
 include_once __DIR__ . '/../../../Controllers/queteC.php';
 include_once __DIR__ . '/../../../Controllers/programmation-queteC.php';
+include_once __DIR__ . '/../../../Controllers/utilisateurC.php';
+
+$id_utilisateur = $_SESSION['user_id'] ?? null;
+$utilisateurC = new UtilisateurC();
+$utilisateur = $utilisateurC->getUtilisateur($id_utilisateur);
 $queteC = new QueteC();
 $programmationC = new ProgrammationQueteC();
 $competences = $queteC->listCompetencesTemp(); //Replace with darine's function
@@ -53,6 +58,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else if (isset($_POST['quete-surprise'])) {
         $programmation = $programmationC->readProgrammation($id_utilisateur);
         $programmationC->createProgrammationMagique($id_utilisateur, $programmation);
+        header("Location: quetes-programmation.php");
+        exit();
+    } else if (isset($_POST['modifier'])) {
+        $id = $_POST['id_prog'];
+        $programmationC->modifierProgrammation($id, $id_utilisateur);
         header("Location: quetes-programmation.php");
         exit();
     };
@@ -226,10 +236,12 @@ $pas_de_prog = count($programmation) === 0 ? true : false;
                     <input type="hidden" name="id-programmation" id="id-programmation-extension">
 
                     <div class="btn-div-form">
+                        <form action="quetes-programmation.php" method="post">
+                            <button name="confirmer-extension" type="submit" id="confirmer-extension" class="submit-btn">
+                                Confirmer 1+ jour
+                            </button>
+                        </form>
 
-                        <button type="submit" id="confirmer-extension" class="submit-btn">
-                            Confirmer 1+ jour
-                        </button>
 
                         <button type="button" class="bouton-modifier annuler-extension">
                             Pas maintenant
@@ -250,10 +262,21 @@ $pas_de_prog = count($programmation) === 0 ? true : false;
                 $dateFin = new DateTimeImmutable($quete['date_fin']);
                 $aujourdhui = new DateTimeImmutable("today");
                 $messageEcheance = $dateFin == $aujourdhui ? "<p class='quete-carte-echeance'>⏳ Échéance aujourd'hui</p>" : "";
+
+                $dateProlongation = $utilisateur->getDerniereProlongationAt();
+                $boutonModification = "<form action='quetes-programmation.php' method='post'><button data-id=" . $quete['id_programmation'] . " class='btn bouton-modifier p-1'><i class='fa-solid fa-clock'></i></button></form>";
+                if ($dateProlongation != null) {
+                    $dateProlongation= new DateTimeImmutable($dateProlongation); 
+
+                    if ($dateProlongation->format("Y-m-d") == $aujourdhui->format("Y-m-d")) {
+                        $boutonModification = ""; 
+                    }
+                }
+
                 $boutons =
                     $quete['statut'] == "selectionnee" ? ""
                     :
-                    "<button class='btn bouton-modifier p-1'><i class='fa-solid fa-clock'></i></button>"
+                    $boutonModification
                     . "<form action='quetes-programmation.php' method='post'> <button data-id=" . $quete['id_programmation'] . " type='submit' class='btn bouton-supprimer p-1'><i class='fa-solid fa-trash'></i></button></form>";
                 $iconeStatut = $quete['statut'] == "selectionnee" ? 'fa-solid fa-circle-check' : 'fa-regular fa-circle';
                 $texteStatut = $quete['statut'] == "selectionnee" ? 'Quête sélectionnée' : 'Sélectionner cette quête';

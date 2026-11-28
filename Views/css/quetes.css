@@ -112,8 +112,9 @@ body {
 }
 
 .cartes-btn-div {
-  display: inline;
+  display: flex;
   align-self: flex-end;
+  gap: 4px;
 }
 
 .carte-footer-div {

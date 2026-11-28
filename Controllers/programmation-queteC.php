@@ -194,8 +194,6 @@ class ProgrammationQueteC
                 $e
             );
         };
-
-
     }
 
     function createProgrammationQuete(array $donnees, int $id_utilisateur)
@@ -286,10 +284,16 @@ class ProgrammationQueteC
 
     function modifierProgrammation(int $id_programmation, int $id_utilisateur)
     {
-        $sql = "UPDATE programmation
-                SET date_fin = DATE_ADD(date_fin, INTERVAL 1 DAY)
+        $sql = "UPDATE programmation AS p
+                JOIN utilisateur AS u ON p.id_utilisateur = u.id_utilisateur
+                SET p.date_fin = DATE_ADD(date_fin, INTERVAL 1 DAY),
+                u.derniere_prolongation_at = NOW()
                 WHERE id_programmation = :id_programmation
-                  AND id_utilisateur = :id_utilisateur";
+                AND p.id_utilisateur = :id_utilisateur
+                 AND (
+                    u.derniere_prolongation_at IS NULL 
+                    OR DATE(u.derniere_prolongation_at) < CURDATE()
+                )";
 
         $db = config::getConnexion();
         try {
