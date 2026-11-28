@@ -102,9 +102,7 @@ $queteC = new QueteC();
 $programmationC = new ProgrammationQueteC();
 $competences = $queteC->listCompetencesTemp(); //Replace with darine's function
 $difficultes = ["Difficile", "Moyenne", "Facile"];
-$programmation = $programmationC->readProgrammation($id_utilisateur);
 
-$pas_de_prog = count($programmation) === 0 ? true : false;
 
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -125,11 +123,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // echo '</pre>';
         // exit;
 
-        $programmation = $programmationC->createProgrammationQuete($donnees, $id_utilisateur); 
-    } 
+        $programmationC->createProgrammationQuete($donnees, $id_utilisateur);
+    }
 };
 
-
+$programmation = $programmationC->readProgrammation($id_utilisateur);
+$pas_de_prog = count($programmation) === 0 ? true : false;
 ?>
 
 
