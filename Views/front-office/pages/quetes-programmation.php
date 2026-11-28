@@ -107,24 +107,18 @@ $difficultes = ["Difficile", "Moyenne", "Facile"];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['generer-quetes'])) {
-        // echo '<pre>';
-        // print_r($_POST);
-        // echo '</pre>';
-        // exit;
-
         $donnees = [];
         for ($i = 1; $i <= $_POST['nb-inputs']; $i++) {
             $donnees['competence-' . $i] = $_POST['competence-' . $i];
             $donnees['difficulte-' . $i] = $_POST['difficulte-' . $i];
         };
-
-        // echo '<pre>';
-        // print_r($donnees);
-        // echo '</pre>';
-        // exit;
-
         $programmationC->createProgrammationQuete($donnees, $id_utilisateur);
-    }
+        header("Location: quetes-programmation.php"); 
+        exit(); 
+    }else if(isset($_POST['supprimer'])){
+        $id = $_POST['id_prog']; 
+        $programmationC->deleteProgrammationQuete($id); 
+    };
 };
 
 $programmation = $programmationC->readProgrammation($id_utilisateur);
@@ -314,7 +308,11 @@ $pas_de_prog = count($programmation) === 0 ? true : false;
                 $dateFin = new DateTimeImmutable($quete['date_fin']);
                 $aujourdhui = new DateTimeImmutable("today");
                 $messageEcheance = $dateFin == $aujourdhui ? "<p class='quete-carte-echeance'>⏳ Échéance aujourd'hui</p>" : "";
-                $boutons = $quete['statut'] == "selectionnee" ? "" : "<button class='btn bouton-modifier p-1'><i class='fa-solid fa-clock'></i></button><button class='btn bouton-supprimer p-1'><i class='fa-solid fa-trash'></i></button>";
+                $boutons = 
+                    $quete['statut'] == "selectionnee" ? "" 
+                    : 
+                    "<button class='btn bouton-modifier p-1'><i class='fa-solid fa-clock'></i></button>"
+                    ."<form action='quetes-programmation.php' method='post'> <button data-id=".$quete['id_programmation'] ." type='submit' class='btn bouton-supprimer p-1'><i class='fa-solid fa-trash'></i></button></form>";
                 $iconeStatut = $quete['statut'] == "selectionnee" ? 'fa-solid fa-circle-check' : 'fa-regular fa-circle';
                 $texteStatut = $quete['statut'] == "selectionnee" ? 'Quête sélectionnée' : 'Sélectionner cette quête';
                 $statutDesactive = $quete['statut'] == "selectionnee" ? 'disabled' : '';

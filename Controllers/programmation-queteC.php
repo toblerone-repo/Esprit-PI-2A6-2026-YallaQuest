@@ -240,9 +240,12 @@ class ProgrammationQueteC
 
     function deleteProgrammationQuete(int $id)
     {
+
+        $sql = "DELETE FROM programmation WHERE id_programmation = :id"; 
+    $db = config::getConnexion();
         try {
-            $db = config::getConnexion();
-            $query = $db->prepare('DELETE FROM programmation WHERE id_programmation = :id');
+
+            $query = $db->prepare($sql);
             $query->execute(['id' => $id]);
             echo $query->rowCount() . " record(s) DELETED";
         } catch (PDOException $e) {
