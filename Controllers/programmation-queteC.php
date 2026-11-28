@@ -51,7 +51,7 @@ class ProgrammationQueteC
         try {
             $quetes = new QueteC();
             $liste = $quetes->listquetes();
-           
+
 
             if (count($liste) !== 0) {
 
@@ -97,6 +97,35 @@ class ProgrammationQueteC
         };
     }
 
+    function checkQueteProgUnicite(int $id_quete, int $id_utilisateur, string $date_debut)
+    {
+        $sql = "SELECT * 
+                FROM programmation AS p
+                WHERE p.id_utilisateur = :id_utilisateur
+                AND p.id_quete = :id_quete
+                AND p.date_debut = :date_debut
+                  ";
+
+        $db = config::getConnexion();
+
+        try {
+            $liste = $db->prepare($sql);
+            $liste->execute([
+                ':id_utilisateur' => $id_utilisateur,
+                ':id_quete' => $id_quete,
+                ':date_debut' => $date_debut
+            ]);
+            return count($liste->fetchAll()) === 0;
+        } catch (Exception $e) {
+            error_log($e->getMessage());
+            throw new RuntimeException(
+                "Impossible d'accèder les programmations.",
+                0,
+                $e
+            );
+        };
+    }
+
     function createProgrammationQuete(array $donnees, int $id_utilisateur)
     {
         $programmation = [];
@@ -129,33 +158,44 @@ class ProgrammationQueteC
                         };
                     };
                     $liste = array_values($liste);
-                   
-                        $index = random_int(0, count($liste) - 1);
-                        $prog_cree = new ProgrammationQuete($liste[$index]['id_quete'], $id_utilisateur);
-                        $sql = "INSERT INTO programmation (id_quete, id_utilisateur, date_debut, date_fin, statut)
-                                VALUES (:id_quete, :id_utilisateur, :dateDebut, :dateFin, :statut)";
+                    $essai = 0;
+                    $prog_cree_check = false;
+                    if (count($liste) !== 0) {
+                        while (!$prog_cree_check && $essai < 3 && count($liste) > 0) {
+                            $index = random_int(0, count($liste) - 1);
+                            $prog_cree = new ProgrammationQuete($liste[$index]['id_quete'], $id_utilisateur);
+                            if ($this->checkQueteProgUnicite($liste[$index]['id_quete'], $id_utilisateur, (new DateTimeImmutable("today"))->format("Y-m-d"))) {
+                                $sql = "INSERT INTO programmation (id_quete, id_utilisateur, date_debut, date_fin, statut)
+                                        VALUES (:id_quete, :id_utilisateur, :dateDebut, :dateFin, :statut)";
 
-                        try {
-                            $query = $db->prepare($sql);
-                            $query->execute([
-                                'id_quete' => $prog_cree->getIdQuete(),
-                                'id_utilisateur' => $id_utilisateur,
-                                'dateDebut' => $prog_cree->getDateDebut()->format("Y-m-d"),
-                                'dateFin' => $prog_cree->getDateFin()->format("Y-m-d"),
-                                'statut' => $prog_cree->getStatut()
-                            ]);
+                                try {
+                                    $query = $db->prepare($sql);
+                                    $query->execute([
+                                        'id_quete' => $prog_cree->getIdQuete(),
+                                        'id_utilisateur' => $id_utilisateur,
+                                        'dateDebut' => $prog_cree->getDateDebut()->format("Y-m-d"),
+                                        'dateFin' => $prog_cree->getDateFin()->format("Y-m-d"),
+                                        'statut' => $prog_cree->getStatut()
+                                    ]);
 
-                            $id_quetes_programmees[] = $prog_cree->getIdQuete();
-                            $programmation[] = $prog_cree;
-                        } catch (Exception $e) {
-                            error_log($e->getMessage());
-                            throw new RuntimeException(
-                                "Impossible d'enregistrer la programmation.",
-                                0,
-                                $e
-                            );
+                                    $id_quetes_programmees[] = $prog_cree->getIdQuete();
+                                    $programmation[] = $prog_cree;
+                                    $prog_cree_check = true;
+                                } catch (Exception $e) {
+                                    error_log($e->getMessage());
+                                    throw new RuntimeException(
+                                        "Impossible d'enregistrer la programmation.",
+                                        0,
+                                        $e
+                                    );
+                                };
+                            } else {
+                                $essai++;
+                                unset($liste[$index]);
+                                $liste = array_values($liste);
+                            }
                         };
-                    
+                    }
                 };
             } catch (Exception $e) {
                 error_log($e->getMessage());

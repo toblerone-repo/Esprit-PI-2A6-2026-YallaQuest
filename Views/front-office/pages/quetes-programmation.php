@@ -234,9 +234,9 @@ $pas_de_prog = count($programmation) === 0 ? true : false;
                                 <div class="quete-competence-options">
                                     <?php foreach ($competences as $index => $competence) {
                                         $checked1 = $index === 0 ? 'checked' : '';
-                                        echo "<input type='radio' class='competence-radio' name='competence' id='competence-{$competence['id']}' value='{$competence['id']}' {$checked1}>";
+                                        echo "<input type='radio' class='competence-radio' name='competence' id='competence-{$competence['id_competence']}' value='{$competence['id_competence']}' {$checked1}>";
 
-                                        echo "<label class='competence-pill' for='competence-{$competence['id']}'><i class='fa-solid fa-check'></i>" . htmlspecialchars($competence['nom'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . "</label>";
+                                        echo "<label class='competence-pill' for='competence-{$competence['id_competence']}'><i class='fa-solid fa-check'></i>" . htmlspecialchars($competence['nom']) . "</label>";
                                     }
                                     ?>
                                 </div>
@@ -259,7 +259,7 @@ $pas_de_prog = count($programmation) === 0 ? true : false;
 
 
                     <div class="btn-div-form">
-                        <button type="submit" class="submit-btn btn">Enregistrer</button>
+                        <button name="generer-1-quete" type="submit" class="submit-btn btn">Enregistrer</button>
                     </div>
 
 
