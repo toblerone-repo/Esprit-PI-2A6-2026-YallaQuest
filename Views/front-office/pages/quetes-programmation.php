@@ -20,82 +20,6 @@ $id_utilisateur = $_SESSION['user_id'] ?? null;
 
 $currentPage = 'quetes-programmation';
 
-
-// $programmation = [
-//     [
-//         'id_programmation' => 1,
-//         'id_utilisateur' => 2,
-//         'id_quete' => 1,
-//         'date_debut' => '2026-11-24',
-//         'date_fin' => '2026-11-27',
-//         'statut' => 'programmee',
-//         'titre' => 'Préparer une salade méchouia.',
-//         'difficulte' => 'Facile',
-//         'xp' => 10,
-//         'competence' => 'Nutrition'
-//     ],
-//     [
-//         'id_programmation' => 2,
-//         'id_utilisateur' => 2,
-//         'id_quete' => 20,
-//         'date_debut' => '2026-11-25',
-//         'date_fin' => '2026-11-28',
-//         'statut' => 'selectionnee',
-//         'titre' => 'Marcher 20 minutes dans son quartier.',
-//         'difficulte' => 'Facile',
-//         'xp' => 10,
-//         'competence' => 'Endurance'
-//     ],
-//     [
-//         'id_programmation' => 3,
-//         'id_utilisateur' => 2,
-//         'id_quete' => 34,
-//         'date_debut' => '2026-11-24',
-//         'date_fin' => '2026-11-27',
-//         'statut' => 'programmee',
-//         'titre' => 'Pratiquer 10 minutes de yoga doux au réveil.',
-//         'difficulte' => 'Facile',
-//         'xp' => 10,
-//         'competence' => 'Mobilité'
-//     ],
-//     [
-//         'id_programmation' => 4,
-//         'id_utilisateur' => 2,
-//         'id_quete' => 43,
-//         'date_debut' => '2026-11-25',
-//         'date_fin' => '2026-11-28',
-//         'statut' => 'selectionnee',
-//         'titre' => 'Suivre 15 minutes d\'exercices de respiration guidée.',
-//         'difficulte' => 'Moyenne',
-//         'xp' => 25,
-//         'competence' => 'Focus'
-//     ],
-//     [
-//         'id_programmation' => 5,
-//         'id_utilisateur' => 2,
-//         'id_quete' => 50,
-//         'date_debut' => '2026-11-27',
-//         'date_fin' => '2026-11-30',
-//         'statut' => 'programmee',
-//         'titre' => 'Faire 2 séries de 8 pompes contre un mur.',
-//         'difficulte' => 'Facile',
-//         'xp' => 10,
-//         'competence' => 'Force'
-//     ],
-//     [
-//         'id_programmation' => 6,
-//         'id_utilisateur' => 2,
-//         'id_quete' => 15,
-//         'date_debut' => '2026-11-27',
-//         'date_fin' => '2026-11-30',
-//         'statut' => 'programmee',
-//         'titre' => 'Préparer une salade de lentilles et de légumes.',
-//         'difficulte' => 'Moyenne',
-//         'xp' => 25,
-//         'competence' => 'Nutrition'
-//     ]
-// ];
-
 include_once __DIR__ . '/../../../Controllers/queteC.php';
 include_once __DIR__ . '/../../../Controllers/programmation-queteC.php';
 $queteC = new QueteC();
@@ -113,11 +37,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $donnees['difficulte-' . $i] = $_POST['difficulte-' . $i];
         };
         $programmationC->createProgrammationQuete($donnees, $id_utilisateur);
-        header("Location: quetes-programmation.php"); 
-        exit(); 
-    }else if(isset($_POST['supprimer'])){
-        $id = $_POST['id_prog']; 
-        $programmationC->deleteProgrammationQuete($id); 
+        header("Location: quetes-programmation.php");
+        exit();
+    } else if (isset($_POST['supprimer'])) {
+        $id = $_POST['id_prog'];
+        $programmationC->deleteProgrammationQuete($id);
+    } else if (isset($_POST['generer-1-quete'])) {
+        $programmation = $programmationC->readProgrammation($id_utilisateur);
+        $donnees = [];
+        $donnees['competence'] = $_POST['competence'];
+        $donnees['difficulte'] = $_POST['difficulte'];
+        $programmationC->createUneProgrammationQuete($donnees, $programmation, $id_utilisateur);
+        header("Location: quetes-programmation.php");
+        exit();
+    } else if (isset($_POST['quete-surprise'])) {
+        $programmation = $programmationC->readProgrammation($id_utilisateur);
+        $programmationC->createProgrammationMagique($id_utilisateur, $programmation);
+        header("Location: quetes-programmation.php");
+        exit();
     };
 };
 
@@ -204,7 +141,11 @@ $pas_de_prog = count($programmation) === 0 ? true : false;
 
         <div id="filter-btn-div">
             <button class="submit-btn" id="charger-1quete-btn">Ajouter une quête</button>
-            <button class="surprise-btn submit-btn">Quête surprise!</button>
+            <form action="quetes-programmation.php" method="post">
+                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
+                <button name="quete-surprise" class="surprise-btn submit-btn">Quête surprise!</button>
+            </form>
+
             <!-- <div class="dropdown">
                 <button class="btn submit-btn dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     Trier selon
@@ -219,7 +160,8 @@ $pas_de_prog = count($programmation) === 0 ? true : false;
         </div>
         <div id="ajouter-queteprog-div">
             <div class="container form-container" id="ajout-1quete-form">
-                <form action="quetes-programmation.php" method="post">
+                <form action="quetes-programmation.php" method="post" id="formulaire-ajouter-1quete">
+                    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
                     <h1 class="form-title">Ajouter une quête</h1>
                     <div id="quete-section">
                         <fieldset class="quete-champ">
@@ -308,11 +250,11 @@ $pas_de_prog = count($programmation) === 0 ? true : false;
                 $dateFin = new DateTimeImmutable($quete['date_fin']);
                 $aujourdhui = new DateTimeImmutable("today");
                 $messageEcheance = $dateFin == $aujourdhui ? "<p class='quete-carte-echeance'>⏳ Échéance aujourd'hui</p>" : "";
-                $boutons = 
-                    $quete['statut'] == "selectionnee" ? "" 
-                    : 
+                $boutons =
+                    $quete['statut'] == "selectionnee" ? ""
+                    :
                     "<button class='btn bouton-modifier p-1'><i class='fa-solid fa-clock'></i></button>"
-                    ."<form action='quetes-programmation.php' method='post'> <button data-id=".$quete['id_programmation'] ." type='submit' class='btn bouton-supprimer p-1'><i class='fa-solid fa-trash'></i></button></form>";
+                    . "<form action='quetes-programmation.php' method='post'> <button data-id=" . $quete['id_programmation'] . " type='submit' class='btn bouton-supprimer p-1'><i class='fa-solid fa-trash'></i></button></form>";
                 $iconeStatut = $quete['statut'] == "selectionnee" ? 'fa-solid fa-circle-check' : 'fa-regular fa-circle';
                 $texteStatut = $quete['statut'] == "selectionnee" ? 'Quête sélectionnée' : 'Sélectionner cette quête';
                 $statutDesactive = $quete['statut'] == "selectionnee" ? 'disabled' : '';

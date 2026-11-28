@@ -56,7 +56,6 @@ class ProgrammationQueteC
             if (count($liste) !== 0) {
 
                 foreach ($liste as $index => $quete) {
-
                     if (in_array($quete['id_quete'], $id_quetes_programmees)) {
                         unset($liste[$index]);
                     };
@@ -124,6 +123,79 @@ class ProgrammationQueteC
                 $e
             );
         };
+    }
+
+    function createUneProgrammationQuete(array $donnees, array $quetes_programmees, int $id_utilisateur)
+    {
+        $id_quetes_programmees = [];
+        foreach ($quetes_programmees as $p) {
+            $id_quetes_programmees[] = $p['id_quete'];
+        };
+
+        $db = config::getConnexion();
+
+
+        $sql = "SELECT q.id_quete FROM quete AS q
+                    WHERE q.id_competence = :id_comp AND q.difficulte = :difficulte";
+
+
+        try {
+
+            $candidats = $db->prepare($sql);
+
+            $candidats->execute([
+                ':id_comp' => $donnees["competence"],
+                'difficulte' => $donnees["difficulte"]
+            ]);
+            $liste = $candidats->fetchAll();
+
+            if (count($liste) !== 0) {
+
+                foreach ($liste as $index => $l) {
+
+                    if (in_array($l['id_quete'], $id_quetes_programmees)) {
+                        unset($liste[$index]);
+                    };
+                };
+                $liste = array_values($liste);
+
+                if (count($liste) !== 0) {
+                    $index = random_int(0, count($liste) - 1);
+                    $prog_cree = new ProgrammationQuete($liste[$index]['id_quete'], $id_utilisateur);
+                    $sql = "INSERT INTO programmation (id_quete, id_utilisateur, date_debut, date_fin, statut)
+                                        VALUES (:id_quete, :id_utilisateur, :dateDebut, :dateFin, :statut)";
+
+                    try {
+                        $query = $db->prepare($sql);
+                        $query->execute([
+                            'id_quete' => $prog_cree->getIdQuete(),
+                            'id_utilisateur' => $id_utilisateur,
+                            'dateDebut' => $prog_cree->getDateDebut()->format("Y-m-d"),
+                            'dateFin' => $prog_cree->getDateFin()->format("Y-m-d"),
+                            'statut' => $prog_cree->getStatut()
+                        ]);
+
+                        return $query->fetchAll();
+                    } catch (Exception $e) {
+                        error_log($e->getMessage());
+                        throw new RuntimeException(
+                            "Impossible d'enregistrer la programmation.",
+                            0,
+                            $e
+                        );
+                    };
+                };
+            };
+        } catch (Exception $e) {
+            error_log($e->getMessage());
+            throw new RuntimeException(
+                "Impossible de sélectionner les quêtes.",
+                0,
+                $e
+            );
+        };
+
+
     }
 
     function createProgrammationQuete(array $donnees, int $id_utilisateur)
@@ -241,8 +313,8 @@ class ProgrammationQueteC
     function deleteProgrammationQuete(int $id)
     {
 
-        $sql = "DELETE FROM programmation WHERE id_programmation = :id"; 
-    $db = config::getConnexion();
+        $sql = "DELETE FROM programmation WHERE id_programmation = :id";
+        $db = config::getConnexion();
         try {
 
             $query = $db->prepare($sql);
