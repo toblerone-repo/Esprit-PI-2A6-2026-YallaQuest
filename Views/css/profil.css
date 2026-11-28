@@ -100,6 +100,18 @@
     font-weight: 600;
 }
 
+.actions-profil {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    width: 100%;
+}
+
+.form-action-profil {
+    flex: 1;
+    margin: 0;
+}
+
 .bouton-modifier-profil {
     width: 100%;
     padding: 0.8rem;
@@ -110,10 +122,45 @@
     font-size: 0.9rem;
     font-weight: 600;
     cursor: pointer;
+    transition: background 0.15s ease;
 }
 
 .bouton-modifier-profil:hover {
     background: #F4D8F8;
+}
+
+.bouton-deconnexion-profil {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 0.8rem 1.4rem;
+    border: 1px solid rgba(239, 68, 68, 0.4);
+    border-radius: 9px;
+    background: rgba(239, 68, 68, 0.12);
+    color: #fca5a5;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.bouton-deconnexion-profil:hover {
+    background: rgba(239, 68, 68, 0.22);
+    border-color: #ef4444;
+    color: #ffffff;
+    text-decoration: none;
+}
+
+@media (max-width: 600px) {
+    .actions-profil {
+        flex-direction: column;
+    }
+    .bouton-deconnexion-profil {
+        width: 100%;
+    }
 }
 
 .grille-statistiques {

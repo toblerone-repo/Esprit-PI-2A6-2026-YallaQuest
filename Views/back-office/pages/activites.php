@@ -1,20 +1,25 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Gestion des activités de chaque quête sur YallaQuest.">
-  <title>Activités - Administration YallaQuest</title>
+<?php
+// Eya : activités. Houssem : protection CSRF/XSS.
+require_once __DIR__ . '/../../../Controllers/AuthController.php';
+$csrfToken = AuthController::getCsrfToken();
+$cspNonce = $cspNonce ?? bin2hex(random_bytes(16));
+$currentPage = 'activites';
+if (in_array($_SERVER['REQUEST_METHOD'] ?? 'GET', ['POST', 'PUT', 'PATCH', 'DELETE'], true)
+    && !AuthController::verifyCsrfToken($_POST['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? null)) {
+    http_response_code(403);
+    exit('Jeton de sécurité invalide. Rechargez la page.');
+}
+AuthController::requireRole('admin');
 
+require_once __DIR__ . '/../../../Controllers/AuthController.php';
+$csrfToken = AuthController::getCsrfToken();
 
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Playfair+Display&display=swap">
-
-  
-  <link rel="stylesheet" href="../../css/journal-admin.css">
-</head>
-<body>
-<?php include_once __DIR__ . '/../partials/sidebar.php'; ?>
-<?php include_once __DIR__ . '/../partials/header.php'; ?>
+?>
+<?php
+$title           = 'Activités - Administration YallaQuest';
+$currentPage     = 'activites';
+require_once __DIR__ . '/../partials/head.php';
+?>
 
 
 <div class="journal-admin">
@@ -265,6 +270,7 @@
     </div>
 
     <form action="#" method="post">
+                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
       <div class="journal-grille-formulaire">
         <div class="journal-champ">
           <label for="quete">Quête</label>
@@ -467,7 +473,7 @@
 
 </div>
 
-<script src="../../js/regex.js"></script>
+<script nonce="<?= htmlspecialchars($cspNonce ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>" src="../../js/regex.js"></script>
 <?php include_once __DIR__ . '/../partials/footer.php'; ?>
 
 </body>

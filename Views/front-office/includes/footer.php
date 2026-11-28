@@ -1,4 +1,5 @@
 <?php
+// Darine : structure commune. Amine : gabarit du routeur. Houssem : sorties échappées.
 /* Pied de page commun à toutes les pages du front-office.
    À inclure juste avant </body> d'une page de Views/front-office/pages/ :
        <?php include_once __DIR__ . '/../includes/footer.php'; ?>
@@ -19,6 +20,7 @@
       <a href="mailto:toblerone@gmail.com">toblerone@gmail.com</a>
     </address>
 
-    <p class="yq-front-footer-copy">&copy; <?= date('Y') ?> YallaQuest · Réalisé par Toblerone</p>
+    <p class="yq-front-footer-copy">&copy; <?= htmlspecialchars((string) (date('Y')), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?> YallaQuest · Réalisé par Toblerone</p>
   </div>
 </footer>
+<?php include_once __DIR__ . '/session-timeout.php'; // Amine : compteur d'inactivité (utilisateur connecté) ?>

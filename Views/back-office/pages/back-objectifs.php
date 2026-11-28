@@ -1,18 +1,32 @@
 <?php
+// Mohamed : objectifs back. Houssem : protection CSRF/XSS.
+require_once __DIR__ . '/../../../Controllers/AuthController.php';
+$csrfToken = AuthController::getCsrfToken();
+$cspNonce = $cspNonce ?? bin2hex(random_bytes(16));
+$currentPage = 'back-objectifs';
+if (in_array($_SERVER['REQUEST_METHOD'] ?? 'GET', ['POST', 'PUT', 'PATCH', 'DELETE'], true)
+    && !AuthController::verifyCsrfToken($_POST['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? null)) {
+    http_response_code(403);
+    exit('Jeton de sécurité invalide. Rechargez la page.');
+}
+AuthController::requireRole('admin');
+
+require_once __DIR__ . '/../../../Controllers/AuthController.php';
+$csrfToken = AuthController::getCsrfToken();
+
+
+if (isset($_GET['supprimer']) || isset($_GET['toggle']) || isset($_GET['toggle_etape'])) {
+    http_response_code(405);
+    header('Allow: POST');
+    exit('Cette action doit être envoyée par POST.');
+}
+
 $currentPage = 'back-objectifs';
 $pageTitle = 'Objectifs · Administration · Yalla Quest';
 ?>
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($pageTitle ?? 'Objectifs · Administration · Yalla Quest') ?></title>
-    <link rel="stylesheet" href="../../css/back-objectifs-styles.css">
-</head>
-<body>
-<?php include_once __DIR__ . '/../partials/sidebar.php'; ?>
-<?php include_once __DIR__ . '/../partials/header.php'; ?>
+<?php
+require_once __DIR__ . '/../partials/head.php';
+?>
 <div class="app">
 <main class="canvas" id="canvas">
     <!-- En-tête Back-Office -->
@@ -21,7 +35,7 @@ $pageTitle = 'Objectifs · Administration · Yalla Quest';
             <p class="kicker">Administration · objectifs</p>
             <h1>Objectifs</h1>
             <p class="about">Les buts planifiés pour le futur, leurs notes et leurs périodes, pour chaque aventurier.</p>
-            <p class="sub"><?= $totalQuests ?? 0 ?> objectif<?= ($totalQuests ?? 0) > 1 ? 's' : '' ?> enregistré<?= ($totalQuests ?? 0) > 1 ? 's' : '' ?></p>
+            <p class="sub"><?= (int) ($totalQuests ?? 0) ?> objectif<?= htmlspecialchars((string) (($totalQuests ?? 0) > 1 ? 's' : ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?> enregistré<?= htmlspecialchars((string) (($totalQuests ?? 0) > 1 ? 's' : ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></p>
         </div>
         <div class="actions">
             <button class="btn primary" type="button" onclick="document.getElementById('dlgQuest').showModal();">
@@ -63,8 +77,8 @@ $pageTitle = 'Objectifs · Administration · Yalla Quest';
                     <?php if (empty($listeObjectifs)): ?>
                         <tr><td colspan="7" style="text-align:center;padding:24px;">Aucun objectif trouvé.</td></tr>
                     <?php else: ?>
-                        <?php foreach ($listeObjectifs as $obj): 
-                            $id = $obj['id'];
+                        <?php foreach ($listeObjectifs as $obj):
+                            $id = (int) $obj['id'];
                             $etapes = ($objectifC && method_exists($objectifC, 'recupererEtapes')) ? $objectifC->recupererEtapes($id) : [];
                             $totalE = count($etapes);
                             $valideesE = 0;
@@ -73,32 +87,33 @@ $pageTitle = 'Objectifs · Administration · Yalla Quest';
                             $statut = $obj['statut'];
                             $statutLibelle = ($statut === 'atteint') ? 'Accompli' : (($statut === 'a_venir') ? 'À venir' : 'En cours');
                         ?>
-                        <tr data-statut="<?= htmlspecialchars($statut) ?>">
+                        <tr data-statut="<?= htmlspecialchars($statut, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
                             <td>
-                                <strong><?= htmlspecialchars($obj['titre']) ?></strong>
+                                <strong><?= htmlspecialchars($obj['titre'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></strong>
                                 <?php if (!empty($obj['note']) || !empty($obj['description'])): ?>
                                     <div style="font-size:12px;color:#aaa;margin-top:2px;">
-                                        📝 <?= htmlspecialchars($obj['note'] ?? $obj['description']) ?>
+                                        📝 <?= htmlspecialchars($obj['note'] ?? $obj['description'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
                                     </div>
                                 <?php endif; ?>
                             </td>
-                            <td><span class="pill" style="font-size:11px;"><?= htmlspecialchars($obj['categorie'] ?? 'Activité physique') ?></span></td>
+                            <td><span class="pill" style="font-size:11px;"><?= htmlspecialchars($obj['categorie'] ?? 'Activité physique', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></span></td>
                             <td>
                                 <span style="font-size:12px;">
-                                    <?= date('d M', strtotime($obj['date_debut'])) ?> → <?= date('d M', strtotime($obj['date_fin'])) ?>
+                                    <?= htmlspecialchars((string) (date('d M', strtotime($obj['date_debut']))), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?> → <?= htmlspecialchars((string) (date('d M', strtotime($obj['date_fin']))), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>
                                 </span>
                             </td>
                             <td>
-                                <span class="pill" style="font-size:11px;"><?= $valideesE ?> / <?= $totalE ?> (<?= $pct ?>%)</span>
+                                <span class="pill" style="font-size:11px;"><?= htmlspecialchars((string) ((int) ($valideesE)), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?> / <?= htmlspecialchars((string) ((int) ($totalE)), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?> (<?= htmlspecialchars((string) (max(0, min(100, (float) ($pct)))), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>%)</span>
                             </td>
                             <td>
-                                <span class="pill st-<?= $statut ?>"><?= $statutLibelle ?></span>
+                                <span class="pill st-<?= htmlspecialchars((string) ($statut), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>"><?= htmlspecialchars((string) ($statutLibelle), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?></span>
                             </td>
-                            <td><strong>+<?= $obj['xp_recompense'] ?? 50 ?> XP</strong></td>
+                            <td><strong>+<?= (int) ($obj['xp_recompense'] ?? 50) ?> XP</strong></td>
                             <td style="text-align:right;">
-                                <a class="btn danger sm" href="back-objectifs.php?supprimer=<?= $id ?>" onclick="return confirm('Confirmer la suppression de cet objectif ?');">
+                                <form method="post" action="back-objectifs.php" style="display:contents" onsubmit="return confirm('Confirmer la suppression de cet objectif ?');">
+                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>"><input type="hidden" name="supprimer" value="<?= htmlspecialchars((string) ((int) $id), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>"><button class="btn danger sm" type="submit">
                                     Supprimer
-                                </a>
+                                </button></form>
                             </td>
                         </tr>
                         <?php endforeach; ?>
@@ -113,12 +128,17 @@ $pageTitle = 'Objectifs · Administration · Yalla Quest';
 <!-- Modal d'assignation d'objectif par l'Admin -->
 <dialog id="dlgQuest" class="dlg">
     <form method="POST" action="back-objectifs.php" onsubmit="return validerAdminObjectif()">
+                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
         <input type="hidden" name="ajouter_objectif_admin" value="1">
         <div class="head">
             <h2>Assigner un objectif</h2>
             <button class="btn icon" type="button" onclick="document.getElementById('dlgQuest').close()">✕</button>
         </div>
         <div class="body">
+            <div class="field">
+                <label for="adminIdUtilisateur">ID Utilisateur (Aventurier) *</label>
+                <input class="input" type="number" id="adminIdUtilisateur" name="id_utilisateur" min="1" placeholder="Ex. 1 (ID de l'aventurier)" required>
+            </div>
             <div class="field">
                 <label for="adminTitre">Intitulé du but *</label>
                 <input class="input" type="text" id="adminTitre" name="titre" placeholder="Ex. Atelier nutrition" required>
@@ -140,11 +160,11 @@ $pageTitle = 'Objectifs · Administration · Yalla Quest';
             <div class="field-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
                 <div class="field">
                     <label for="adminDebut">Date & heure début *</label>
-                    <input class="input" type="datetime-local" id="adminDebut" name="date_debut" value="<?= date('Y-m-d\TH:i') ?>" required>
+                    <input class="input" type="datetime-local" id="adminDebut" name="date_debut" value="<?= htmlspecialchars((string) (date('Y-m-d\TH:i')), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>" required>
                 </div>
                 <div class="field">
                     <label for="adminFin">Date & heure fin *</label>
-                    <input class="input" type="datetime-local" id="adminFin" name="date_fin" value="<?= date('Y-m-d\TH:i', strtotime('+7 days')) ?>" required>
+                    <input class="input" type="datetime-local" id="adminFin" name="date_fin" value="<?= htmlspecialchars((string) (date('Y-m-d\TH:i', strtotime('+7 days'))), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>" required>
                 </div>
             </div>
             <div class="field" style="margin-top:12px;">

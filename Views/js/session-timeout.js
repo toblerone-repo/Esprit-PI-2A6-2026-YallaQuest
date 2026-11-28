@@ -76,10 +76,20 @@
         boite.hidden = true;
     }
 
+    // Intégration : la déconnexion du routeur n'accepte que POST avec le jeton CSRF de Houssem.
     function aller(url) {
         termine = true;
         window.clearInterval(minuterie);
-        window.location.href = url;
+        var formulaire = document.createElement('form');
+        formulaire.method = 'post';
+        formulaire.action = url;
+        var jeton = document.createElement('input');
+        jeton.type = 'hidden';
+        jeton.name = 'csrf_token';
+        jeton.value = boite.dataset.csrf || '';
+        formulaire.appendChild(jeton);
+        document.body.appendChild(formulaire);
+        formulaire.submit();
     }
 
     function tic() {

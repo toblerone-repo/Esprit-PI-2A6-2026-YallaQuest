@@ -1,4 +1,20 @@
 <?php
+// Darine : compétences. Houssem : protection CSRF/XSS.
+require_once __DIR__ . '/../../../Controllers/AuthController.php';
+$csrfToken = AuthController::getCsrfToken();
+$cspNonce = $cspNonce ?? bin2hex(random_bytes(16));
+$currentPage = 'competences';
+if (in_array($_SERVER['REQUEST_METHOD'] ?? 'GET', ['POST', 'PUT', 'PATCH', 'DELETE'], true)
+    && !AuthController::verifyCsrfToken($_POST['csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? null)) {
+    http_response_code(403);
+    exit('Jeton de sécurité invalide. Rechargez la page.');
+}
+AuthController::requireRole('admin');
+
+require_once __DIR__ . '/../../../Controllers/AuthController.php';
+$csrfToken = AuthController::getCsrfToken();
+
+
 $title = 'Compétences | YallaQuest Admin';
 $currentPage = 'competences';
 require_once __DIR__ . '/../partials/head.php';
@@ -110,7 +126,8 @@ require_once __DIR__ . '/../partials/head.php';
       <h2>Ajouter une compétence</h2>
     </div>
 
-    <form action="#" method="post"> <!-- envois de données vers le serveur -->
+    <form action="#" method="post">
+                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>"> <!-- envois de données vers le serveur -->
       <div class="competences-admin-champs">
         <div class="competences-admin-champ">
           <label for="nom">Nom</label>
@@ -140,7 +157,7 @@ require_once __DIR__ . '/../partials/head.php';
 
 </div>
 
-<script src="../../js/regex.js"></script>
+<script nonce="<?= htmlspecialchars($cspNonce ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>" src="../../js/regex.js"></script>
 <?php include_once __DIR__ . '/../partials/footer.php'; ?>
 </body>
 </html>

@@ -1,3 +1,4 @@
+// Mohamed : objectifs admin et helper d’échappement HTML.
 /**
  * YallaQuest - Back-Office Objectifs (Administration)
  * Fichier unique regroupant toute la logique JavaScript du Back-Office
@@ -40,6 +41,7 @@ function ajouterEtapeAdmin() {
 
 // 3. Validation du formulaire d'assignation Admin avant envoi
 function validerAdminObjectif() {
+    var idUser = document.getElementById('adminIdUtilisateur');
     var titre = document.getElementById('adminTitre').value.trim();
     var debut = document.getElementById('adminDebut').value;
     var fin = document.getElementById('adminFin').value;
@@ -52,6 +54,11 @@ function validerAdminObjectif() {
     
     var etapes = document.querySelectorAll('#adminListeEtapes input[name="etapes[]"]');
 
+    if (idUser && (!idUser.value.trim() || parseInt(idUser.value, 10) <= 0)) {
+        alert("Veuillez renseigner un ID d'utilisateur valide.");
+        idUser.focus();
+        return false;
+    }
     if (!titre) {
         alert("Le titre est requis.");
         return false;

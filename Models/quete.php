@@ -5,8 +5,8 @@
         private string $titre; 
         private string $difficulte; 
         private int $xp; 
-        private int $id_comp; 
-        private int $id_cat; 
+        private int $id_comp = 0;
+        private int $id_cat = 0;
 
 
         function __construct(string $titre, string $difficulte, int $xp, int $id=NULL)
@@ -51,7 +51,20 @@
         }
 
         function getIdCat(){
-            return $this->id_cat; 
+            return $this->id_cat;
+        }
+
+        // Guildes : compétence et catégorie d'une quête proposée
+        function setIdComp(int $id){
+            $this->id_comp = $id;
+        }
+
+        function setIdCat(int $id){
+            $this->id_cat = $id;
+        }
+
+        function setId(?int $id){
+            $this->id = $id;
         }
 
         

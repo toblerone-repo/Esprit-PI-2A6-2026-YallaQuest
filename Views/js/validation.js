@@ -1,3 +1,4 @@
+// Amine : validation REGEX. Eya : envoi natif du formulaire vers register().
 /**
  * Vue - formulaires « Rejoindre la guilde » (inscription) et « Connexion ».
  * Les formats (e-mail, nom, pseudo, mot de passe) viennent de regex.js (YQRegex), à charger avant ce fichier.
@@ -5,11 +6,11 @@
  */
 document.addEventListener('DOMContentLoaded', function () {
     // Inscription (join_now.php)
+    // [INSCRIPTION] Si tout est bon, le formulaire part vers join_now.php (PHP),
+    // qui crée le compte puis redirige vers login.php avec le message de réussite.
     const joinForm = document.getElementById('joinForm');
     if (joinForm) {
         joinForm.addEventListener('submit', function (e) {
-            e.preventDefault();
-
             const pseudo = document.getElementById('pseudo').value.trim();
             const email = document.getElementById('email').value.trim();
             const prenom = document.getElementById('prenom').value.trim();
@@ -43,6 +44,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             if (errors.length > 0) {
+                e.preventDefault();
                 const ul = document.createElement('ul');
                 errors.forEach((err) => {
                     const li = document.createElement('li');
@@ -56,10 +58,6 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             joinError.hidden = true;
-            // Pas encore d'enregistrement côté serveur : le compte n'est pas créé dans la base.
-            joinForm.querySelector('[type="submit"]').disabled = true;
-            YQ.toast('Bienvenue ' + pseudo + ' ! Ton compte est créé.');
-            setTimeout(() => YQ.go('../../../index.php?action=login'), 1200);
         });
     }
 
