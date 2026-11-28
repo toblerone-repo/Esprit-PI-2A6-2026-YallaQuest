@@ -229,7 +229,7 @@ require_once __DIR__ . '/../partials/head.php';
         </div>
 
 
-        <h2 id="liste-quete-titre">Liste de quêtes</h2>
+        <h2 id="liste-quete-titre">Quêtes disponibles</h2>
         <div class="container">
 
             <table class="table-liste">

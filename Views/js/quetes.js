@@ -121,14 +121,28 @@ $("#charger-1quete-btn").click(function () {
 });
 
 $(".quete-carte-statut").click(function () {
-    const $carte = $(this).closest(".quete-carte");
-    $(this).prop("disabled", true)
-        .attr("aria-label", "Quête sélectionnée")
-        .attr("title", "Quête sélectionnée")
-        .find("i")
-        .removeClass("fa-regular fa-circle")
-        .addClass("fa-solid fa-circle-check");
-    $carte.find(".bouton-supprimer, .bouton-modifier").hide();
+    const id = $(this).data("id");
+    const boutonSelectionner = $(this);
+    $.post("quetes-programmation.php",
+        {
+            id_prog: id,
+            selectionner: true,
+            csrf_token: $("meta[name='csrf-token']").attr("content")
+
+        })
+        .done(function () {
+            const $carte = boutonSelectionner.closest(".quete-carte");
+            boutonSelectionner.prop("disabled", true)
+                .attr("title", "Quête sélectionnée")
+                .find("i")
+                .removeClass("fa-regular fa-circle")
+                .addClass("fa-solid fa-circle-check");
+            $carte.find(".bouton-supprimer, .bouton-modifier").hide();
+        })
+        .fail(function () {
+            alert("Impossible de sélectionner la quête.");
+        });
+
 });
 
 $(".bouton-supprimer").click(function () {

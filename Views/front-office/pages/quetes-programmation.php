@@ -65,6 +65,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $programmationC->modifierProgrammation($id, $id_utilisateur);
         header("Location: quetes-programmation.php");
         exit();
+    } else if (isset($_POST['selectionner'])) {
+        $id = $_POST['id_prog'];
+        $programmationC->selectionnerQuete($id); 
+        header("Location: quetes-programmation.php");
+        exit();
     };
 };
 
@@ -286,7 +291,7 @@ $pas_de_prog = count($programmation) === 0 ? true : false;
                     . "<div class='quete-carte-header'>"
                     . "<p class='quete-carte-competence'>" . htmlspecialchars($quete['competence']) . "&#183; </p>"
                     . "<p class='quete-carte-difficulte'>" . htmlspecialchars($quete['difficulte']) . "</p>"
-                    . "<button type='button' class='quete-carte-statut' title='{$texteStatut}' {$statutDesactive}><i class='{$iconeStatut}' aria-hidden='true'></i></button>"
+                    . "<button data-id=" . $quete['id_programmation'] . "  name='selectionner-bouton' type='button' class='quete-carte-statut' title='{$texteStatut}' {$statutDesactive}><i class='{$iconeStatut}' aria-hidden='true'></i></button>"
                     . "</div>"
                     . "<p class='quete-carte-titre'>" . htmlspecialchars($quete['titre']) . "</p>"
                     . "<div class='carte-footer-div'>"

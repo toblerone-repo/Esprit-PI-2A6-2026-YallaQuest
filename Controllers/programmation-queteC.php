@@ -333,4 +333,26 @@ class ProgrammationQueteC
             );
         }
     }
+
+
+    function selectionnerQuete(int $id_programmation)
+    {
+        $sql = "UPDATE programmation 
+        SET statut = 'selectionnee' 
+        WHERE id_programmation = :id";
+        $db = config::getConnexion();
+        try {
+
+            $query = $db->prepare($sql);
+            $query->execute(['id' => $id_programmation]);
+            echo $query->rowCount() . " record(s) DELETED";
+        } catch (PDOException $e) {
+            error_log($e->getMessage());
+            throw new RuntimeException(
+                "Impossible de supprimer la programmation.",
+                0,
+                $e
+            );
+        }
+    }
 }
