@@ -491,3 +491,13 @@ tr:hover td .action-btn {
   font-size: 0.9rem;
   color: #A8324A;
 }
+
+body.page-quetes-programmation{
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.page-quetes-programmation > #liste-quetes-cartes {
+  flex-grow : 1; 
+}
