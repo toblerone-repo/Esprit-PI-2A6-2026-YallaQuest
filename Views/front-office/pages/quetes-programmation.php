@@ -92,7 +92,7 @@ $pas_de_prog = count($programmation) === 0 ? true : false;
             <h1 class="form-title">Choisissez vos quêtes du jour</h1>
             <form method="POST" action="quetes-programmation.php" id="programmation-quetes-form">
                 <input id="nb-quetes-champ" type="hidden" name="nb-inputs">
-                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
+                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken) ?>">
                 <div id="quete-section">
                     <fieldset class="quete-champ">
                         <legend class="quete-numero">Quête 01</legend>
@@ -142,7 +142,7 @@ $pas_de_prog = count($programmation) === 0 ? true : false;
         <div id="filter-btn-div">
             <button class="submit-btn" id="charger-1quete-btn">Ajouter une quête</button>
             <form action="quetes-programmation.php" method="post">
-                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>">
+                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken) ?>">
                 <button name="quete-surprise" class="surprise-btn submit-btn">Quête surprise!</button>
             </form>
 
