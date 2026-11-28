@@ -1,14 +1,14 @@
 <?php  
 
-    class Quete {
+    class Categorie {
         private ?int $id_categorie; 
         private string $nom; 
         private string $description; 
 
 
-        function __construct(string $nom, string $description, int $id=NULL)
+        function __construct(string $nom, string $description, ?int $id_categorie = null)
         {
-            $this->id = $id; 
+            $this->id_categorie = $id_categorie;
             $this->nom =  $nom; 
             $this->description = $description; 
          
@@ -16,7 +16,7 @@
         } 
 
         function getId(){
-            return $this->id; 
+            return $this->id_categorie; 
         } 
 
         function getNom(){
@@ -34,16 +34,6 @@
         function setDescription(string $description){
             $this->description = $description; 
         }
-
-        
-
-
-
-        
-
-
-
-
 
     }
 

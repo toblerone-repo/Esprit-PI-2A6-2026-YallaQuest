@@ -312,3 +312,76 @@ $(".bouton-modifier").click(function (event) {
 
 
 
+// Gestion des catégories
+$("#ajout-categorie-btn-bo").click(function () {
+    $("#form-ajout-categorie").slideToggle("slow");
+});
+
+$("#categorie-ajout, #categorie-modifier").submit(function (event) {
+    event.preventDefault();
+    const formulaire = $(this);
+    const bouton = formulaire.find("button[type='submit']");
+    bouton.prop("disabled", true).text("Enregistrement...");
+    let soumissionValidee = true;
+
+    const champNom = formulaire.find("input[name='nom']");
+    const nom = champNom.val().trim();
+    const champDescription = formulaire.find("textarea[name='description']");
+    const description = champDescription.val();
+    formulaire.find(".message-erreur").text("");
+
+    if (nom.length === 0) {
+        champNom.next().text("Le nom est obligatoire.");
+        soumissionValidee = false;
+    } else if (Array.from(nom).length > 100) {
+        champNom.next().text("Le nom doit comporter au maximum 100 caractères.");
+        soumissionValidee = false;
+    }
+    if (new TextEncoder().encode(description).length > 500) {
+        champDescription.next().text("La description dépasse la longueur autorisée.");
+        soumissionValidee = false;
+    }
+
+    if (soumissionValidee) {
+        champNom.val(nom);
+        this.submit();
+    } else {
+        bouton.prop("disabled", false).text("Enregistrer");
+    }
+});
+
+$(".action-btn.mod-categorie-btn").click(function () {
+    const id_categorie = $(this).data("id");
+    $.getJSON("categories-listes.php", { id_categorie: id_categorie })
+        .done(function (categorie) {
+            const formulaire = $("#categorie-modifier");
+
+            formulaire.find("[name='id_categorie']").val(categorie.id_categorie);
+            formulaire.find("[name='nom']").val(categorie.nom);
+            formulaire.find("[name='description']").val(categorie.description);
+            formulaire.find(".message-erreur").text("");
+
+            $("#form-modifier-categorie").slideToggle("slow");
+        })
+        .fail(function () {
+            alert("Impossible de charger la catégorie.");
+        });
+});
+
+$(".action-btn.supp-categorie-btn").click(function (event) {
+    event.preventDefault();
+    const bouton = $(this);
+    const id_categorie = bouton.data("id");
+    $.post("categories-listes.php",
+        {
+            id_categorie: id_categorie,
+            supprimer: true,
+            csrf_token: $("meta[name='csrf-token']").attr("content")
+        })
+        .done(function () {
+            bouton.closest("tr").remove();
+        })
+        .fail(function () {
+            alert("Impossible de supprimer la catégorie.");
+        });
+});

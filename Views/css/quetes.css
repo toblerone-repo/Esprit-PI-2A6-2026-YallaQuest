@@ -148,7 +148,8 @@ body {
   margin-bottom: 40px;
   background-color: var(--ivory-color);
 }
-#form-ajout-quete, #modifier-queteprog-form, #ajout-1quete-form, #form-modifier-quete{
+#form-ajout-quete, #modifier-queteprog-form, #ajout-1quete-form, #form-modifier-quete,
+#form-ajout-categorie, #form-modifier-categorie {
   display: none;
 }
 
@@ -199,7 +200,7 @@ body {
   font-family: var(--font-heading);
 }
 
-#quest-ajout, #quest-modifier {
+#quest-ajout, #quest-modifier, #categorie-ajout, #categorie-modifier {
   display: flex;
   flex-direction: column;
 }
@@ -265,7 +266,7 @@ body {
 }
 
 #filter-btn-div,
-#backoffice-btn-div-quete {
+#backoffice-btn-div-quete, #backoffice-btn-div-categorie {
   margin-bottom: 20px;
   display: flex;
   justify-content: flex-end;
@@ -403,7 +404,7 @@ body {
   font-size: 5rem;
 }
 
-#liste-quete-titre {
+#liste-quete-titre, #liste-categorie-titre {
   font-family: var(--font-heading);
   font-size: 1.75rem;
   font-weight: 400;

@@ -10,6 +10,7 @@ $boSidebarPages = [
     'listuser.php'       => 'Aventuriers', // [DARINE · LISTE UTILISATEURS]
     'liste_utilisateurs.php' => 'Suppression des comptes',
     'quetes-listes.php'  => 'Quêtes',
+    'categories-listes.php' => 'Catégories',
     'activites.php'      => 'Activités',
     'types-activite.php' => "Types d'activité",
     'competences.php'    => 'Compétences',
@@ -17,7 +18,7 @@ $boSidebarPages = [
     'guilde_admin.php'   => 'Guildes',
     'back-objectifs.php' => 'Objectifs',
     'publications.php'   => 'Publications',
-    'signalements.php'   => 'Signalements',
+    'signalements.php'   => 'Signalements'
 ];
 $boSidebarCurrent = basename($_SERVER['SCRIPT_NAME'] ?? '');
 // Mohamed : actions sur les comptes, affichées sous « Aventuriers » avec le même style que les autres liens.
